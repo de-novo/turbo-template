@@ -8,6 +8,5 @@
     "outDir": "dist",
     "rootDir": "src"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "references": [{ "path": "../ui-primitives" }]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

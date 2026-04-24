@@ -129,6 +129,8 @@ tsconfig.base.json
 .gitignore
 .nvmrc
 project.config.json
+scripts/check-tsconfig-references.mjs
+scripts/rename-template.mjs
 DESIGN.md
 README.md
 ```
@@ -164,8 +166,8 @@ pnpm build
 ```
 
 `pnpm check` is the strict template quality gate. It runs Biome lint with warnings as failures,
-repo-wide TypeScript type checks, Biome/Prettier format checks, env example validation, and
-`DESIGN.md` linting.
+tsconfig reference checks, repo-wide TypeScript type checks, Biome/Prettier format checks, env
+example validation, and `DESIGN.md` linting.
 
 ## Prebuilt Shared Code
 
@@ -188,6 +190,9 @@ Good day-one candidates:
   states.
 - `@repo/ui-primitives`: shadcn primitive landing zone.
 - `@repo/config`: shared tsconfig and tool conventions.
+
+Internal package relationships are declared in `package.json` with `workspace:*`. Do not maintain
+parallel `tsconfig.references`; the template includes a check that rejects them.
 
 Avoid day-one overreach:
 

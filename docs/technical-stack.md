@@ -113,14 +113,15 @@ Template naming policy:
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm env:check && pnpm design:lint",
+    "check": "pnpm lint && pnpm tsconfig:check && pnpm typecheck && pnpm format:check && pnpm env:check && pnpm design:lint",
     "typecheck": "turbo run typecheck",
     "env:check": "pnpm --filter @repo/env check:examples",
     "format": "pnpm format:biome && pnpm format:prettier",
     "format:biome": "biome format --write .",
     "format:check": "biome format . && prettier --check .",
     "format:prettier": "prettier --write .",
-    "lint": "biome lint --error-on-warnings ."
+    "lint": "biome lint --error-on-warnings .",
+    "tsconfig:check": "node scripts/check-tsconfig-references.mjs"
   }
 }
 ```
@@ -129,6 +130,24 @@ Template naming policy:
 
 Use Turborepo for orchestration, not dependency management. Dependencies still belong in the package
 that imports them. Prefer `workspace:*` for internal packages.
+
+`package.json` is the source of truth for internal dependency wiring. Treat `@repo/*` packages like
+real installed libraries:
+
+```json
+{
+  "dependencies": {
+    "@repo/contracts": "workspace:*",
+    "@repo/env": "workspace:*"
+  }
+}
+```
+
+Do not add TypeScript `references` arrays to app or package `tsconfig.json` files. They duplicate
+`package.json`, become painful as app count grows, and are blocked by `pnpm tsconfig:check`.
+Turborepo already derives the dependency graph from package manifests, and `typecheck` depends on
+`^build`, so dependency packages expose `dist/*.d.ts` through package exports before downstream
+packages typecheck.
 
 Recommended task graph:
 
@@ -564,6 +583,10 @@ packages/platform
 
 Avoid reverse dependencies from `contracts` into `auth`, `clients`, `infrastructure`, `db`, `web`,
 or `api`.
+
+Dependency direction is documented here as architecture guidance only. The executable dependency
+graph must live in `package.json` through `workspace:*`; do not mirror it with
+`tsconfig.references`.
 
 ## Environment Standard
 

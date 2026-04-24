@@ -128,6 +128,35 @@ apps/api
 `packages/contracts` stays runtime-light and should not depend on app, framework, database, Redis,
 Kafka, or browser-only APIs.
 
+## Workspace Dependencies
+
+Declare internal dependencies only in `package.json`, the same way external libraries are installed:
+
+```json
+{
+  "dependencies": {
+    "@repo/auth": "workspace:*",
+    "@repo/contracts": "workspace:*",
+    "@repo/env": "workspace:*"
+  }
+}
+```
+
+Do not maintain TypeScript project references manually in each app's `tsconfig.json`. They drift as
+apps/packages grow and duplicate the dependency graph already owned by `package.json`.
+
+The intended flow is:
+
+```text
+package.json dependencies
+  -> Turborepo package graph
+  -> dependency packages build first via ^build
+  -> TypeScript resolves @repo/* through package exports
+```
+
+The root quality gate includes `pnpm tsconfig:check`, which fails if a workspace `tsconfig.json`
+adds a non-empty `references` array.
+
 ## Environment Management
 
 Use `@repo/env` for all app env access. Each app imports only its own loader:

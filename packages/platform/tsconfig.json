@@ -8,6 +8,5 @@
     "rootDir": "src",
     "types": ["node"]
   },
-  "include": ["src/**/*.ts"],
-  "references": [{ "path": "../contracts" }]
+  "include": ["src/**/*.ts"]
 }

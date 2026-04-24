@@ -16,11 +16,5 @@
     "src/**/*.tsx",
     "app.config.ts",
     "metro.config.cjs"
-  ],
-  "references": [
-    { "path": "../../packages/auth" },
-    { "path": "../../packages/config" },
-    { "path": "../../packages/contracts" },
-    { "path": "../../packages/env" }
   ]
 }
