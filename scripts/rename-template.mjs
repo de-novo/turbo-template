@@ -9,15 +9,7 @@ const DEFAULTS = {
   scope: "@repo",
 };
 
-const SKIP_DIRS = new Set([
-  ".git",
-  ".next",
-  ".omx",
-  ".turbo",
-  "coverage",
-  "dist",
-  "node_modules",
-]);
+const SKIP_DIRS = new Set([".git", ".next", ".omx", ".turbo", "coverage", "dist", "node_modules"]);
 
 const SKIP_FILES = new Set([
   "project.config.json",
@@ -43,6 +35,14 @@ const TEXT_EXTENSIONS = new Set([
   ".yaml",
   ".yml",
 ]);
+
+function writeStdout(message) {
+  process.stdout.write(message);
+}
+
+function writeStderr(message) {
+  process.stderr.write(message);
+}
 
 function parseArgs(argv) {
   const args = {
@@ -103,7 +103,7 @@ function requireValue(flag, value) {
 }
 
 function printHelp() {
-  console.log(`Usage:
+  writeStdout(`Usage:
   node scripts/rename-template.mjs --name "Acme License" --slug "acme-license"
   node scripts/rename-template.mjs --name "Acme License" --slug "acme-license" --scope "@acme"
   node scripts/rename-template.mjs --name "Acme License" --dry-run
@@ -223,18 +223,18 @@ function main() {
 
   if (args.dryRun) {
     for (const change of changed) {
-      console.log(relative(root, change.file));
+      writeStdout(`${relative(root, change.file)}\n`);
     }
-    console.log(`Dry run: ${changed.length} file(s) would change.`);
+    writeStdout(`Dry run: ${changed.length} file(s) would change.\n`);
     return;
   }
 
   for (const change of changed) {
     writeFileSync(change.file, change.after);
-    console.log(`updated ${relative(root, change.file)}`);
+    writeStdout(`updated ${relative(root, change.file)}\n`);
   }
 
-  console.log(`Done: ${changed.length} file(s) updated.`);
+  writeStdout(`Done: ${changed.length} file(s) updated.\n`);
 }
 
 function validateScope(scope) {
@@ -246,6 +246,6 @@ function validateScope(scope) {
 try {
   main();
 } catch (error) {
-  console.error(error instanceof Error ? error.message : String(error));
+  writeStderr(`${error instanceof Error ? error.message : String(error)}\n`);
   process.exit(1);
 }

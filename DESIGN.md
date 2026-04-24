@@ -111,13 +111,12 @@ components:
 
 ## Overview
 
-Products created from this template should start from a clear operational SaaS
-baseline: quiet, structured, trustworthy, and fast to scan. The interface should
-prioritize task completion, domain confidence, and precise state visibility over
-decorative expression.
+Products created from this template should start from a clear operational SaaS baseline: quiet,
+structured, trustworthy, and fast to scan. The interface should prioritize task completion, domain
+confidence, and precise state visibility over decorative expression.
 
-Use restrained surfaces, direct labels, compact spacing, and visible hierarchy.
-The product should not feel like a marketing landing page inside the app.
+Use restrained surfaces, direct labels, compact spacing, and visible hierarchy. The product should
+not feel like a marketing landing page inside the app.
 
 ## Colors
 
@@ -132,44 +131,44 @@ The product should not feel like a marketing landing page inside the app.
 
 ## Typography
 
-Use Geist for product UI and Geist Mono for codes, IDs, timestamps, license keys,
-numeric identifiers, logs, and dense operational values. Keep letter spacing at 0.
-Use weight, color, and spacing for hierarchy instead of oversized typography.
+Use Geist for product UI and Geist Mono for codes, IDs, timestamps, license keys, numeric
+identifiers, logs, and dense operational values. Keep letter spacing at 0. Use weight, color, and
+spacing for hierarchy instead of oversized typography.
 
-Text inside compact panels, forms, tables, and sidebars must stay appropriately
-small and readable. Reserve display typography for true page headers.
+Text inside compact panels, forms, tables, and sidebars must stay appropriately small and readable.
+Reserve display typography for true page headers.
 
 ## Layout
 
-Use dense but calm layouts. Prefer page shells with predictable navigation,
-toolbar regions, filter rows, tables, forms, and detail panels. Avoid floating
-cards inside cards. Page sections should be unframed layouts or full-width bands;
-cards are for repeated items, modals, and genuinely bounded tools.
+Use dense but calm layouts. Prefer page shells with predictable navigation, toolbar regions, filter
+rows, tables, forms, and detail panels. Avoid floating cards inside cards. Page sections should be
+unframed layouts or full-width bands; cards are for repeated items, modals, and genuinely bounded
+tools.
 
-Mobile layouts collapse to a single column. Interactive targets should be at
-least 44px tall where touch interaction is expected.
+Mobile layouts collapse to a single column. Interactive targets should be at least 44px tall where
+touch interaction is expected.
 
 ## Elevation & Depth
 
-Prefer borders and background contrast over heavy shadows. Elevation should
-communicate modal focus, popovers, and temporary overlays, not decorate every
-surface. Shadows, when used, must be subtle and neutral.
+Prefer borders and background contrast over heavy shadows. Elevation should communicate modal focus,
+popovers, and temporary overlays, not decorate every surface. Shadows, when used, must be subtle and
+neutral.
 
 ## Shapes
 
-Use 4px to 8px radii for dense controls and ordinary panels. Use 12px sparingly
-for larger dialogs or focused work surfaces. Avoid pill-heavy UI unless the
-control is a tag, status chip, or segmented filter.
+Use 4px to 8px radii for dense controls and ordinary panels. Use 12px sparingly for larger dialogs
+or focused work surfaces. Avoid pill-heavy UI unless the control is a tag, status chip, or segmented
+filter.
 
 ## Components
 
-Buttons should use familiar iconography when the action is common. Use text
-buttons for clear commands and primary actions. Inputs use labels above the
-field, helper text below when needed, and inline error messages below the field.
+Buttons should use familiar iconography when the action is common. Use text buttons for clear
+commands and primary actions. Inputs use labels above the field, helper text below when needed, and
+inline error messages below the field.
 
-Tables should support scanning: stable row height, sticky headers when useful,
-clear empty states, and consistent status chips. Loading states should preserve
-layout dimensions with skeletons rather than generic spinners.
+Tables should support scanning: stable row height, sticky headers when useful, clear empty states,
+and consistent status chips. Loading states should preserve layout dimensions with skeletons rather
+than generic spinners.
 
 ## Do's and Don'ts
 

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "check": "turbo run check",
+    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm design:lint",
     "dev": "turbo run dev",
     "dev:api": "pnpm --filter @repo/api dev",
     "dev:desktop": "pnpm --filter @repo/desktop dev",
@@ -18,8 +18,11 @@
     "db:generate": "pnpm --filter @repo/db db:generate",
     "db:migrate": "pnpm --filter @repo/db db:migrate",
     "db:studio": "pnpm --filter @repo/db db:studio",
-    "format": "biome format --write .",
-    "lint": "biome lint .",
+    "format": "pnpm format:biome && pnpm format:prettier",
+    "format:biome": "biome format --write .",
+    "format:check": "biome format . && prettier --check .",
+    "format:prettier": "prettier --write .",
+    "lint": "biome lint --error-on-warnings .",
     "template:rename": "node scripts/rename-template.mjs",
     "typecheck": "turbo run typecheck",
     "design:lint": "design.md lint DESIGN.md"
@@ -28,6 +31,7 @@
     "@biomejs/biome": "catalog:",
     "@google/design.md": "catalog:",
     "@types/node": "catalog:",
+    "prettier": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:"
   }

@@ -4,11 +4,11 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   build: {
-    outDir: "dist"
+    outDir: "dist",
   },
   plugins: [react(), tailwindcss()],
   server: {
     port: 3001,
-    strictPort: true
-  }
+    strictPort: true,
+  },
 });

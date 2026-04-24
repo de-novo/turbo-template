@@ -17,9 +17,16 @@ export type Logger = {
   log(event: LogEvent): void;
 };
 
+const outputByLevel = {
+  debug: process.stdout,
+  info: process.stdout,
+  warn: process.stderr,
+  error: process.stderr,
+} satisfies Record<LogLevel, NodeJS.WriteStream>;
+
 export const consoleLogger: Logger = {
   log(event) {
     const { level, message, ...context } = event;
-    console[level](message, context);
+    outputByLevel[level].write(`${JSON.stringify({ level, message, ...context })}\n`);
   },
 };

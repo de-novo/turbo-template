@@ -1,0 +1,9 @@
+.DS_Store
+.expo
+.next
+.turbo
+coverage
+dist
+node_modules
+pnpm-lock.yaml
+*.tsbuildinfo

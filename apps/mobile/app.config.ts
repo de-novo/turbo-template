@@ -9,7 +9,7 @@ export default {
     version: "0.0.0",
     web: {
       bundler: "metro",
-      output: "static"
-    }
-  }
+      output: "static",
+    },
+  },
 };

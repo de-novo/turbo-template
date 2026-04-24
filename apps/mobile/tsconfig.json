@@ -9,7 +9,14 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["app/**/*.ts", "app/**/*.tsx", "src/**/*.ts", "src/**/*.tsx", "app.config.ts", "metro.config.cjs"],
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "app.config.ts",
+    "metro.config.cjs"
+  ],
   "references": [
     { "path": "../../packages/auth" },
     { "path": "../../packages/config" },

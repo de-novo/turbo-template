@@ -96,6 +96,9 @@ catalogs:
     pg:
       specifier: 8.20.0
       version: 8.20.0
+    prettier:
+      specifier: 3.8.3
+      version: 3.8.3
     react:
       specifier: 19.2.5
       version: 19.2.5
@@ -149,6 +152,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.1
+      prettier:
+        specifier: 'catalog:'
+        version: 3.8.3
       turbo:
         specifier: 'catalog:'
         version: 2.9.6
@@ -5070,6 +5076,11 @@ packages:
   postgres-interval@1.2.0:
     resolution: {integrity: sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==}
     engines: {node: '>=0.10.0'}
+
+  prettier@3.8.3:
+    resolution: {integrity: sha512-7igPTM53cGHMW8xWuVTydi2KO233VFiTNyF5hLJqpilHfmn8C8gPf+PS7dUT64YcXFbiMGZxS9pCSxL/Dxm/Jw==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   pretty-format@29.7.0:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
@@ -10898,6 +10909,8 @@ snapshots:
   postgres-interval@1.2.0:
     dependencies:
       xtend: 4.0.2
+
+  prettier@3.8.3: {}
 
   pretty-format@29.7.0:
     dependencies:

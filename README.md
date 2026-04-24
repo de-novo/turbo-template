@@ -1,10 +1,9 @@
 # Fullstack TypeScript Template
 
-This repository is a reusable TypeScript monorepo template for web, API, shared
-contracts, shared infrastructure, and product design-system work.
+This repository is a reusable TypeScript monorepo template for web, API, shared contracts, shared
+infrastructure, and product design-system work.
 
-The project baseline is documented in
-[docs/technical-stack.md](./docs/technical-stack.md).
+The project baseline is documented in [docs/technical-stack.md](./docs/technical-stack.md).
 
 Template naming and bootstrap conventions are documented in
 [docs/template-strategy.md](./docs/template-strategy.md).
@@ -14,8 +13,8 @@ Template naming and bootstrap conventions are documented in
 - Runtime: Node.js 24 LTS
 - Package manager: pnpm 10
 - Monorepo orchestration: Turborepo
-- Formatting and linting: Biome
-- Language: TypeScript 6
+- Linting and formatting gate: Biome lint, Biome format check, Prettier check
+- Language: TypeScript 6 with strict shared compiler options
 - Web: Next.js 16, React 19, Tailwind CSS 4
 - Desktop: Vite React shell, Tauri v2 native packaging path
 - Mobile: Expo 55, React Native 0.85
@@ -39,8 +38,10 @@ Run the full verification gate:
 ```bash
 pnpm check
 pnpm build
-pnpm design:lint
 ```
+
+`pnpm check` is intentionally strict: Biome lint runs with warnings as failures, TypeScript runs
+repo-wide type checks, Biome/Prettier formatting is checked, and `DESIGN.md` is validated.
 
 Database schema commands:
 
@@ -50,9 +51,8 @@ pnpm db:migrate
 pnpm db:studio
 ```
 
-`DATABASE_URL` is optional for template bootstrapping. Drizzle schema generation
-works without a live database; migrate/studio require a reachable PostgreSQL
-database.
+`DATABASE_URL` is optional for template bootstrapping. Drizzle schema generation works without a
+live database; migrate/studio require a reachable PostgreSQL database.
 
 Start local development:
 
@@ -115,17 +115,15 @@ apps/api
   -> packages/infrastructure
 ```
 
-`packages/contracts` stays runtime-light and should not depend on app,
-framework, database, Redis, Kafka, or browser-only APIs.
+`packages/contracts` stays runtime-light and should not depend on app, framework, database, Redis,
+Kafka, or browser-only APIs.
 
 ## Design System
 
-This project uses [DESIGN.md](./DESIGN.md) as a fast, agent-readable design
-system brief.
+This project uses [DESIGN.md](./DESIGN.md) as a fast, agent-readable design system brief.
 
-`DESIGN.md` captures machine-readable tokens in YAML front matter and human
-design rationale in Markdown. It should be created or updated before meaningful
-UI work starts.
+`DESIGN.md` captures machine-readable tokens in YAML front matter and human design rationale in
+Markdown. It should be created or updated before meaningful UI work starts.
 
 Relationship:
 
@@ -148,27 +146,27 @@ npx @google/design.md lint DESIGN.md
 
 ## Bootstrap Order
 
-1. Add root workspace config: `package.json`, `pnpm-workspace.yaml`,
-   `turbo.json`, `biome.json`, `.gitignore`, `.nvmrc`.
+1. Add root workspace config: `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `biome.json`,
+   `.gitignore`, `.nvmrc`.
 2. Create `packages/contracts`.
 3. Create `packages/auth`.
 4. Create `packages/ui-primitives`.
 5. Create `packages/design-system`.
 6. Create `packages/clients` after the first API contract exists.
-7. Create `packages/infrastructure` before shared Redis, Kafka, queue, cache,
-   logging, or metrics adapters.
+7. Create `packages/infrastructure` before shared Redis, Kafka, queue, cache, logging, or metrics
+   adapters.
 8. Create `apps/web`.
 9. Create `apps/api`.
 10. Create `apps/desktop`.
 11. Create `apps/mobile`.
 
-The current template already includes this baseline structure and minimal
-compile-safe code for every package above.
+The current template already includes this baseline structure and minimal compile-safe code for
+every package above.
 
 ## Rename Template
 
-Internal packages should normally keep the stable `@repo/*` scope. After copying
-the template, change the project display name and slug first:
+Internal packages should normally keep the stable `@repo/*` scope. After copying the template,
+change the project display name and slug first:
 
 ```bash
 node scripts/rename-template.mjs \
@@ -176,8 +174,7 @@ node scripts/rename-template.mjs \
   --slug "new-product"
 ```
 
-Only change package scope when packages must be published or consumed outside
-this monorepo:
+Only change package scope when packages must be published or consumed outside this monorepo:
 
 ```bash
 node scripts/rename-template.mjs \

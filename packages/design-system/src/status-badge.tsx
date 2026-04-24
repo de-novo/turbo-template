@@ -14,7 +14,9 @@ export type StatusBadgeProps = {
 
 export function StatusBadge({ children, tone = "neutral" }: StatusBadgeProps) {
   return (
-    <span className={`inline-flex rounded-sm border px-2 py-1 font-medium text-xs ${toneClassName[tone]}`}>
+    <span
+      className={`inline-flex rounded-sm border px-2 py-1 font-medium text-xs ${toneClassName[tone]}`}
+    >
       {children}
     </span>
   );

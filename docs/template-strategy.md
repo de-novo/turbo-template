@@ -2,16 +2,16 @@
 
 Last checked: 2026-04-24
 
-This repository should become a fast-start template for projects that share the
-same TypeScript, Next.js, NestJS, Turborepo, Biome, shadcn, design-system,
-contracts, auth, infrastructure, and Effect standards.
+This repository should become a fast-start template for projects that share the same TypeScript,
+Next.js, NestJS, Turborepo, Biome, shadcn, design-system, contracts, auth, infrastructure, and
+Effect standards.
 
 ## Naming Decision
 
 Default internal package scope: `@repo/*`.
 
-Keep `@repo/*` stable inside the template unless there is a concrete reason to
-publish the packages outside the monorepo.
+Keep `@repo/*` stable inside the template unless there is a concrete reason to publish the packages
+outside the monorepo.
 
 Why:
 
@@ -28,8 +28,8 @@ Use project-specific naming for:
 - Product display name after copying: `Acme Portal`, `FITT License`, etc.
 - Product slug after copying: `acme-portal`, `fitt-license`, etc.
 - App package names if useful: `@repo/web`, `@repo/api`.
-- Deployment identifiers: container image names, domains, database names,
-  Kubernetes namespaces, CI environment names.
+- Deployment identifiers: container image names, domains, database names, Kubernetes namespaces, CI
+  environment names.
 
 Only change `@repo/*` to another scope when:
 
@@ -54,8 +54,8 @@ Recommended optional scopes:
 
 ## Template Variables
 
-Use a small set of centralized template variables. Avoid scattering product
-names directly through generated code.
+Use a small set of centralized template variables. Avoid scattering product names directly through
+generated code.
 
 ```text
 PROJECT_NAME       Human-facing name, default "Fullstack TypeScript Template"
@@ -82,8 +82,8 @@ Example:
 }
 ```
 
-Apps and packages may import this later through `@repo/config` once the package
-exists. Until then, scripts and docs can read the root file.
+Apps and packages may import this later through `@repo/config` once the package exists. Until then,
+scripts and docs can read the root file.
 
 ## Rename Strategy
 
@@ -95,8 +95,7 @@ Use a script for the safe, frequent changes:
 - deployment slug placeholders.
 - app display name.
 
-Keep package scope replacement optional. The common path should not rename
-`@repo/*`.
+Keep package scope replacement optional. The common path should not rename `@repo/*`.
 
 Recommended command shape:
 
@@ -162,8 +161,10 @@ Current verification gate:
 ```bash
 pnpm check
 pnpm build
-pnpm design:lint
 ```
+
+`pnpm check` is the strict template quality gate. It runs Biome lint with warnings as failures,
+repo-wide TypeScript type checks, Biome/Prettier format checks, and `DESIGN.md` linting.
 
 ## Prebuilt Shared Code
 
@@ -171,28 +172,26 @@ Prewrite shared code where the abstraction is already clear.
 
 Good day-one candidates:
 
-- `@repo/contracts`: shared API response envelope, error schema, pagination,
-  ID schema, env schema conventions.
-- `@repo/auth`: session shape, user identity shape, role/permission constants,
-  service-auth claim schema.
-- `@repo/platform`: app error taxonomy, result helpers, logger context shape,
-  feature flag key registry, time/id helpers.
-- `@repo/infrastructure`: Redis/Kafka/cache interfaces and Effect-backed
-  adapter skeletons, without requiring live services.
+- `@repo/contracts`: shared API response envelope, error schema, pagination, ID schema, env schema
+  conventions.
+- `@repo/auth`: session shape, user identity shape, role/permission constants, service-auth claim
+  schema.
+- `@repo/platform`: app error taxonomy, result helpers, logger context shape, feature flag key
+  registry, time/id helpers.
+- `@repo/infrastructure`: Redis/Kafka/cache interfaces and Effect-backed adapter skeletons, without
+  requiring live services.
 - `@repo/clients`: typed fetch client skeleton, retry/timeout/error mapping.
-- `@repo/design-system`: token export, shell layout primitives, status badges,
-  empty/loading/error states.
+- `@repo/design-system`: token export, shell layout primitives, status badges, empty/loading/error
+  states.
 - `@repo/ui-primitives`: shadcn primitive landing zone.
 - `@repo/config`: shared tsconfig and tool conventions.
 
 Avoid day-one overreach:
 
-- Do not create real Kafka/Redis production clients before env/config contracts
-  and usage are known.
+- Do not create real Kafka/Redis production clients before env/config contracts and usage are known.
 - Do not add a database ORM until the DB ownership is decided.
 - Do not generate domain-specific modules before the bounded contexts are known.
-- Do not make `DESIGN.md` CLI validation a hard build gate while the format is
-  still alpha.
+- Do not make `DESIGN.md` CLI validation a hard build gate while the format is still alpha.
 
 ## Recommended Approach
 

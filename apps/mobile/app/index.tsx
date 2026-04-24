@@ -31,45 +31,45 @@ const styles = StyleSheet.create({
     borderColor: "#CBD5E1",
     borderRadius: 8,
     borderWidth: 1,
-    padding: 20
+    padding: 20,
   },
   cardLabel: {
     color: "#475569",
     fontSize: 14,
-    fontWeight: "600"
+    fontWeight: "600",
   },
   cardValue: {
     color: "#111827",
     fontSize: 18,
     fontWeight: "700",
-    marginTop: 8
+    marginTop: 8,
   },
   container: {
     gap: 24,
-    padding: 24
+    padding: 24,
   },
   description: {
     color: "#475569",
     fontSize: 16,
     lineHeight: 24,
-    marginTop: 12
+    marginTop: 12,
   },
   header: {
-    gap: 8
+    gap: 8,
   },
   kicker: {
     color: "#2563EB",
     fontSize: 12,
-    fontWeight: "700"
+    fontWeight: "700",
   },
   safeArea: {
     backgroundColor: "#F8FAFC",
-    flex: 1
+    flex: 1,
   },
   title: {
     color: "#111827",
     fontSize: 32,
     fontWeight: "700",
-    lineHeight: 38
-  }
+    lineHeight: 38,
+  },
 });
