@@ -63,6 +63,8 @@ PROJECT_SLUG       Machine slug, default "fullstack-typescript-template"
 PACKAGE_SCOPE      Internal package scope, default "@repo"
 PROJECT_DOMAIN     Optional domain, e.g. "license.fitt.example"
 PROJECT_TIMEZONE   Default timezone, e.g. "Asia/Seoul"
+AUTH_MODE          Auth strategy, default "better-auth-embedded"
+AUTH_TOPOLOGY      Auth deployment topology, default "modular-monolith"
 ```
 
 Recommended first source of truth after bootstrap:
@@ -78,7 +80,9 @@ Example:
   "projectName": "Fullstack TypeScript Template",
   "projectSlug": "fullstack-typescript-template",
   "packageScope": "@repo",
-  "projectTimezone": "Asia/Seoul"
+  "projectTimezone": "Asia/Seoul",
+  "authMode": "better-auth-embedded",
+  "authTopology": "modular-monolith"
 }
 ```
 
@@ -131,6 +135,7 @@ tsconfig.base.json
 project.config.json
 scripts/check-tsconfig-references.mjs
 scripts/rename-template.mjs
+scripts/select-auth-strategy.mjs
 DESIGN.md
 README.md
 ```
@@ -181,8 +186,8 @@ Good day-one candidates:
   validation.
 - `@repo/mfe`: micro frontend manifest schema, remote entry URL resolution, and lifecycle event
   names.
-- `@repo/auth`: session shape, user identity shape, role/permission constants, service-auth claim
-  schema.
+- `@repo/auth`: session shape, user identity shape, role/permission constants, selectable auth
+  strategy contract, service-auth claim schema.
 - `@repo/platform`: app error taxonomy, result helpers, logger context shape, feature flag key
   registry, time/id helpers.
 - `@repo/infrastructure`: Redis/Kafka/cache interfaces and Effect-backed adapter skeletons, without

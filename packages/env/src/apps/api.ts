@@ -5,6 +5,11 @@ import { assertNoForeignKeys, pickEnv, type EnvSource, type StrictEnvOptions } f
 
 const apiEnvKeys = [
   "APP_ENV",
+  "AUTH_AUDIENCE",
+  "AUTH_ISSUER_URL",
+  "AUTH_MODE",
+  "AUTH_SERVICE_URL",
+  "AUTH_TOPOLOGY",
   "NODE_ENV",
   "PORT",
   "PROJECT_NAME",
@@ -18,6 +23,13 @@ const apiEnvKeys = [
 export const apiEnvSchema = projectEnvSchema
   .extend({
     APP_ENV: appEnvironmentSchema.default("local"),
+    AUTH_AUDIENCE: z.string().min(1).default("repo-api"),
+    AUTH_ISSUER_URL: z.string().url().optional(),
+    AUTH_MODE: z
+      .enum(["better-auth-embedded", "external-oidc", "sso-gateway", "central-auth-service"])
+      .default("better-auth-embedded"),
+    AUTH_SERVICE_URL: z.string().url().optional(),
+    AUTH_TOPOLOGY: z.enum(["single-app", "modular-monolith", "msa"]).default("modular-monolith"),
     BETTER_AUTH_SECRET: z.string().min(32).optional(),
     BETTER_AUTH_URL: z.string().url().optional(),
     DATABASE_URL: z.string().url().optional(),
@@ -25,11 +37,18 @@ export const apiEnvSchema = projectEnvSchema
     PORT: z.coerce.number().int().positive().default(4000),
   })
   .superRefine((value, ctx) => {
-    requireInProduction(ctx, value.APP_ENV, value, [
-      "BETTER_AUTH_SECRET",
-      "BETTER_AUTH_URL",
-      "DATABASE_URL",
-    ]);
+    requireInProduction(ctx, value.APP_ENV, value, ["DATABASE_URL"]);
+
+    if (value.AUTH_MODE === "better-auth-embedded") {
+      requireInProduction(ctx, value.APP_ENV, value, ["BETTER_AUTH_SECRET", "BETTER_AUTH_URL"]);
+      return;
+    }
+
+    requireInProduction(ctx, value.APP_ENV, value, ["AUTH_ISSUER_URL"]);
+
+    if (value.AUTH_MODE === "sso-gateway" || value.AUTH_MODE === "central-auth-service") {
+      requireInProduction(ctx, value.APP_ENV, value, ["AUTH_SERVICE_URL"]);
+    }
   });
 
 export type ApiEnv = z.infer<typeof apiEnvSchema>;

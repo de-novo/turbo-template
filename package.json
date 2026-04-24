@@ -27,6 +27,7 @@
     "format:check": "biome format . && prettier --check .",
     "format:prettier": "prettier --write .",
     "lint": "biome lint --error-on-warnings .",
+    "template:auth": "node scripts/select-auth-strategy.mjs",
     "template:rename": "node scripts/rename-template.mjs",
     "tsconfig:check": "node scripts/check-tsconfig-references.mjs",
     "typecheck": "turbo run typecheck",

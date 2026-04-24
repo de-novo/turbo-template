@@ -2,5 +2,7 @@
   "projectName": "Fullstack TypeScript Template",
   "projectSlug": "fullstack-typescript-template",
   "packageScope": "@repo",
-  "projectTimezone": "Asia/Seoul"
+  "projectTimezone": "Asia/Seoul",
+  "authMode": "better-auth-embedded",
+  "authTopology": "modular-monolith"
 }

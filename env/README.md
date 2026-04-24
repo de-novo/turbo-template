@@ -29,6 +29,12 @@ Rules:
   - Desktop: `VITE_*`
   - Mobile: `EXPO_PUBLIC_*`
 - Server secrets such as `DATABASE_URL` and `BETTER_AUTH_SECRET` belong only to server app env.
+- Auth strategy is split between server and public client env:
+  - API/auth server: `AUTH_MODE`, `AUTH_TOPOLOGY`, `AUTH_ISSUER_URL`, `AUTH_SERVICE_URL`
+  - Web public config: `NEXT_PUBLIC_AUTH_MODE`, `NEXT_PUBLIC_AUTH_TOPOLOGY`,
+    `NEXT_PUBLIC_AUTH_ISSUER_URL`, `NEXT_PUBLIC_AUTH_SERVICE_URL`
+- Use `better-auth-embedded` for a fast modular-monolith start, then switch to `external-oidc`,
+  `sso-gateway`, or `central-auth-service` when SSO/MSA ownership is decided.
 
 Validate examples:
 

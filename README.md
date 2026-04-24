@@ -25,7 +25,7 @@ Template naming and bootstrap conventions are documented in
 - Functional runtime: Effect for complex async/error/resource workflows
 - Database: Drizzle ORM with PostgreSQL as the default relational path
 - Env: app-scoped `@repo/env` loaders with environment-specific examples
-- Auth: Better Auth, with centralized auth contracts for future MSA readiness
+- Auth: selectable Better Auth embedded, external OIDC, SSO gateway, or central auth-service mode
 
 ## Quick Start
 
@@ -192,6 +192,63 @@ Actual `*.env` files are ignored. Deployment systems should inject only the matc
 group. `@repo/env` rejects foreign public prefixes by default, so web cannot accidentally receive
 `EXPO_PUBLIC_*` or `VITE_*`, and client apps reject server secrets such as `DATABASE_URL` and
 `BETTER_AUTH_SECRET`.
+
+## Auth Strategy Selection
+
+Auth is intentionally a template choice, because the implementation changes when the product moves
+from a single app to MSA/SSO. The shared contract lives in `packages/auth`; runtime env selection
+lives in `@repo/env`.
+
+Supported modes:
+
+```text
+better-auth-embedded   # app/API owns Better Auth session storage and routes
+external-oidc          # external IdP such as Auth0/Keycloak/Okta/Cognito owns login
+sso-gateway            # edge/API gateway validates SSO and forwards trusted claims
+central-auth-service   # internal auth-service owns login/session/token exchange for MSA
+```
+
+Supported topology values:
+
+```text
+single-app
+modular-monolith
+msa
+```
+
+Use the defaults for fast product starts:
+
+```env
+AUTH_MODE=better-auth-embedded
+AUTH_TOPOLOGY=modular-monolith
+NEXT_PUBLIC_AUTH_MODE=better-auth-embedded
+NEXT_PUBLIC_AUTH_TOPOLOGY=modular-monolith
+```
+
+When moving to MSA or external SSO, change the mode instead of rewriting local auth semantics:
+
+```env
+AUTH_MODE=central-auth-service
+AUTH_TOPOLOGY=msa
+AUTH_ISSUER_URL=https://auth.example.com
+AUTH_SERVICE_URL=https://auth.example.com
+
+NEXT_PUBLIC_AUTH_MODE=central-auth-service
+NEXT_PUBLIC_AUTH_TOPOLOGY=msa
+NEXT_PUBLIC_AUTH_ISSUER_URL=https://auth.example.com
+NEXT_PUBLIC_AUTH_SERVICE_URL=https://auth.example.com
+```
+
+Use the helper when starting a project:
+
+```bash
+pnpm template:auth -- --mode better-auth-embedded --topology modular-monolith
+pnpm template:auth -- --mode external-oidc --topology modular-monolith --issuer-url https://idp.example.com
+pnpm template:auth -- --mode central-auth-service --topology msa --issuer-url https://auth.example.com --service-url https://auth.example.com
+```
+
+Keep provider-specific SDK setup in the owning app/service. Keep session shape, user identity,
+permission names, token claims, and service-auth semantics in `packages/auth`.
 
 ## Micro Frontend Template
 
@@ -452,6 +509,8 @@ Runtime job for api:
 Authentication-related secrets should be injected only into the runtime that needs them:
 
 - `BETTER_AUTH_SECRET`: API or auth server only.
+- `AUTH_MODE`, `AUTH_TOPOLOGY`, `AUTH_ISSUER_URL`, `AUTH_SERVICE_URL`: API/auth server only unless
+  exposed through the matching `NEXT_PUBLIC_*` public web variables.
 - OAuth provider client secrets: API/auth server only.
 - OAuth public client IDs: client app only if the provider requires them in public config.
 - Service-to-service tokens or private signing keys: server-side services only.

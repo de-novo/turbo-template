@@ -13,31 +13,31 @@ cross-file formatting gate for docs/config surfaces.
 
 Recommended runtime and major versions:
 
-| Area                 | Package / Tool            | Current version checked | Decision                                                                                      |
-| -------------------- | ------------------------- | ----------------------: | --------------------------------------------------------------------------------------------- |
-| Runtime              | Node.js                   |                 24.15.0 | Use Node 24 LTS for local, CI, and containers.                                                |
-| Package manager      | pnpm                      |                 10.33.2 | Use Corepack-pinned pnpm 10.                                                                  |
-| Monorepo task runner | turbo                     |                   2.9.6 | Use Turborepo for task graph, cache, and CI filtering.                                        |
-| Formatting / linting | @biomejs/biome            |                  2.4.13 | Use Biome lint with warnings as failures and Biome format check.                              |
-| Formatting gate      | prettier                  |                   3.8.3 | Use Prettier as the repo-wide docs/config/style formatting gate.                              |
-| Agent design spec    | @google/design.md         |                   0.1.1 | Use DESIGN.md as the fast project design-system brief for coding agents.                      |
-| Language             | typescript                |                   6.0.3 | Use strict TypeScript 6 and prepare for TypeScript 7.                                         |
-| Web app              | next                      |                  16.2.4 | Use App Router and default Turbopack behavior.                                                |
-| React                | react / react-dom         |                  19.2.5 | Use React 19 across web and UI packages.                                                      |
-| Desktop app          | vite / @tauri-apps/\*     |         8.0.10 / 2.10.1 | Use Vite for fast desktop shell iteration and Tauri v2 for native packaging.                  |
-| Mobile app           | expo / react-native       |        55.0.17 / 0.83.6 | Use Expo SDK-compatible React Native for fast iOS, Android, and mobile-web startup.           |
-| Micro frontend       | vite / custom elements    |                  8.0.10 | Use manifest-based host/remote templates before adding heavier federation runtime.            |
-| API app              | @nestjs/core              |                 11.1.19 | Use NestJS 11 on Node 20+ compatible runtime.                                                 |
-| Styling              | tailwindcss               |                   4.2.4 | Use Tailwind v4 CSS-first setup.                                                              |
-| Tailwind PostCSS     | @tailwindcss/postcss      |                   4.2.4 | Use official Next.js PostCSS plugin path.                                                     |
-| UI primitives        | shadcn                    |                   4.4.0 | Use shadcn CLI with monorepo support.                                                         |
-| Server state         | @tanstack/react-query     |                 5.100.1 | Use for remote/server cache only.                                                             |
-| Client state         | zustand                   |                  5.0.12 | Use for local interactive UI state only.                                                      |
-| Validation           | zod                       |                   4.3.6 | Use for runtime boundaries and shared schemas.                                                |
-| Functional runtime   | effect                    |                  3.21.2 | Use for typed async, errors, resources, retries, and workflows where complexity justifies it. |
-| Database ORM         | drizzle-orm / drizzle-kit |        0.45.2 / 0.31.10 | Use Drizzle with PostgreSQL as the default relational persistence path.                       |
-| Env contracts        | @repo/env                 |                internal | Use app-scoped loaders and environment-specific examples.                                     |
-| Auth                 | better-auth               |                   1.6.9 | Use for web auth/session; keep server auth contract explicit.                                 |
+| Area                 | Package / Tool            | Current version checked | Decision                                                                                        |
+| -------------------- | ------------------------- | ----------------------: | ----------------------------------------------------------------------------------------------- |
+| Runtime              | Node.js                   |                 24.15.0 | Use Node 24 LTS for local, CI, and containers.                                                  |
+| Package manager      | pnpm                      |                 10.33.2 | Use Corepack-pinned pnpm 10.                                                                    |
+| Monorepo task runner | turbo                     |                   2.9.6 | Use Turborepo for task graph, cache, and CI filtering.                                          |
+| Formatting / linting | @biomejs/biome            |                  2.4.13 | Use Biome lint with warnings as failures and Biome format check.                                |
+| Formatting gate      | prettier                  |                   3.8.3 | Use Prettier as the repo-wide docs/config/style formatting gate.                                |
+| Agent design spec    | @google/design.md         |                   0.1.1 | Use DESIGN.md as the fast project design-system brief for coding agents.                        |
+| Language             | typescript                |                   6.0.3 | Use strict TypeScript 6 and prepare for TypeScript 7.                                           |
+| Web app              | next                      |                  16.2.4 | Use App Router and default Turbopack behavior.                                                  |
+| React                | react / react-dom         |                  19.2.5 | Use React 19 across web and UI packages.                                                        |
+| Desktop app          | vite / @tauri-apps/\*     |         8.0.10 / 2.10.1 | Use Vite for fast desktop shell iteration and Tauri v2 for native packaging.                    |
+| Mobile app           | expo / react-native       |        55.0.17 / 0.83.6 | Use Expo SDK-compatible React Native for fast iOS, Android, and mobile-web startup.             |
+| Micro frontend       | vite / custom elements    |                  8.0.10 | Use manifest-based host/remote templates before adding heavier federation runtime.              |
+| API app              | @nestjs/core              |                 11.1.19 | Use NestJS 11 on Node 20+ compatible runtime.                                                   |
+| Styling              | tailwindcss               |                   4.2.4 | Use Tailwind v4 CSS-first setup.                                                                |
+| Tailwind PostCSS     | @tailwindcss/postcss      |                   4.2.4 | Use official Next.js PostCSS plugin path.                                                       |
+| UI primitives        | shadcn                    |                   4.4.0 | Use shadcn CLI with monorepo support.                                                           |
+| Server state         | @tanstack/react-query     |                 5.100.1 | Use for remote/server cache only.                                                               |
+| Client state         | zustand                   |                  5.0.12 | Use for local interactive UI state only.                                                        |
+| Validation           | zod                       |                   4.3.6 | Use for runtime boundaries and shared schemas.                                                  |
+| Functional runtime   | effect                    |                  3.21.2 | Use for typed async, errors, resources, retries, and workflows where complexity justifies it.   |
+| Database ORM         | drizzle-orm / drizzle-kit |        0.45.2 / 0.31.10 | Use Drizzle with PostgreSQL as the default relational persistence path.                         |
+| Env contracts        | @repo/env                 |                internal | Use app-scoped loaders and environment-specific examples.                                       |
+| Auth                 | better-auth / OIDC-ready  |                   1.6.9 | Select embedded auth, external OIDC, SSO gateway, or central auth-service per product topology. |
 
 ## Repository Shape
 
@@ -548,8 +548,8 @@ Rules:
 - `packages/contracts` must stay runtime-light and framework-light. It should not depend on NestJS,
   Next.js, Kafka, Redis, database clients, or browser-only APIs.
 - `packages/auth` must stay implementation-aware but provider-neutral where possible. Better Auth
-  integration can use it, but the package should not make future MSA/service-to-service auth
-  impossible.
+  integration can use it, but the package should not make future MSA, SSO, or service-to-service
+  auth impossible.
 - `packages/infrastructure` may depend on runtime libraries, but it should expose narrow project
   interfaces so apps are not coupled to vendor-specific details everywhere.
 - `packages/platform` owns cross-cutting conventions that must mean the same thing everywhere: error
@@ -750,8 +750,33 @@ package boundary becomes stable.
 
 ## Auth Standard
 
-Use Better Auth for web authentication if this product owns auth/session logic, but keep auth
-contracts and authorization policy centralized for future MSA.
+Choose the auth topology before wiring provider-specific code. Use Better Auth for web
+authentication if this product owns auth/session logic, but keep auth contracts and authorization
+policy centralized for future SSO/MSA.
+
+Supported topology values:
+
+```text
+single-app
+modular-monolith
+msa
+```
+
+Supported strategy values:
+
+```text
+better-auth-embedded
+  # app/API owns Better Auth session storage, callback routes, and cookie/session behavior
+
+external-oidc
+  # external IdP owns login; this repo validates issuer/audience/claims and maps users/orgs
+
+sso-gateway
+  # edge/API gateway owns SSO validation; apps consume forwarded claims plus service auth
+
+central-auth-service
+  # internal auth-service owns login/session/token exchange for MSA
+```
 
 Recommended shape:
 
@@ -760,6 +785,7 @@ packages/auth/src/session/
 packages/auth/src/identity/
 packages/auth/src/permissions/
 packages/auth/src/service-auth/
+packages/auth/src/strategy/
 apps/web/src/lib/auth.ts
 apps/web/src/lib/auth-client.ts
 apps/web/src/app/api/auth/[...all]/route.ts
@@ -773,6 +799,10 @@ Rules:
   future services.
 - MSA readiness requires service identity contracts: internal service name, allowed audience, token
   issuer, token claims, and machine-to-machine permission model.
+- `packages/auth` owns selectable auth strategy names and topology names. Apps should branch on that
+  contract instead of inventing local strings such as `useSso` or `isMsa`.
+- `@repo/env` owns runtime strategy selection. API/auth server loaders expose `AUTH_*`; public web
+  loaders expose only the matching `NEXT_PUBLIC_AUTH_*` values.
 - Keep UI login/session convenience in `apps/web`, but do not let `apps/web` become the source of
   truth for auth semantics.
 - Keep Better Auth server config in a server-only module.
@@ -784,6 +814,31 @@ Rules:
 - If auth later becomes its own service, `packages/auth` should become the migration bridge: shared
   claim schemas, permission vocabulary, and compatibility helpers move first; storage/session
   implementation moves after.
+
+Recommended selection flow:
+
+```text
+1. Default new product:
+   AUTH_MODE=better-auth-embedded
+   AUTH_TOPOLOGY=modular-monolith
+
+2. External enterprise SSO:
+   AUTH_MODE=external-oidc
+   AUTH_TOPOLOGY=modular-monolith
+   AUTH_ISSUER_URL=https://idp.example.com
+
+3. Gateway-led SSO:
+   AUTH_MODE=sso-gateway
+   AUTH_TOPOLOGY=msa
+   AUTH_ISSUER_URL=https://sso.example.com
+   AUTH_SERVICE_URL=https://auth.example.com
+
+4. Internal auth service:
+   AUTH_MODE=central-auth-service
+   AUTH_TOPOLOGY=msa
+   AUTH_ISSUER_URL=https://auth.example.com
+   AUTH_SERVICE_URL=https://auth.example.com
+```
 
 ## Suggested First Bootstrap
 
