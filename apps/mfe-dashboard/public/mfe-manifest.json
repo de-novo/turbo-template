@@ -1,0 +1,7 @@
+{
+  "description": "Production manifest for the dashboard micro frontend.",
+  "elementTag": "repo-mfe-dashboard",
+  "entry": "/remote-entry.js",
+  "name": "dashboard",
+  "version": "0.0.0"
+}

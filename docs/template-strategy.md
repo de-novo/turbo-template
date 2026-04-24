@@ -179,6 +179,8 @@ Good day-one candidates:
   conventions.
 - `@repo/env`: app-scoped env schemas, loaders, foreign public-prefix checks, and example
   validation.
+- `@repo/mfe`: micro frontend manifest schema, remote entry URL resolution, and lifecycle event
+  names.
 - `@repo/auth`: session shape, user identity shape, role/permission constants, service-auth claim
   schema.
 - `@repo/platform`: app error taxonomy, result helpers, logger context shape, feature flag key

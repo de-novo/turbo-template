@@ -18,6 +18,7 @@ Template naming and bootstrap conventions are documented in
 - Web: Next.js 16, React 19, Tailwind CSS 4
 - Desktop: Vite React shell, Tauri v2 native packaging path
 - Mobile: Expo 55, React Native 0.83
+- Micro frontend: Vite React host/remote template with manifest-based runtime composition
 - API: NestJS 11
 - UI primitives: shadcn/ui as primitive substrate only
 - State and validation: TanStack Query, Zustand, Zod
@@ -75,6 +76,7 @@ pnpm dev:web
 pnpm dev:api
 pnpm dev:desktop
 pnpm dev:mobile
+pnpm dev:mfe
 ```
 
 Default app ports:
@@ -84,6 +86,8 @@ web: http://localhost:3000
 desktop: http://localhost:3001
 api: http://localhost:4000
 mobile metro: http://localhost:8081
+mfe host: http://localhost:3100
+mfe dashboard remote: http://localhost:3101
 ```
 
 ## Package Boundaries
@@ -96,6 +100,8 @@ apps/
   api/              # NestJS application
   desktop/          # Vite React desktop shell, Tauri-ready
   mobile/           # Expo React Native mobile shell
+  mfe-host/         # Micro frontend host app
+  mfe-dashboard/    # Example micro frontend remote
 packages/
   ui-primitives/    # shadcn/ui generated primitives and thin wrappers
   design-system/    # service-owned tokens, components, layouts, patterns
@@ -103,6 +109,7 @@ packages/
   auth/             # shared auth/session/permission policy contracts
   clients/          # typed API clients and external service SDK wrappers
   env/              # app-scoped env schemas, loaders, and example validation
+  mfe/              # micro frontend manifest and runtime event contracts
   infrastructure/   # Redis, Kafka, queue, cache, logger, config adapters
   platform/         # cross-cutting errors, observability, feature flags
   config/           # shared TypeScript, Biome, test/build conventions
@@ -173,16 +180,68 @@ env/local/api.env.example
 env/local/web.env.example
 env/local/desktop.env.example
 env/local/mobile.env.example
+env/local/mfe-host.env.example
 env/production/api.env.example
 env/production/web.env.example
 env/production/desktop.env.example
 env/production/mobile.env.example
+env/production/mfe-host.env.example
 ```
 
 Actual `*.env` files are ignored. Deployment systems should inject only the matching app secret
 group. `@repo/env` rejects foreign public prefixes by default, so web cannot accidentally receive
 `EXPO_PUBLIC_*` or `VITE_*`, and client apps reject server secrets such as `DATABASE_URL` and
 `BETTER_AUTH_SECRET`.
+
+## Micro Frontend Template
+
+The template includes a runtime-composed micro frontend lane:
+
+```text
+apps/mfe-host
+  # host shell that reads a remote manifest URL from env
+
+apps/mfe-dashboard
+  # example remote app that registers <repo-mfe-dashboard>
+
+packages/mfe
+  # shared manifest schema, remote entry URL resolver, lifecycle event names
+```
+
+Run both host and remote:
+
+```bash
+pnpm dev:mfe
+```
+
+Or run them separately:
+
+```bash
+pnpm dev:mfe-host
+pnpm dev:mfe-dashboard
+```
+
+Default local contract:
+
+```text
+VITE_MFE_DASHBOARD_MANIFEST_URL=http://localhost:3101/mfe-manifest.dev.json
+remote custom element: <repo-mfe-dashboard>
+```
+
+The host does not import the remote source code. It fetches the manifest, validates it with
+`@repo/mfe`, loads the remote entry as a module script, and mounts the custom element declared by
+the manifest. This keeps team ownership clear while avoiding framework-specific lock-in.
+
+For production, deploy the remote as static assets or behind a CDN and point the host env at the
+remote manifest:
+
+```text
+VITE_MFE_DASHBOARD_MANIFEST_URL=https://cdn.example.com/mfe/dashboard/mfe-manifest.json
+```
+
+If a project later needs Webpack Module Federation, Vite federation, single-spa, or iframe-based
+isolation, keep `packages/mfe` as the contract boundary and swap the remote loading strategy inside
+the host.
 
 ## Deployment Environment And Secrets
 

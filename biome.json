@@ -12,6 +12,7 @@
       "!**/dist",
       "!**/coverage",
       "!apps/desktop/src/styles.css",
+      "!apps/mfe-host/src/styles.css",
       "!apps/web/src/app/globals.css",
       "!**/node_modules"
     ]

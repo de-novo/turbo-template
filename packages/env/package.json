@@ -20,6 +20,10 @@
       "types": "./dist/apps/mobile.d.ts",
       "default": "./dist/apps/mobile.js"
     },
+    "./apps/mfe-host": {
+      "types": "./dist/apps/mfe-host.d.ts",
+      "default": "./dist/apps/mfe-host.js"
+    },
     "./apps/web": {
       "types": "./dist/apps/web.d.ts",
       "default": "./dist/apps/web.js"

@@ -9,11 +9,13 @@ env/
     web.env.example
     desktop.env.example
     mobile.env.example
+    mfe-host.env.example
   production/
     api.env.example
     web.env.example
     desktop.env.example
     mobile.env.example
+    mfe-host.env.example
 ```
 
 Rules:

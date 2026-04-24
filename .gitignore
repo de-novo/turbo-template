@@ -6,6 +6,7 @@ env/**/*.env
 !env/**/*.env.example
 .expo
 .next
+.omx
 .turbo
 *.tsbuildinfo
 build.log

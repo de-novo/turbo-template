@@ -3,6 +3,7 @@ import { basename, join } from "node:path";
 import { loadApiEnv } from "./apps/api.js";
 import { loadDesktopEnv } from "./apps/desktop.js";
 import { loadMobileEnv } from "./apps/mobile.js";
+import { loadMfeHostEnv } from "./apps/mfe-host.js";
 import { loadWebEnv } from "./apps/web.js";
 import type { EnvSource } from "./source.js";
 
@@ -10,6 +11,7 @@ const appLoaders = {
   api: loadApiEnv,
   desktop: loadDesktopEnv,
   mobile: loadMobileEnv,
+  "mfe-host": loadMfeHostEnv,
   web: loadWebEnv,
 } as const;
 

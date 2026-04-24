@@ -26,6 +26,7 @@ Recommended runtime and major versions:
 | React                | react / react-dom         |                  19.2.5 | Use React 19 across web and UI packages.                                                      |
 | Desktop app          | vite / @tauri-apps/\*     |         8.0.10 / 2.10.1 | Use Vite for fast desktop shell iteration and Tauri v2 for native packaging.                  |
 | Mobile app           | expo / react-native       |        55.0.17 / 0.83.6 | Use Expo SDK-compatible React Native for fast iOS, Android, and mobile-web startup.           |
+| Micro frontend       | vite / custom elements    |                  8.0.10 | Use manifest-based host/remote templates before adding heavier federation runtime.            |
 | API app              | @nestjs/core              |                 11.1.19 | Use NestJS 11 on Node 20+ compatible runtime.                                                 |
 | Styling              | tailwindcss               |                   4.2.4 | Use Tailwind v4 CSS-first setup.                                                              |
 | Tailwind PostCSS     | @tailwindcss/postcss      |                   4.2.4 | Use official Next.js PostCSS plugin path.                                                     |
@@ -48,6 +49,8 @@ apps/
   api/              # NestJS application
   desktop/          # Vite React desktop shell, Tauri-ready
   mobile/           # Expo React Native mobile shell
+  mfe-host/         # Micro frontend host shell
+  mfe-dashboard/    # Example micro frontend remote
 packages/
   ui-primitives/    # shadcn/ui generated primitives and thin wrappers
   design-system/    # service-owned tokens, components, layouts, patterns
@@ -55,6 +58,7 @@ packages/
   auth/             # shared auth/session/permission policy contracts
   clients/          # typed API clients and external service SDK wrappers
   env/              # app-scoped env schemas, loaders, and example validation
+  mfe/              # micro frontend manifest and lifecycle contracts
   infrastructure/   # Redis, Kafka, queue, cache, logger, config adapters
   platform/         # cross-cutting errors, observability, feature flags
   config/           # shared tsconfig, Biome, test/build conventions if needed
@@ -513,6 +517,10 @@ packages/env
   # app-scoped env schemas, loaders, public-prefix policy,
   # example validation, deploy-time env contracts
 
+packages/mfe
+  # micro frontend manifest schema, remote entry URL resolution,
+  # runtime lifecycle event names
+
 packages/infrastructure
   # Redis, Kafka, queues, cache, logger, tracing, metrics,
   # config loading, health checks, connection lifecycle helpers
@@ -532,6 +540,8 @@ Rules:
   strings, permission names, session shapes, or token claim parsing.
 - Env contracts live in `packages/env`; apps should not parse broad `process.env` directly outside a
   thin app-local adapter.
+- Micro frontend runtime contracts live in `packages/mfe`; host and remote apps should not invent
+  incompatible manifest fields, custom element names, or lifecycle event names.
 - Keep transport-specific client code in `packages/clients`, not inside `apps/web` or `apps/api`.
 - Keep runtime adapters such as Kafka producers/consumers, Redis clients, queue helpers, cache
   utilities, and observability wiring in `packages/infrastructure`.
@@ -565,6 +575,13 @@ apps/api
   -> packages/env
   -> packages/infrastructure
 
+apps/mfe-host
+  -> packages/env
+  -> packages/mfe
+
+apps/mfe-dashboard
+  -> packages/mfe
+
 packages/auth
   -> packages/contracts
 
@@ -572,6 +589,9 @@ packages/clients
   -> packages/contracts
 
 packages/env
+  -> external zod only
+
+packages/mfe
   -> external zod only
 
 packages/infrastructure
@@ -678,6 +698,8 @@ Strong candidates:
   IDs if needed.
 - Event and job contracts: Kafka topic names, event names, payload schemas, retry/dead-letter
   metadata, job idempotency keys.
+- Micro frontend contracts: remote manifest shape, remote entry URL policy, custom element naming,
+  lifecycle event names, host/remote compatibility checks.
 - Storage/file contracts: bucket names, object key builders, signed URL policy, MIME/size rules,
   upload lifecycle events.
 - Notification contracts: email/SMS/push template keys, payload schemas, delivery status event
