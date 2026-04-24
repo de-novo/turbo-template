@@ -155,6 +155,232 @@ group. `@repo/env` rejects foreign public prefixes by default, so web cannot acc
 `EXPO_PUBLIC_*` or `VITE_*`, and client apps reject server secrets such as `DATABASE_URL` and
 `BETTER_AUTH_SECRET`.
 
+## Deployment Environment And Secrets
+
+The repository keeps env contracts in git, not real secrets. In production, the source of truth for
+real values should be the deployment platform, CI/CD secret store, or a secrets manager such as
+Vault, AWS Secrets Manager, GCP Secret Manager, Azure Key Vault, Doppler, 1Password Secrets
+Automation, or SOPS-backed GitOps.
+
+### Deployment Rules
+
+- Treat each app as a separate secret boundary.
+- Never inject one global env blob into every app.
+- Match deployment secret groups to `@repo/env` loaders:
+  - API: `@repo/env/apps/api`
+  - Web: `@repo/env/apps/web`
+  - Desktop: `@repo/env/apps/desktop`
+  - Mobile: `@repo/env/apps/mobile`
+- Client apps receive only public build/runtime values:
+  - Web: `NEXT_PUBLIC_*`
+  - Desktop/Vite: `VITE_*`
+  - Mobile/Expo: `EXPO_PUBLIC_*`
+- Server secrets such as `DATABASE_URL`, `BETTER_AUTH_SECRET`, provider client secrets, private
+  signing keys, and service tokens belong only to server-side app secret groups.
+- Run `pnpm env:check` in CI to validate committed example contracts.
+- Run the deployed app's startup path with the real secret group before promoting traffic. The app
+  should fail fast if required production env is missing.
+
+### Recommended Secret Groups
+
+Use names like these in CI/CD or your secrets manager:
+
+```text
+turbo-template/local/api
+turbo-template/local/web
+turbo-template/local/desktop
+turbo-template/local/mobile
+
+turbo-template/production/api
+turbo-template/production/web
+turbo-template/production/desktop
+turbo-template/production/mobile
+```
+
+Each group should mirror the matching example file:
+
+```text
+env/production/api.env.example       -> turbo-template/production/api
+env/production/web.env.example       -> turbo-template/production/web
+env/production/desktop.env.example   -> turbo-template/production/desktop
+env/production/mobile.env.example    -> turbo-template/production/mobile
+```
+
+### Vault Or Secret Manager Flow
+
+When using Vault or a similar tool, keep the repo flow the same:
+
+1. Store real values under app-scoped paths, not one shared path.
+2. Render or inject only the target app's keys at deploy time.
+3. Start the app with those env vars already present.
+4. Let `@repo/env` validate the final process env.
+
+Example Vault path mapping:
+
+```text
+secret/data/turbo-template/production/api
+  APP_ENV=production
+  NODE_ENV=production
+  PORT=4000
+  DATABASE_URL=...
+  BETTER_AUTH_URL=...
+  BETTER_AUTH_SECRET=...
+
+secret/data/turbo-template/production/web
+  NEXT_PUBLIC_APP_ENV=production
+  NEXT_PUBLIC_API_URL=https://api.example.com
+  NEXT_PUBLIC_WEB_URL=https://app.example.com
+```
+
+Do not mount the API path into the web build or web container. The web loader is intentionally
+configured to reject `DATABASE_URL` and `BETTER_AUTH_SECRET`.
+
+Common integration options:
+
+- CI fetches secrets from Vault and passes them as environment variables to the build/deploy step.
+- Kubernetes uses External Secrets Operator or a Vault CSI driver to sync a secret into the target
+  namespace.
+- Nomad or a Vault agent renders a template file, then the entrypoint exports it before starting
+  Node.
+- GitOps stores encrypted secrets with SOPS and decrypts them only in the cluster or CI runner.
+
+### Docker Runtime Injection
+
+For server-side Docker containers, inject env at runtime:
+
+```bash
+docker run --rm \
+  --env APP_ENV=production \
+  --env NODE_ENV=production \
+  --env PORT=4000 \
+  --env DATABASE_URL="$DATABASE_URL" \
+  --env BETTER_AUTH_URL="$BETTER_AUTH_URL" \
+  --env BETTER_AUTH_SECRET="$BETTER_AUTH_SECRET" \
+  ghcr.io/org/api:latest
+```
+
+An env file is acceptable for local or controlled internal deployments, but keep it app-scoped:
+
+```bash
+docker run --rm \
+  --env-file ./env/production/api.env \
+  ghcr.io/org/api:latest
+```
+
+The real `env/production/api.env` file must not be committed. The repository only commits
+`env/production/api.env.example`.
+
+### Docker Compose
+
+Compose should also keep env files separated by app:
+
+```yaml
+services:
+  api:
+    image: ghcr.io/org/api:latest
+    env_file:
+      - ./env/production/api.env
+    ports:
+      - "4000:4000"
+
+  web:
+    image: ghcr.io/org/web:latest
+    env_file:
+      - ./env/production/web.env
+    ports:
+      - "3000:3000"
+```
+
+Do not reuse `api.env` in the `web` service.
+
+### Kubernetes
+
+Use one Secret per app, then wire it only to that app's Deployment:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-env
+type: Opaque
+stringData:
+  APP_ENV: production
+  NODE_ENV: production
+  PORT: "4000"
+  DATABASE_URL: postgres://app:change-me@db.example.com:5432/app
+  BETTER_AUTH_URL: https://app.example.com
+  BETTER_AUTH_SECRET: replace-with-a-production-secret-32
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  template:
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/org/api:latest
+          envFrom:
+            - secretRef:
+                name: api-env
+```
+
+For Vault-backed Kubernetes, prefer generating the same `api-env` shape through External Secrets
+Operator or the platform's native secret sync. The app should not need to know whether the values
+came from Vault, SOPS, cloud secret manager, or CI variables.
+
+### Build-Time Versus Runtime Env
+
+Some frontend frameworks inline public env at build time:
+
+- Next.js inlines `NEXT_PUBLIC_*` into the client bundle.
+- Vite inlines `VITE_*` into the client bundle.
+- Expo inlines `EXPO_PUBLIC_*` for the app bundle.
+
+That means public client env must be present during the image or static bundle build, not only when
+the container starts. Server-only secrets should be runtime-only and must not be passed to frontend
+build jobs.
+
+Recommended split:
+
+```text
+Build job for web:
+  NEXT_PUBLIC_APP_ENV
+  NEXT_PUBLIC_API_URL
+  NEXT_PUBLIC_WEB_URL
+
+Runtime job for api:
+  APP_ENV
+  NODE_ENV
+  PORT
+  DATABASE_URL
+  BETTER_AUTH_URL
+  BETTER_AUTH_SECRET
+```
+
+### Auth And Service Credentials
+
+Authentication-related secrets should be injected only into the runtime that needs them:
+
+- `BETTER_AUTH_SECRET`: API or auth server only.
+- OAuth provider client secrets: API/auth server only.
+- OAuth public client IDs: client app only if the provider requires them in public config.
+- Service-to-service tokens or private signing keys: server-side services only.
+- Session cookie domain/origin values: server-side app, with matching public app URL values in web
+  env where required.
+
+If this template moves toward MSA, create service-specific env loaders instead of sharing the API
+loader:
+
+```text
+@repo/env/apps/auth-service
+@repo/env/apps/billing-service
+@repo/env/apps/worker
+```
+
+Each service should own only the secrets it needs.
+
 ## Design System
 
 This project uses [DESIGN.md](./DESIGN.md) as a fast, agent-readable design system brief.
