@@ -17,12 +17,13 @@ Template naming and bootstrap conventions are documented in
 - Language: TypeScript 6 with strict shared compiler options
 - Web: Next.js 16, React 19, Tailwind CSS 4
 - Desktop: Vite React shell, Tauri v2 native packaging path
-- Mobile: Expo 55, React Native 0.85
+- Mobile: Expo 55, React Native 0.83
 - API: NestJS 11
 - UI primitives: shadcn/ui as primitive substrate only
 - State and validation: TanStack Query, Zustand, Zod
 - Functional runtime: Effect for complex async/error/resource workflows
 - Database: Drizzle ORM with PostgreSQL as the default relational path
+- Env: app-scoped `@repo/env` loaders with environment-specific examples
 - Auth: Better Auth, with centralized auth contracts for future MSA readiness
 
 ## Quick Start
@@ -41,7 +42,14 @@ pnpm build
 ```
 
 `pnpm check` is intentionally strict: Biome lint runs with warnings as failures, TypeScript runs
-repo-wide type checks, Biome/Prettier formatting is checked, and `DESIGN.md` is validated.
+repo-wide type checks, Biome/Prettier formatting is checked, env examples are validated, and
+`DESIGN.md` is validated.
+
+Validate env examples only:
+
+```bash
+pnpm env:check
+```
 
 Database schema commands:
 
@@ -94,8 +102,9 @@ packages/
   contracts/        # Zod schemas, DTOs, shared API contracts
   auth/             # shared auth/session/permission policy contracts
   clients/          # typed API clients and external service SDK wrappers
+  env/              # app-scoped env schemas, loaders, and example validation
   infrastructure/   # Redis, Kafka, queue, cache, logger, config adapters
-  platform/         # cross-cutting errors, env, observability, feature flags
+  platform/         # cross-cutting errors, observability, feature flags
   config/           # shared TypeScript, Biome, test/build conventions
   db/               # ORM schema/migrations if this project owns DB access
 ```
@@ -112,11 +121,39 @@ apps/web
 apps/api
   -> packages/auth
   -> packages/contracts
+  -> packages/env
   -> packages/infrastructure
 ```
 
 `packages/contracts` stays runtime-light and should not depend on app, framework, database, Redis,
 Kafka, or browser-only APIs.
+
+## Environment Management
+
+Use `@repo/env` for all app env access. Each app imports only its own loader:
+
+```ts
+import { loadApiEnv } from "@repo/env/apps/api";
+import { loadWebEnv } from "@repo/env/apps/web";
+```
+
+Environment examples are split by environment and app:
+
+```text
+env/local/api.env.example
+env/local/web.env.example
+env/local/desktop.env.example
+env/local/mobile.env.example
+env/production/api.env.example
+env/production/web.env.example
+env/production/desktop.env.example
+env/production/mobile.env.example
+```
+
+Actual `*.env` files are ignored. Deployment systems should inject only the matching app secret
+group. `@repo/env` rejects foreign public prefixes by default, so web cannot accidentally receive
+`EXPO_PUBLIC_*` or `VITE_*`, and client apps reject server secrets such as `DATABASE_URL` and
+`BETTER_AUTH_SECRET`.
 
 ## Design System
 

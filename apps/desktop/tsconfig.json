@@ -12,6 +12,7 @@
     { "path": "../../packages/auth" },
     { "path": "../../packages/config" },
     { "path": "../../packages/contracts" },
-    { "path": "../../packages/design-system" }
+    { "path": "../../packages/design-system" },
+    { "path": "../../packages/env" }
   ]
 }

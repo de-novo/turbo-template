@@ -17,6 +17,7 @@
     "@nestjs/platform-express": "catalog:",
     "@repo/contracts": "workspace:*",
     "@repo/db": "workspace:*",
+    "@repo/env": "workspace:*",
     "@repo/infrastructure": "workspace:*",
     "@repo/platform": "workspace:*",
     "reflect-metadata": "catalog:",

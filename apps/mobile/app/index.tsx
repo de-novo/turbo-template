@@ -2,6 +2,7 @@ import { permissions } from "@repo/auth";
 import { projectConfig } from "@repo/config";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { mobileEnv } from "../src/env";
 
 export default function HomeScreen() {
   return (
@@ -19,6 +20,10 @@ export default function HomeScreen() {
         <View style={styles.card}>
           <Text style={styles.cardLabel}>Shared permission</Text>
           <Text style={styles.cardValue}>{permissions.licenseRead}</Text>
+        </View>
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>API endpoint</Text>
+          <Text style={styles.cardValue}>{mobileEnv.EXPO_PUBLIC_API_URL}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

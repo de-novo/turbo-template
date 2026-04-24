@@ -35,6 +35,7 @@ Recommended runtime and major versions:
 | Validation           | zod                       |                   4.3.6 | Use for runtime boundaries and shared schemas.                                                |
 | Functional runtime   | effect                    |                  3.21.2 | Use for typed async, errors, resources, retries, and workflows where complexity justifies it. |
 | Database ORM         | drizzle-orm / drizzle-kit |        0.45.2 / 0.31.10 | Use Drizzle with PostgreSQL as the default relational persistence path.                       |
+| Env contracts        | @repo/env                 |                internal | Use app-scoped loaders and environment-specific examples.                                     |
 | Auth                 | better-auth               |                   1.6.9 | Use for web auth/session; keep server auth contract explicit.                                 |
 
 ## Repository Shape
@@ -53,8 +54,9 @@ packages/
   contracts/        # Zod schemas, DTOs, shared API contracts
   auth/             # shared auth/session/permission policy contracts
   clients/          # typed API clients and external service SDK wrappers
+  env/              # app-scoped env schemas, loaders, and example validation
   infrastructure/   # Redis, Kafka, queue, cache, logger, config adapters
-  platform/         # cross-cutting errors, env, observability, feature flags
+  platform/         # cross-cutting errors, observability, feature flags
   config/           # shared tsconfig, Biome, test/build conventions if needed
   db/               # ORM schema/migrations if this project owns DB access
 ```
@@ -111,8 +113,9 @@ Template naming policy:
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm design:lint",
+    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm env:check && pnpm design:lint",
     "typecheck": "turbo run typecheck",
+    "env:check": "pnpm --filter @repo/env check:examples",
     "format": "pnpm format:biome && pnpm format:prettier",
     "format:biome": "biome format --write .",
     "format:check": "biome format . && prettier --check .",
@@ -477,7 +480,7 @@ Recommended package ownership:
 ```text
 packages/contracts
   # API request/response schemas, DTO types, domain event schemas,
-  # message payload schemas, env schemas, shared error shapes
+  # message payload schemas, shared error shapes
 
 packages/auth
   # auth domain contracts, session/user/org/role/permission models,
@@ -487,12 +490,16 @@ packages/clients
   # typed HTTP/fetch clients, generated or hand-written API clients,
   # third-party SDK wrappers with app-safe interfaces
 
+packages/env
+  # app-scoped env schemas, loaders, public-prefix policy,
+  # example validation, deploy-time env contracts
+
 packages/infrastructure
   # Redis, Kafka, queues, cache, logger, tracing, metrics,
   # config loading, health checks, connection lifecycle helpers
 
 packages/platform
-  # error taxonomy, result helpers, env parsing, feature flags,
+  # error taxonomy, result helpers, feature flags,
   # observability conventions, time/id helpers, test fixtures
 ```
 
@@ -504,6 +511,8 @@ Rules:
   types from the schema.
 - Auth/session/permission contracts live in `packages/auth`; apps should not invent local role
   strings, permission names, session shapes, or token claim parsing.
+- Env contracts live in `packages/env`; apps should not parse broad `process.env` directly outside a
+  thin app-local adapter.
 - Keep transport-specific client code in `packages/clients`, not inside `apps/web` or `apps/api`.
 - Keep runtime adapters such as Kafka producers/consumers, Redis clients, queue helpers, cache
   utilities, and observability wiring in `packages/infrastructure`.
@@ -515,8 +524,7 @@ Rules:
 - `packages/infrastructure` may depend on runtime libraries, but it should expose narrow project
   interfaces so apps are not coupled to vendor-specific details everywhere.
 - `packages/platform` owns cross-cutting conventions that must mean the same thing everywhere: error
-  codes, env parsing, feature flags, logging/tracing labels, time/id helpers, and test fixture
-  factories.
+  codes, feature flags, logging/tracing labels, time/id helpers, and test fixture factories.
 - `packages/clients` may depend on `contracts`; it should not own business validation rules that
   belong in `contracts`.
 - When an external library appears in more than one app, promote it into `clients` or
@@ -535,6 +543,7 @@ apps/web
 apps/api
   -> packages/auth
   -> packages/contracts
+  -> packages/env
   -> packages/infrastructure
 
 packages/auth
@@ -542,6 +551,9 @@ packages/auth
 
 packages/clients
   -> packages/contracts
+
+packages/env
+  -> external zod only
 
 packages/infrastructure
   -> packages/contracts
@@ -552,6 +564,52 @@ packages/platform
 
 Avoid reverse dependencies from `contracts` into `auth`, `clients`, `infrastructure`, `db`, `web`,
 or `api`.
+
+## Environment Standard
+
+Use `packages/env` as the only shared env contract package. The package owns app-scoped schemas,
+loaders, public-prefix policy, and example validation.
+
+Directory shape:
+
+```text
+env/
+  local/
+    api.env.example
+    web.env.example
+    desktop.env.example
+    mobile.env.example
+  production/
+    api.env.example
+    web.env.example
+    desktop.env.example
+    mobile.env.example
+
+packages/env/
+  src/apps/api.ts
+  src/apps/web.ts
+  src/apps/desktop.ts
+  src/apps/mobile.ts
+```
+
+Rules:
+
+- Commit only `*.env.example` files. Real `*.env` files stay ignored.
+- Each app imports only its loader: `@repo/env/apps/api`, `@repo/env/apps/web`,
+  `@repo/env/apps/desktop`, or `@repo/env/apps/mobile`.
+- App code may have a single thin adapter such as `apps/web/src/env.ts`; do not read env values
+  throughout feature code.
+- App loaders pick only allowlisted keys before parsing.
+- Foreign public prefixes fail by default:
+  - API rejects `NEXT_PUBLIC_*`, `VITE_*`, and `EXPO_PUBLIC_*`.
+  - Web rejects `VITE_*` and `EXPO_PUBLIC_*`.
+  - Desktop rejects `NEXT_PUBLIC_*` and `EXPO_PUBLIC_*`.
+  - Mobile rejects `NEXT_PUBLIC_*` and `VITE_*`.
+- Client apps reject server secrets such as `DATABASE_URL` and `BETTER_AUTH_SECRET`.
+- Production env examples must include required production-only values; local examples can rely on
+  safe defaults.
+- CI/CD should inject app-specific secret groups rather than one global env blob.
+- Validate examples with `pnpm env:check`; root `pnpm check` includes this gate.
 
 ## Database Standard
 

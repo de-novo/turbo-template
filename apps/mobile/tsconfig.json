@@ -20,6 +20,7 @@
   "references": [
     { "path": "../../packages/auth" },
     { "path": "../../packages/config" },
-    { "path": "../../packages/contracts" }
+    { "path": "../../packages/contracts" },
+    { "path": "../../packages/env" }
   ]
 }

@@ -15,6 +15,7 @@
     "@repo/clients": "workspace:*",
     "@repo/contracts": "workspace:*",
     "@repo/design-system": "workspace:*",
+    "@repo/env": "workspace:*",
     "@tanstack/react-query": "catalog:",
     "better-auth": "catalog:",
     "next": "catalog:",

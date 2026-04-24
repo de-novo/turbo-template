@@ -3,6 +3,7 @@ import { projectConfig } from "@repo/config";
 import { AppShell, StatusBadge } from "@repo/design-system";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { desktopEnv } from "./env";
 import "./styles.css";
 
 function DesktopApp() {
@@ -17,6 +18,7 @@ function DesktopApp() {
         <p className="mt-2 text-slate-600 text-sm">
           Example permission imported from @repo/auth: {permissions.systemAdmin}
         </p>
+        <p className="mt-2 text-slate-600 text-sm">API endpoint: {desktopEnv.VITE_API_URL}</p>
       </section>
     </AppShell>
   );

@@ -1,4 +1,5 @@
 import { AppShell, EmptyState, StatusBadge } from "@repo/design-system";
+import { webEnv } from "../env";
 import { Providers } from "./providers";
 
 export default function HomePage() {
@@ -32,7 +33,7 @@ export default function HomePage() {
           </div>
         </section>
         <EmptyState
-          description="Create domain modules after the first product boundary is clear."
+          description={`Create domain modules after the first product boundary is clear. API: ${webEnv.NEXT_PUBLIC_API_URL}`}
           title="Template scaffold is ready"
         />
       </AppShell>

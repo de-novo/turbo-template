@@ -164,7 +164,8 @@ pnpm build
 ```
 
 `pnpm check` is the strict template quality gate. It runs Biome lint with warnings as failures,
-repo-wide TypeScript type checks, Biome/Prettier format checks, and `DESIGN.md` linting.
+repo-wide TypeScript type checks, Biome/Prettier format checks, env example validation, and
+`DESIGN.md` linting.
 
 ## Prebuilt Shared Code
 
@@ -172,8 +173,10 @@ Prewrite shared code where the abstraction is already clear.
 
 Good day-one candidates:
 
-- `@repo/contracts`: shared API response envelope, error schema, pagination, ID schema, env schema
+- `@repo/contracts`: shared API response envelope, error schema, pagination, ID schema, and event
   conventions.
+- `@repo/env`: app-scoped env schemas, loaders, foreign public-prefix checks, and example
+  validation.
 - `@repo/auth`: session shape, user identity shape, role/permission constants, service-auth claim
   schema.
 - `@repo/platform`: app error taxonomy, result helpers, logger context shape, feature flag key

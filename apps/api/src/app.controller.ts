@@ -1,8 +1,9 @@
 import { Controller, Get } from "@nestjs/common";
 import type { ApiResponse } from "@repo/contracts";
 import { databaseNotConfigured } from "@repo/db";
+import { loadApiEnv } from "@repo/env/apps/api";
 import { createMemoryCache, healthy, type HealthStatus } from "@repo/infrastructure";
-import { parseBaseEnv, runWorkflow } from "@repo/platform";
+import { runWorkflow } from "@repo/platform";
 
 type HealthResponse = {
   service: string;
@@ -17,7 +18,7 @@ export class AppController {
 
   @Get("/health")
   async healthCheck(): Promise<ApiResponse<HealthResponse>> {
-    const env = parseBaseEnv();
+    const env = loadApiEnv();
     await runWorkflow(this.cache.set("health:last-check", new Date().toISOString()));
 
     return {
