@@ -622,11 +622,13 @@ env/
     web.env.example
     desktop.env.example
     mobile.env.example
+    mfe-host.env.example
   production/
     api.env.example
     web.env.example
     desktop.env.example
     mobile.env.example
+    mfe-host.env.example
 
 packages/env/
   src/apps/api.ts
@@ -652,7 +654,19 @@ Rules:
 - Production env examples must include required production-only values; local examples can rely on
   safe defaults.
 - CI/CD should inject app-specific secret groups rather than one global env blob.
+- GitOps deployments may use SOPS + age + KSOPS, but encrypted Kubernetes Secrets must still mirror
+  these app-scoped env contracts.
 - Validate examples with `pnpm env:check`; root `pnpm check` includes this gate.
+
+GitOps secret rule:
+
+```text
+env/production/{app}.env.example
+  -> ops/gitops/apps/{app}/*Secret.enc.yaml
+  -> Kubernetes Secret {app}-env
+  -> Deployment envFrom.secretRef
+  -> @repo/env/apps/{app} startup validation
+```
 
 ## Database Standard
 

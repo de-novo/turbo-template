@@ -1,9 +1,12 @@
 .DS_Store
+.age-key.txt
+.agekey
 .env
 .env.*
 !.env.example
 env/**/*.env
 !env/**/*.env.example
+sops.agekey
 .expo
 .next
 .omx

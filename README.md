@@ -307,6 +307,9 @@ real values should be the deployment platform, CI/CD secret store, or a secrets 
 Vault, AWS Secrets Manager, GCP Secret Manager, Azure Key Vault, Doppler, 1Password Secrets
 Automation, or SOPS-backed GitOps.
 
+Detailed SOPS + age + KSOPS guidance and Argo CD examples live in
+[docs/secret-management.md](./docs/secret-management.md) and [ops/gitops](./ops/gitops).
+
 ### Deployment Rules
 
 - Treat each app as a separate secret boundary.
@@ -388,6 +391,32 @@ Common integration options:
 - Nomad or a Vault agent renders a template file, then the entrypoint exports it before starting
   Node.
 - GitOps stores encrypted secrets with SOPS and decrypts them only in the cluster or CI runner.
+
+### SOPS + age + KSOPS GitOps
+
+Use this only when encrypted Kubernetes Secret manifests must live in git. The template includes an
+opt-in example:
+
+```text
+.sops.yaml.example
+ops/gitops/apps/api/api-secret.enc.yaml.example
+ops/gitops/apps/api/secret-generator.yaml
+ops/gitops/argocd/ksops-plugin.example.yaml
+```
+
+Recommended flow:
+
+```bash
+age-keygen -o ~/.config/sops/age/turbo-template.txt
+export SOPS_AGE_KEY_FILE=~/.config/sops/age/turbo-template.txt
+cp .sops.yaml.example .sops.yaml
+cp ops/gitops/apps/api/api-secret.enc.yaml.example ops/gitops/apps/api/api-secret.enc.yaml
+sops --encrypt --in-place ops/gitops/apps/api/api-secret.enc.yaml
+```
+
+Argo CD should decrypt through a repo-server Config Management Plugin sidecar that has `sops`,
+`ksops`, and `kustomize` installed. Mount the age private key only into that sidecar. Application
+pods should receive only the resulting Kubernetes Secret such as `api-env`, never the age key.
 
 ### Docker Runtime Injection
 
