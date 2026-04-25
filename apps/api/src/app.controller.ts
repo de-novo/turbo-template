@@ -4,6 +4,7 @@ import { databaseNotConfigured } from "@repo/db";
 import { loadApiEnv } from "@repo/env/apps/api";
 import { createMemoryCache, healthy, type HealthStatus } from "@repo/infrastructure";
 import { runWorkflow } from "@repo/platform";
+import { logger } from "./logger.js";
 
 type HealthResponse = {
   service: string;
@@ -20,13 +21,20 @@ export class AppController {
   async healthCheck(): Promise<ApiResponse<HealthResponse>> {
     const env = loadApiEnv();
     await runWorkflow(this.cache.set("health:last-check", new Date().toISOString()));
+    const status = await runWorkflow(this.health.check());
+
+    logger.log({
+      level: "info",
+      message: "Health check completed.",
+      details: { status },
+    });
 
     return {
       ok: true,
       data: {
         database: databaseNotConfigured,
         service: env.PROJECT_SLUG,
-        status: await runWorkflow(this.health.check()),
+        status,
       },
     };
   }

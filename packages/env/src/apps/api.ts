@@ -10,7 +10,10 @@ const apiEnvKeys = [
   "AUTH_MODE",
   "AUTH_SERVICE_URL",
   "AUTH_TOPOLOGY",
+  "LOG_LEVEL",
   "NODE_ENV",
+  "OTEL_EXPORTER_OTLP_ENDPOINT",
+  "OTEL_SERVICE_VERSION",
   "PORT",
   "PROJECT_NAME",
   "PROJECT_SLUG",
@@ -33,7 +36,10 @@ export const apiEnvSchema = projectEnvSchema
     BETTER_AUTH_SECRET: z.string().min(32).optional(),
     BETTER_AUTH_URL: z.string().url().optional(),
     DATABASE_URL: z.string().url().optional(),
+    LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
     NODE_ENV: nodeEnvironmentSchema.default("development"),
+    OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
+    OTEL_SERVICE_VERSION: z.string().min(1).optional(),
     PORT: z.coerce.number().int().positive().default(4000),
   })
   .superRefine((value, ctx) => {

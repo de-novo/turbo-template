@@ -27,6 +27,7 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@repo/testing": "workspace:*",
+    "@types/express": "catalog:",
     "@types/node": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
