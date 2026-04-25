@@ -17,6 +17,7 @@
 		"@nestjs/common": "catalog:",
 		"@nestjs/core": "catalog:",
 		"@nestjs/platform-express": "catalog:",
+		"@nestjs/schedule": "catalog:",
 		"@repo/auth": "workspace:*",
 		"@repo/auth-server": "workspace:*",
 		"@repo/contracts": "workspace:*",

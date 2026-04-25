@@ -20,6 +20,7 @@
 		"dev:web": "pnpm --filter @repo/web dev",
 		"db:generate": "pnpm --filter @repo/db db:generate",
 		"db:migrate": "pnpm --filter @repo/db db:migrate",
+		"db:seed": "pnpm --filter @repo/db db:seed",
 		"db:studio": "pnpm --filter @repo/db db:studio",
 		"env:check": "pnpm --filter @repo/env check:examples",
 		"format": "biome format --write .",

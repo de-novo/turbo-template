@@ -12,7 +12,7 @@ Six runnable surfaces ship buildable on day one.
 | App                  | Stack                                                          | Port | Notes |
 | -------------------- | -------------------------------------------------------------- | ---- | ----- |
 | `apps/web`           | Next.js 16 (App Router), React 19, Tailwind 4, TanStack Query, Zustand | 3000 | Standalone build output for slim Docker images |
-| `apps/api`           | NestJS 11 (ESM), Pino, Swagger, Better Auth, Drizzle           | 4000 | OpenAPI at `/docs`, `/health`, `notes` reference module |
+| `apps/api`           | NestJS 11 (ESM), Pino, Swagger, Better Auth, Drizzle, @nestjs/schedule | 4000 | OpenAPI at `/docs`, `/health/live` + `/health/ready`, `notes` + `jobs` reference modules |
 | `apps/desktop`       | Vite + React 19, Tauri 2                                       | 3001 | `pnpm dev:desktop` (browser shell), `dev:native` (Tauri devtools) |
 | `apps/mobile`        | Expo 55 + React Native 0.85, Expo Router                       | 8081 | iOS, Android, and web export from one source |
 | `apps/mfe-host`      | Vite + React, manifest-driven runtime composition              | 3100 | Loads remotes via fetch + dynamic import + custom element |
@@ -164,6 +164,9 @@ Intentionally not shipped. Add when the product needs them:
 - Container registry push / deploy CI workflow. Dockerfiles exist;
   registry choice is project-specific.
 - E2E test framework (Playwright / Cypress).
+- BullMQ / Inngest queue. The api ships an `@nestjs/schedule` cron
+  reference (`apps/api/src/jobs/cache-cleanup.job.ts`); swap for a
+  real queue when the product picks one.
 - Production observability stack (Pino emits JSON; the receiver is
   platform-specific).
 - EAS or Tauri native build CI.

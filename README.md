@@ -57,6 +57,7 @@ Database schema commands:
 ```bash
 pnpm db:generate
 pnpm db:migrate
+pnpm db:seed     # idempotent demo data: 1 user + 2 notes
 pnpm db:studio
 ```
 
