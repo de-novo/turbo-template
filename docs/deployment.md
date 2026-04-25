@@ -46,11 +46,17 @@ workspace dependency through pnpm symlinks.
 ## Local-prod sanity (Docker Compose)
 
 `docker-compose.prod.yml` orchestrates `postgres + api + web` for a quick
-end-to-end check. Source environment values from `.env`; the compose file
-falls back to template defaults but requires `BETTER_AUTH_SECRET`.
+end-to-end check. Source environment values from a top-level `.env` (the
+compose file reads it); the compose file falls back to template defaults
+but requires `BETTER_AUTH_SECRET`.
+
+The simplest local-prod env is to merge the local api + web examples and
+override the `BETTER_AUTH_SECRET`:
 
 ```bash
-cp .env.example .env                       # set BETTER_AUTH_SECRET >= 32 chars
+cat env/local/api.env.example env/local/web.env.example > .env
+# edit .env: set BETTER_AUTH_SECRET to 32+ random chars
+#   ( openssl rand -base64 32 )
 docker compose -f docker-compose.prod.yml up --build
 # api: http://localhost:4000/docs (Swagger)
 # web: http://localhost:3000
@@ -67,15 +73,29 @@ When to use which compose file:
 
 ## Environment
 
-`.env.example` is the single source. Every variable consumed at runtime
-appears there. When deploying, set:
+Per-app env contracts live in `@repo/env/apps/<name>` and are documented
+example-by-example under `env/{local,production}/<app>.env.example`. A
+deployment maps one secret bundle per app — never a shared bundle for
+the whole monorepo (web/desktop/mobile bundles must not see
+`BETTER_AUTH_SECRET` or `DATABASE_URL`; the loaders enforce this with
+`assertNoForeignKeys`).
 
-- `NODE_ENV=production`
-- `BETTER_AUTH_SECRET` — 32+ chars (`openssl rand -base64 32`).
-- `BETTER_AUTH_URL` — public URL of the API.
-- `WEB_ORIGIN` — public URL of the web app, used for CORS.
-- `NEXT_PUBLIC_API_URL` — public URL of the API for the browser.
-- `DATABASE_URL` — managed PostgreSQL connection string.
+When deploying api, set:
+
+- `APP_ENV=production` and `NODE_ENV=production`
+- `BETTER_AUTH_SECRET` — 32+ chars (`openssl rand -base64 32`)
+- `BETTER_AUTH_URL` — public URL of the API
+- `WEB_ORIGIN` — public URL of the web app, used for CORS
+- `DATABASE_URL` — managed PostgreSQL connection string
+
+When deploying web, set:
+
+- `NEXT_PUBLIC_APP_ENV=production`
+- `NEXT_PUBLIC_API_URL` — public URL of the API for the browser
+- `NEXT_PUBLIC_WEB_URL` — public URL of the web app
+
+See `env/production/api.env.example` and
+`env/production/web.env.example` for the full inventory.
 
 Never bake secrets into the image. Pass them through orchestrator
 secrets / env injection at runtime.
