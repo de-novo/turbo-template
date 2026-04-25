@@ -1,0 +1,54 @@
+{
+	"$schema": "https://json.schemastore.org/eas-config.json",
+	"cli": {
+		"version": ">= 16.0.0",
+		"appVersionSource": "remote"
+	},
+	"build": {
+		"base": {
+			"node": "24.15.0",
+			"env": {
+				"EXPO_PUBLIC_APP_ENV": "local"
+			}
+		},
+		"development": {
+			"extends": "base",
+			"developmentClient": true,
+			"distribution": "internal",
+			"channel": "development",
+			"env": {
+				"EXPO_PUBLIC_APP_ENV": "local"
+			}
+		},
+		"preview": {
+			"extends": "base",
+			"distribution": "internal",
+			"channel": "preview",
+			"ios": { "simulator": true },
+			"env": {
+				"EXPO_PUBLIC_APP_ENV": "staging"
+			}
+		},
+		"production": {
+			"extends": "base",
+			"channel": "production",
+			"autoIncrement": true,
+			"env": {
+				"EXPO_PUBLIC_APP_ENV": "production"
+			}
+		}
+	},
+	"submit": {
+		"production": {
+			"ios": {
+				"appleId": null,
+				"ascAppId": null,
+				"appleTeamId": null
+			},
+			"android": {
+				"serviceAccountKeyPath": null,
+				"track": "internal"
+			}
+		}
+	}
+}
