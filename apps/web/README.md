@@ -11,8 +11,14 @@ top of `@repo/design-system`.
 - Next.js 16 (App Router, Turbopack)
 - React 19, Tailwind CSS 4
 - `@tanstack/react-query` for server state, `zustand` for local state
+- `next-themes` for system / light / dark theming
+- `react-hook-form` + `@hookform/resolvers/zod` for forms backed by
+  `@repo/contracts` schemas (single source of truth)
 - Better Auth client; session validated against `@repo/auth` schemas
 - Next standalone build output for slim Docker images
+- Conservative security headers in `next.config.ts` (X-Frame-Options,
+  X-Content-Type-Options, Referrer-Policy, Permissions-Policy, HSTS).
+  CSP is intentionally not pre-shipped — see SECURITY.md.
 
 ## Dev
 
@@ -31,14 +37,26 @@ pnpm --filter @repo/web build      # produces .next/standalone/server.js
 
 ## Env
 
-Validated by `parseWebEnv()` in `src/env.ts` and called from
-`src/instrumentation.ts` (Next.js startup hook). Document new variables in
-`.env.example` first.
+Validated by `loadWebEnv()` from `@repo/env/apps/web`, called from
+`src/instrumentation.ts` (Next.js startup hook). Document new
+variables in `env/local/web.env.example` and the loader, then re-run
+`pnpm env:check`.
+
+## Conventions
+
+- Root client providers in `src/app/providers.tsx`:
+  `ThemeProvider` (next-themes) → `ErrorBoundary` → `QueryClientProvider`.
+- `src/components/error-boundary.tsx` is the canonical render-phase
+  boundary. Wrap risky surfaces in narrower boundaries when their
+  failure should not blank the page.
+- `src/components/note-form.tsx` is the form reference: rhf +
+  `zodResolver(createNoteInputSchema)`, prop named `onSubmitAction`
+  to satisfy Next.js 16's "use client" entry rule.
 
 ## Allowed dependencies
 
 `@repo/auth`, `@repo/clients`, `@repo/contracts`, `@repo/design-system`,
-plus the React/Next ecosystem.
+`@repo/env`, `@repo/platform`, plus the React/Next ecosystem.
 
 ## Tests
 

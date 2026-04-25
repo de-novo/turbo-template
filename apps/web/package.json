@@ -14,16 +14,20 @@
 		"typecheck": "tsc -p tsconfig.json --noEmit"
 	},
 	"dependencies": {
+		"@hookform/resolvers": "catalog:",
 		"@repo/auth": "workspace:*",
 		"@repo/clients": "workspace:*",
 		"@repo/contracts": "workspace:*",
 		"@repo/design-system": "workspace:*",
 		"@repo/env": "workspace:*",
+		"@repo/platform": "workspace:*",
 		"@tanstack/react-query": "catalog:",
 		"better-auth": "catalog:",
 		"next": "catalog:",
+		"next-themes": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
+		"react-hook-form": "catalog:",
 		"tailwindcss": "catalog:",
 		"zod": "catalog:",
 		"zustand": "catalog:"
