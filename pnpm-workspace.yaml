@@ -41,6 +41,7 @@ catalog:
   "expo-router": "55.0.13"
   "expo-status-bar": "55.0.5"
   "husky": "9.1.7"
+  "license-checker-rseidelsohn": "4.4.2"
   "lint-staged": "16.4.0"
   "lucide-react": "1.11.0"
   "nestjs-pino": "4.6.1"

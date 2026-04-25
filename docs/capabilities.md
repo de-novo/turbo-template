@@ -113,15 +113,29 @@ See [deployment.md](./deployment.md) and
 Every PR runs the same checks locally and in CI:
 
 ```bash
-pnpm check          # biome lint + tsc --noEmit (per-package via Turbo)
-pnpm env:check      # @repo/env validates every env/*/*.env.example
-pnpm test           # vitest fanout — every app + package
-pnpm test:coverage  # vitest fanout with v8 coverage (informational)
-pnpm test:scripts   # rename-template self-tests
-pnpm build          # turbo build — typed compile + Next/Vite/NestJS
-pnpm design:lint    # DESIGN.md schema check (local-only by design)
-pnpm syncpack:check # catalog drift detection across packages
+pnpm check           # biome lint + tsc --noEmit (per-package via Turbo)
+pnpm env:check       # @repo/env validates every env/*/*.env.example
+pnpm test            # vitest fanout — every app + package
+pnpm test:coverage   # vitest fanout with v8 coverage (informational)
+pnpm test:scripts    # rename-template self-tests
+pnpm build           # turbo build — typed compile + Next/Vite/NestJS
+pnpm design:lint     # DESIGN.md schema check (local-only by design)
+pnpm syncpack:check  # catalog drift detection across packages
+pnpm licenses:check  # production deps match the license allow-list
 ```
+
+GitHub Actions:
+
+- `.github/workflows/ci.yml` runs the gate above on every PR + push to
+  main. Includes `pnpm audit --audit-level=high`.
+- `.github/workflows/security.yml` runs Trivy (Dockerfile + IaC config
+  scan) and CodeQL (TypeScript/JavaScript, security-extended) on PR,
+  push to main, and weekly on Mondays. Findings land in the Security
+  tab via SARIF upload.
+- `.github/workflows/sbom.yml` generates a CycloneDX SBOM via
+  `@cyclonedx/cdxgen` on every published release and on
+  `workflow_dispatch`. The SBOM is uploaded as a workflow artifact and
+  attached to the GitHub release.
 
 Commit-time guards:
 

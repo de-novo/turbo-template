@@ -30,6 +30,41 @@ pnpm build         # turbo build pipeline
 
 `pnpm design:lint` is local-only by design — not a CI gate.
 
+When you touch dependency versions (especially across multiple
+packages), also run:
+
+```bash
+pnpm syncpack:check  # detect catalog drift between packages
+pnpm syncpack:fix    # auto-fix mismatches and format manifests
+```
+
+apps/mobile is intentionally exempted from version sync because Expo
+SDK pins `react`, `react-native`, and a few peers to specific versions
+(see `.syncpackrc.json`).
+
+For coverage on demand:
+
+```bash
+pnpm test:coverage   # turbo fanout; per-package coverage report + HTML
+                     # output under each package's coverage/ directory
+```
+
+Coverage is intentionally informational, not a CI gate — the smoke
+tests are deliberately thin (boundary contracts, not behavior). Tighten
+thresholds in your fork after you grow real test bodies.
+
+License compliance:
+
+```bash
+pnpm licenses:check  # production deps must match the allow-list
+```
+
+The allow-list is in the `licenses:check` script in root
+`package.json` (MIT, ISC, Apache-2.0, BSD-2/3-Clause, CC0-1.0,
+CC-BY-3.0/4.0, 0BSD, Unlicense, MIT-0, Python-2.0, BlueOak-1.0.0,
+WTFPL, UPL-1.0, Artistic-2.0). Add a license to the list only after
+checking it against your fork's policy. CI runs this gate.
+
 ## Commit conventions
 
 We use [Conventional Commits](https://www.conventionalcommits.org/)
