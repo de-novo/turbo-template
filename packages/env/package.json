@@ -1,0 +1,52 @@
+{
+	"name": "@repo/env",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./apps/api": {
+			"types": "./dist/apps/api.d.ts",
+			"default": "./dist/apps/api.js"
+		},
+		"./apps/desktop": {
+			"types": "./dist/apps/desktop.d.ts",
+			"default": "./dist/apps/desktop.js"
+		},
+		"./apps/mobile": {
+			"types": "./dist/apps/mobile.d.ts",
+			"default": "./dist/apps/mobile.js"
+		},
+		"./apps/mfe-host": {
+			"types": "./dist/apps/mfe-host.d.ts",
+			"default": "./dist/apps/mfe-host.js"
+		},
+		"./apps/web": {
+			"types": "./dist/apps/web.d.ts",
+			"default": "./dist/apps/web.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"check": "pnpm lint && pnpm typecheck && pnpm check:examples",
+		"check:examples": "tsx src/check-examples.ts",
+		"lint": "biome lint .",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "tsc -p tsconfig.json --noEmit"
+	},
+	"dependencies": {
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@repo/config": "workspace:*",
+		"@types/node": "catalog:",
+		"tsx": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
+	}
+}

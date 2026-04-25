@@ -1,0 +1,44 @@
+import { z } from "zod";
+import { appEnvironmentSchema } from "../common.js";
+import { requireInProduction } from "../production.js";
+import {
+	assertNoForeignKeys,
+	type EnvSource,
+	pickEnv,
+	type StrictEnvOptions,
+} from "../source.js";
+
+const desktopEnvKeys = [
+	"VITE_API_URL",
+	"VITE_APP_ENV",
+	"VITE_DESKTOP_URL",
+] as const;
+
+export const desktopEnvSchema = z
+	.object({
+		VITE_API_URL: z.string().url().default("http://localhost:4000"),
+		VITE_APP_ENV: appEnvironmentSchema.default("local"),
+		VITE_DESKTOP_URL: z.string().url().default("http://localhost:3001"),
+	})
+	.superRefine((value, ctx) => {
+		requireInProduction(ctx, value.VITE_APP_ENV, value, [
+			"VITE_API_URL",
+			"VITE_DESKTOP_URL",
+		]);
+	});
+
+export type DesktopEnv = z.infer<typeof desktopEnvSchema>;
+
+export function loadDesktopEnv(
+	source: EnvSource,
+	options?: StrictEnvOptions,
+): DesktopEnv {
+	assertNoForeignKeys(
+		"desktop",
+		source,
+		["BETTER_AUTH_SECRET", "DATABASE_URL"],
+		["EXPO_PUBLIC_", "NEXT_PUBLIC_"],
+		options,
+	);
+	return desktopEnvSchema.parse(pickEnv(source, desktopEnvKeys));
+}
