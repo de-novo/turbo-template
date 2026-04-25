@@ -17,3 +17,5 @@ coverage
 dist
 node_modules
 pnpm-debug.log*
+playwright-report
+test-results

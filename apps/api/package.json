@@ -9,6 +9,7 @@
     "dev": "tsx watch src/main.ts",
     "lint": "biome lint .",
     "start": "node dist/main.js",
+    "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -25,8 +26,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@repo/testing": "workspace:*",
     "@types/node": "catalog:",
     "tsx": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

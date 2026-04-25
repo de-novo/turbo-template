@@ -13,6 +13,7 @@
     "build": "tsc -p tsconfig.json",
     "check": "pnpm lint && pnpm typecheck",
     "lint": "biome lint .",
+    "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -21,6 +22,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
-    "typescript": "catalog:"
+    "@repo/testing": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

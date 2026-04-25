@@ -12,6 +12,7 @@
     "dev:ios": "expo start --ios",
     "dev:web": "expo start --web",
     "lint": "biome lint .",
+    "test": "jest",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -38,9 +39,12 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@expo/metro-config": "catalog:",
+    "@jest/globals": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "19.2.10",
     "@types/react-dom": "catalog:",
+    "jest": "catalog:",
+    "jest-expo": "catalog:",
     "typescript": "5.9.2"
   }
 }

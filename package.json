@@ -30,6 +30,8 @@
     "template:auth": "node scripts/select-auth-strategy.mjs",
     "template:rename": "node scripts/rename-template.mjs",
     "template:surfaces": "node scripts/select-surfaces.mjs",
+    "test": "turbo run test",
+    "test:e2e": "pnpm --filter @repo/web test:e2e",
     "tsconfig:check": "node scripts/check-tsconfig-references.mjs",
     "typecheck": "turbo run typecheck",
     "design:lint": "design.md lint DESIGN.md"

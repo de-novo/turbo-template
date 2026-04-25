@@ -8,6 +8,7 @@
     "check": "pnpm lint && pnpm typecheck",
     "dev": "vite --host 0.0.0.0 --port 3100",
     "lint": "biome lint .",
+    "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -21,11 +22,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@repo/testing": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }
