@@ -365,10 +365,12 @@ package via their own toolchains and are not Dockerized.
 ## References
 
 - [Capabilities (what this template enables)](./docs/capabilities.md)
+- [Architecture Decision Records](./docs/adr/)
 - [Technical stack baseline](./docs/technical-stack.md)
 - [Template strategy](./docs/template-strategy.md)
 - [Deployment guide](./docs/deployment.md)
 - [Secret management (SOPS + GitOps)](./docs/secret-management.md)
 - [Release strategy](./docs/release-strategy.md)
 - [Project design-system brief](./DESIGN.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
 - [google-labs-code/design.md](https://github.com/google-labs-code/design.md)

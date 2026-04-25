@@ -111,6 +111,21 @@ script if needed.
 - Update relevant docs in the same PR (`docs/`, package READMEs,
   `capabilities.md` if a new capability is added).
 
+## Architecture Decision Records
+
+Decisions whose rationale is not obvious from code alone live in
+[docs/adr/](./docs/adr/). Open an ADR when a decision crosses package
+or app boundaries, constrains a future change, or has been argued and
+chosen against alternatives. Skip ADRs for routine refactors, bug
+fixes, and dep bumps. See `docs/adr/README.md` for the format and
+when to write one.
+
+## Code of Conduct
+
+Participation in this repository is governed by the
+[Contributor Covenant](./CODE_OF_CONDUCT.md). Report concerns through
+the channel listed in [SECURITY.md](./SECURITY.md).
+
 ## Reporting security issues
 
 Please **do not** open a public issue for security reports. See
