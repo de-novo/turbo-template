@@ -26,6 +26,8 @@
 		"format": "biome format --write .",
 		"lint": "biome lint .",
 		"prepare": "husky",
+		"syncpack:check": "syncpack lint",
+		"syncpack:fix": "syncpack fix-mismatches && syncpack format",
 		"template:rename": "node scripts/rename-template.mjs",
 		"test": "turbo run test",
 		"test:scripts": "vitest run scripts/rename-template.test.mjs",
@@ -45,6 +47,7 @@
 		"@types/node": "catalog:",
 		"husky": "catalog:",
 		"lint-staged": "catalog:",
+		"syncpack": "catalog:",
 		"turbo": "catalog:",
 		"typescript": "catalog:",
 		"vitest": "catalog:"
