@@ -27,6 +27,7 @@
 		"@repo/infrastructure": "workspace:*",
 		"@repo/platform": "workspace:*",
 		"@nestjs/swagger": "catalog:",
+		"@nestjs/throttler": "catalog:",
 		"better-auth": "catalog:",
 		"drizzle-orm": "catalog:",
 		"nestjs-pino": "catalog:",

@@ -12,7 +12,13 @@ contracts validated through Zod and errors mapped to a single envelope.
 - Better Auth via `@repo/auth-server`
 - Drizzle + PostgreSQL via `@repo/db`
 - Pino logging via `nestjs-pino`; secrets redacted by default
+- `@nestjs/schedule` cron lane (`src/jobs/`); `cache-cleanup.job.ts`
+  is the wiring template
+- `@nestjs/throttler` global rate limit (100 req/min/IP). Per-route
+  overrides via `@Throttle()` — see `notes.controller.ts` `create`
 - OpenAPI/Swagger UI at `/docs`
+- Liveness + readiness probes at `/health/live` and `/health/ready`
+  (orchestrator-friendly)
 
 ## Dev
 

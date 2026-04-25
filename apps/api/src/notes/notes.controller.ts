@@ -11,6 +11,7 @@ import {
 	UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
 import type { UserIdentity } from "@repo/auth";
 import {
 	type ApiResponse,
@@ -50,6 +51,9 @@ export class NotesController {
 		return { ok: true, data: await this.notes.get(user.userId, id) };
 	}
 
+	// Per-route override of the global throttler — write paths tend to
+	// need tighter ceilings than reads.
+	@Throttle({ default: { ttl: 60_000, limit: 10 } })
 	@Post()
 	@HttpCode(201)
 	async create(
