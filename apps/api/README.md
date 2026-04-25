@@ -22,6 +22,11 @@ contracts validated through Zod and errors mapped to a single envelope.
 - Prometheus scrape endpoint at `/metrics` via `prom-client` default
   Node + process metrics. `@SkipThrottle()` so scrapers don't eat
   the rate-limit budget. Restrict at the network layer.
+- OpenTelemetry tracing via `@opentelemetry/sdk-node` +
+  auto-instrumentations. Bootstrap lives in `src/telemetry.ts` and
+  must be the first import of `main.ts`. Opt-in: SDK starts only
+  when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, so local dev stays
+  zero-overhead.
 
 ## Dev
 

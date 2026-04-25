@@ -1,3 +1,7 @@
+// Telemetry MUST be the first import — the OTel SDK patches Node
+// modules before NestJS pulls them in. Anything imported above it
+// loses instrumentation silently.
+import "./telemetry.js";
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";

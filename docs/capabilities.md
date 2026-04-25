@@ -12,7 +12,7 @@ Six runnable surfaces ship buildable on day one.
 | App                  | Stack                                                          | Port | Notes |
 | -------------------- | -------------------------------------------------------------- | ---- | ----- |
 | `apps/web`           | Next.js 16 (App Router), React 19, Tailwind 4, TanStack Query, Zustand, next-themes, react-hook-form | 3000 | Standalone build output for slim Docker images. `pnpm --filter @repo/web analyze` runs `@next/bundle-analyzer` |
-| `apps/api`           | NestJS 11 (ESM), Pino, Swagger, Better Auth, Drizzle, @nestjs/schedule, @nestjs/throttler, prom-client | 4000 | OpenAPI at `/docs`, `/health/live` + `/health/ready`, `/metrics` (Prometheus), global 100 req/min/IP rate limit, `notes` + `jobs` reference modules |
+| `apps/api`           | NestJS 11 (ESM), Pino, Swagger, Better Auth, Drizzle, @nestjs/schedule, @nestjs/throttler, prom-client, @opentelemetry/sdk-node | 4000 | OpenAPI at `/docs`, `/health/live` + `/health/ready`, `/metrics` (Prometheus), OTel tracing opt-in via `OTEL_EXPORTER_OTLP_ENDPOINT`, global 100 req/min/IP rate limit, `notes` + `jobs` reference modules |
 | `apps/desktop`       | Vite + React 19, Tauri 2                                       | 3001 | `pnpm dev:desktop` (browser shell), `dev:native` (Tauri devtools) |
 | `apps/mobile`        | Expo 55 + React Native 0.85, Expo Router                       | 8081 | iOS, Android, and web export from one source |
 | `apps/mfe-host`      | Vite + React, manifest-driven runtime composition              | 3100 | Loads remotes via fetch + dynamic import + custom element |
@@ -190,10 +190,13 @@ Intentionally not shipped. Add when the product needs them:
 - BullMQ / Inngest queue. The api ships an `@nestjs/schedule` cron
   reference (`apps/api/src/jobs/cache-cleanup.job.ts`); swap for a
   real queue when the product picks one.
-- Production observability stack — Pino emits JSON and the api
-  exposes a `/metrics` Prometheus endpoint via `prom-client`'s
-  default Node + process metrics, but the receiver (Loki, Datadog,
-  Prometheus + Grafana, OTel collector) is platform-specific.
+- Production observability stack — Pino emits JSON, the api exposes
+  a `/metrics` Prometheus endpoint via `prom-client`'s default Node +
+  process metrics, and the api ships OpenTelemetry SDK wiring
+  (`apps/api/src/telemetry.ts`, opt-in via
+  `OTEL_EXPORTER_OTLP_ENDPOINT`) with auto-instrumentations for HTTP,
+  fetch, pg, express, pino. The receiver (Loki, Datadog,
+  Tempo / Jaeger / Honeycomb, OTel collector) is platform-specific.
 - EAS or Tauri native build CI. Tauri signing fields are documented
   in [docs/desktop-signing.md](./desktop-signing.md); EAS build
   profiles ship in `apps/mobile/eas.json` (development / preview /
