@@ -34,6 +34,7 @@
 		"pino": "catalog:",
 		"pino-http": "catalog:",
 		"pino-pretty": "catalog:",
+		"prom-client": "catalog:",
 		"reflect-metadata": "catalog:",
 		"rxjs": "catalog:",
 		"zod": "catalog:"

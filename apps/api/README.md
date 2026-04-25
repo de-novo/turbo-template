@@ -19,6 +19,9 @@ contracts validated through Zod and errors mapped to a single envelope.
 - OpenAPI/Swagger UI at `/docs`
 - Liveness + readiness probes at `/health/live` and `/health/ready`
   (orchestrator-friendly)
+- Prometheus scrape endpoint at `/metrics` via `prom-client` default
+  Node + process metrics. `@SkipThrottle()` so scrapers don't eat
+  the rate-limit budget. Restrict at the network layer.
 
 ## Dev
 
@@ -38,10 +41,12 @@ pnpm --filter @repo/api start # node dist/main.js
 
 ## Env
 
-Validated by `parseApiEnv()` in `src/env.ts` (called from `src/main.ts`,
-exits on failure). `BETTER_AUTH_SECRET` must be 32+ chars. Social SSO
-providers activate only when both `*_CLIENT_ID` and `*_CLIENT_SECRET` are
-set.
+Validated by `loadApiEnv()` from `@repo/env/apps/api`, called from
+`src/main.ts` (exits on failure). `BETTER_AUTH_SECRET` must be 32+
+chars. Social SSO providers activate only when both `*_CLIENT_ID`
+and `*_CLIENT_SECRET` are set. Document new variables in
+`env/local/api.env.example` and the loader, then re-run
+`pnpm env:check`.
 
 ## Adding a domain module
 

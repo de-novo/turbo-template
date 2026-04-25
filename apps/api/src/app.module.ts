@@ -7,6 +7,7 @@ import { DbModule } from "./db/db.module.js";
 import { HealthModule } from "./health/health.module.js";
 import { JobsModule } from "./jobs/jobs.module.js";
 import { LoggerModule } from "./logger.module.js";
+import { MetricsModule } from "./metrics/metrics.module.js";
 import { NotesModule } from "./notes/notes.module.js";
 
 /**
@@ -26,6 +27,7 @@ import { NotesModule } from "./notes/notes.module.js";
 		AuthModule,
 		HealthModule,
 		JobsModule,
+		MetricsModule,
 		NotesModule,
 	],
 	controllers: [AppController],
