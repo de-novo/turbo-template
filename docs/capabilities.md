@@ -11,7 +11,7 @@ Six runnable surfaces ship buildable on day one.
 
 | App                  | Stack                                                          | Port | Notes |
 | -------------------- | -------------------------------------------------------------- | ---- | ----- |
-| `apps/web`           | Next.js 16 (App Router), React 19, Tailwind 4, TanStack Query, Zustand | 3000 | Standalone build output for slim Docker images |
+| `apps/web`           | Next.js 16 (App Router), React 19, Tailwind 4, TanStack Query, Zustand, next-themes, react-hook-form | 3000 | Standalone build output for slim Docker images. `pnpm --filter @repo/web analyze` runs `@next/bundle-analyzer` |
 | `apps/api`           | NestJS 11 (ESM), Pino, Swagger, Better Auth, Drizzle, @nestjs/schedule, @nestjs/throttler | 4000 | OpenAPI at `/docs`, `/health/live` + `/health/ready`, global 100 req/min/IP rate limit, `notes` + `jobs` reference modules |
 | `apps/desktop`       | Vite + React 19, Tauri 2                                       | 3001 | `pnpm dev:desktop` (browser shell), `dev:native` (Tauri devtools) |
 | `apps/mobile`        | Expo 55 + React Native 0.85, Expo Router                       | 8081 | iOS, Android, and web export from one source |

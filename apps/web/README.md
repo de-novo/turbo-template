@@ -33,7 +33,12 @@ defaults for `NEXT_PUBLIC_*`.
 
 ```bash
 pnpm --filter @repo/web build      # produces .next/standalone/server.js
+pnpm --filter @repo/web analyze    # rebuild with @next/bundle-analyzer
+                                   # opens HTML reports under .next/analyze
 ```
+
+The analyzer is wired conditionally via `ANALYZE=true` in
+`next.config.ts` so production builds stay clean.
 
 ## Env
 

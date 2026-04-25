@@ -1,5 +1,6 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import bundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -42,4 +43,10 @@ const nextConfig: NextConfig = {
 	},
 };
 
-export default nextConfig;
+// Bundle analyzer activates only when ANALYZE=true so production
+// builds stay clean. Run with `pnpm --filter @repo/web analyze`.
+const withBundleAnalyzer = bundleAnalyzer({
+	enabled: process.env["ANALYZE"] === "true",
+});
+
+export default withBundleAnalyzer(nextConfig);
