@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ConfigManagementPlugin
+metadata:
+  name: ksops
+spec:
+  version: v1
+  discover:
+    find:
+      command:
+        - sh
+        - -c
+        - find . -name secret-generator.yaml -o -name '*.enc.yaml'
+  generate:
+    command:
+      - sh
+      - -c
+      - kustomize build --enable-alpha-plugins .
+  lockRepo: false

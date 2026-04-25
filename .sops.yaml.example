@@ -1,0 +1,4 @@
+creation_rules:
+  - path_regex: ops/gitops/.+\.enc\.ya?ml$
+    encrypted_regex: "^(data|stringData)$"
+    age: age1replacewithclusterrecipient0000000000000000000000000000000000000000000000000000
