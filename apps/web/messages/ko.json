@@ -1,0 +1,27 @@
+{
+	"home": {
+		"title": "Fullstack TypeScript Template",
+		"description": "Next.js, NestJS, 공유 contracts, 인증, 인프라, 디자인 시스템을 즉시 확장 가능한 베이스라인.",
+		"cards": {
+			"contracts": {
+				"badge": "READY",
+				"title": "공유 Contracts",
+				"body": "API envelope, error, pagination, ID, env, event 계약이 중앙에 모여 있습니다."
+			},
+			"design": {
+				"badge": "BASELINE",
+				"title": "디자인 시스템",
+				"body": "shadcn primitive와 서비스 소유 디자인 시스템 컴포넌트가 분리되어 있습니다."
+			},
+			"rename": {
+				"badge": "NEXT",
+				"title": "프로젝트 이름 변경",
+				"body": "rename 스크립트로 display name과 slug를 바꾸면서 @repo import는 그대로 유지하세요."
+			}
+		},
+		"emptyState": {
+			"title": "템플릿 스캐폴드 준비 완료",
+			"description": "첫 제품 경계가 명확해진 뒤 도메인 모듈을 생성하세요."
+		}
+	}
+}

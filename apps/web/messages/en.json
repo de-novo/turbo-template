@@ -1,0 +1,27 @@
+{
+	"home": {
+		"title": "Fullstack TypeScript Template",
+		"description": "A ready-to-extend baseline for Next.js, NestJS, shared contracts, auth, infrastructure, and design-system work.",
+		"cards": {
+			"contracts": {
+				"badge": "READY",
+				"title": "Shared contracts",
+				"body": "API envelopes, errors, pagination, IDs, env, and event contracts are centralized."
+			},
+			"design": {
+				"badge": "BASELINE",
+				"title": "Design system",
+				"body": "shadcn primitives stay separate from service-owned design-system components."
+			},
+			"rename": {
+				"badge": "NEXT",
+				"title": "Project rename",
+				"body": "Use the rename script to switch display name and slug while keeping @repo imports."
+			}
+		},
+		"emptyState": {
+			"title": "Template scaffold is ready",
+			"description": "Create domain modules after the first product boundary is clear."
+		}
+	}
+}

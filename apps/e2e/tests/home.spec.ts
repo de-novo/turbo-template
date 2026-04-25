@@ -9,11 +9,12 @@ import { expect, test } from "@playwright/test";
  * fail when the user-visible contract breaks, not when an internal
  * implementation detail moves.
  */
-test.describe("home", () => {
-	test("renders the template title and the three baseline cards", async ({
+test.describe("home — default locale (en)", () => {
+	test("`/` redirects to `/en` and renders the English baseline", async ({
 		page,
 	}) => {
 		await page.goto("/");
+		await expect(page).toHaveURL(/\/en$/);
 
 		await expect(page).toHaveTitle(/Fullstack TypeScript Template/);
 
@@ -32,11 +33,27 @@ test.describe("home", () => {
 	});
 
 	test("ships the conservative security headers", async ({ request }) => {
-		const response = await request.get("/");
+		const response = await request.get("/en");
 		const headers = response.headers();
 		expect(headers["x-frame-options"]).toBe("DENY");
 		expect(headers["x-content-type-options"]).toBe("nosniff");
 		expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
 		expect(headers["strict-transport-security"]).toContain("max-age=63072000");
+	});
+});
+
+test.describe("home — Korean locale (ko)", () => {
+	test("`/ko` renders the Korean message bundle", async ({ page }) => {
+		await page.goto("/ko");
+
+		await expect(
+			page.getByRole("heading", { name: "공유 Contracts" }),
+		).toBeVisible();
+		await expect(
+			page.getByRole("heading", { name: "디자인 시스템" }),
+		).toBeVisible();
+		await expect(
+			page.getByRole("heading", { name: "프로젝트 이름 변경" }),
+		).toBeVisible();
 	});
 });

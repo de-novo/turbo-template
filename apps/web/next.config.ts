@@ -2,6 +2,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import bundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -49,4 +50,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 	enabled: process.env["ANALYZE"] === "true",
 });
 
-export default withBundleAnalyzer(nextConfig);
+// next-intl plugin wires the server-side request config (locale +
+// messages) into the build so getMessages() / useTranslations work
+// everywhere without manual provider plumbing.
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+
+export default withNextIntl(withBundleAnalyzer(nextConfig));

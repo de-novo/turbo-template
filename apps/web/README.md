@@ -12,6 +12,10 @@ top of `@repo/design-system`.
 - React 19, Tailwind CSS 4
 - `@tanstack/react-query` for server state, `zustand` for local state
 - `next-themes` for system / light / dark theming
+- `next-intl` for i18n. Locale-aware `[locale]` route segment +
+  middleware. Default locale `en`; `ko` shipped as the second
+  reference. Add a third in `src/i18n/routing.ts` + a matching JSON
+  under `messages/`.
 - `react-hook-form` + `@hookform/resolvers/zod` for forms backed by
   `@repo/contracts` schemas (single source of truth)
 - Better Auth client; session validated against `@repo/auth` schemas
@@ -49,14 +53,29 @@ variables in `env/local/web.env.example` and the loader, then re-run
 
 ## Conventions
 
-- Root client providers in `src/app/providers.tsx`:
-  `ThemeProvider` (next-themes) → `ErrorBoundary` → `QueryClientProvider`.
+- Routing lives under `src/app/[locale]/`. The middleware in
+  `src/middleware.ts` redirects `/` to the negotiated locale (or
+  the default `en`) and rewrites everything else through next-intl.
+- Root client providers in `src/app/[locale]/providers.tsx`:
+  `NextIntlClientProvider` → `ThemeProvider` (next-themes) →
+  `ErrorBoundary` → `QueryClientProvider`.
+- Server components call `useTranslations("namespace")` directly;
+  the parent `[locale]/layout.tsx` calls `setRequestLocale` so the
+  call resolves correctly under static rendering.
 - `src/components/error-boundary.tsx` is the canonical render-phase
   boundary. Wrap risky surfaces in narrower boundaries when their
   failure should not blank the page.
 - `src/components/note-form.tsx` is the form reference: rhf +
   `zodResolver(createNoteInputSchema)`, prop named `onSubmitAction`
   to satisfy Next.js 16's "use client" entry rule.
+
+## Adding a locale
+
+1. Append the IETF tag to `src/i18n/routing.ts` `locales`.
+2. Copy `messages/en.json` to `messages/<tag>.json` and translate.
+   Keys must match exactly — missing keys raise at runtime.
+3. (Optional) tweak `localePrefix` in `routing.ts` if you want the
+   default locale served at `/` instead of `/<defaultLocale>`.
 
 ## Allowed dependencies
 
