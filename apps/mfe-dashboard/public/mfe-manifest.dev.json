@@ -1,0 +1,7 @@
+{
+	"description": "Development manifest for the dashboard micro frontend.",
+	"elementTag": "repo-mfe-dashboard",
+	"entry": "/src/register.tsx",
+	"name": "dashboard",
+	"version": "0.0.0"
+}

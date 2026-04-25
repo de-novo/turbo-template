@@ -1,0 +1,35 @@
+{
+	"name": "@repo/mfe-host",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "vite build",
+		"check": "pnpm lint && pnpm typecheck",
+		"dev": "vite --host 0.0.0.0 --port 3100",
+		"lint": "biome lint .",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "tsc -p tsconfig.json --noEmit"
+	},
+	"dependencies": {
+		"@repo/design-system": "workspace:*",
+		"@repo/env": "workspace:*",
+		"@repo/mfe": "workspace:*",
+		"@tanstack/react-query": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"zustand": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@repo/config": "workspace:*",
+		"@tailwindcss/vite": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"@vitejs/plugin-react": "catalog:",
+		"typescript": "catalog:",
+		"vite": "catalog:",
+		"vitest": "catalog:"
+	}
+}
