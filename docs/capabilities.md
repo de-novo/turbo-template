@@ -136,6 +136,11 @@ GitHub Actions:
   `@cyclonedx/cdxgen` on every published release and on
   `workflow_dispatch`. The SBOM is uploaded as a workflow artifact and
   attached to the GitHub release.
+- `.github/workflows/release-images.yml` builds and pushes the `api`
+  and `web` Docker images to GHCR on push to `main` and `v*` tags.
+  Buildx GHA cache, build provenance attestation, and CycloneDX SBOM
+  attached automatically. See [docs/deployment.md](./deployment.md)
+  for the tag matrix and how to override the registry.
 
 Commit-time guards:
 
@@ -177,8 +182,10 @@ Intentionally not shipped. Add when the product needs them:
 
 - Real Redis / Kafka / queue clients. The `@repo/infrastructure`
   package ships interfaces + in-memory / noop implementations.
-- Container registry push / deploy CI workflow. Dockerfiles exist;
-  registry choice is project-specific.
+- Deploy-to-environment CI workflow (k8s, Fly, Render, Vercel).
+  Image push to GHCR is shipped via
+  `.github/workflows/release-images.yml`; the deploy step
+  downstream of that is platform-specific.
 - E2E test framework (Playwright / Cypress).
 - BullMQ / Inngest queue. The api ships an `@nestjs/schedule` cron
   reference (`apps/api/src/jobs/cache-cleanup.job.ts`); swap for a

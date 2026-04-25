@@ -17,6 +17,37 @@ own toolchains and are not Dockerized — see their per-app READMEs.
 Image names track `PROJECT_SLUG` from `project.config.json`, so
 `pnpm template:rename` automatically changes the image namespace.
 
+## Publishing to GHCR
+
+`.github/workflows/release-images.yml` builds and pushes `api` and
+`web` images in parallel to GitHub Container Registry on every push
+to `main` and every `v*` tag. `workflow_dispatch` accepts a manual
+`tag` input for ad-hoc preview builds.
+
+| Trigger                 | Tags published                                        |
+| ----------------------- | ----------------------------------------------------- |
+| push to `main`          | `<branch>` (= `main`), `sha-<short>`, `latest`        |
+| `v1.2.3` git tag        | `<tag>` (= `v1.2.3`), `sha-<short>`                   |
+| `workflow_dispatch`     | `<tag>` (whatever the operator typed), `sha-<short>`  |
+
+Every push attests build provenance via the
+`actions/attest-build-provenance` step, attaches CycloneDX SBOM, and
+caches Buildx layers on `type=gha` so subsequent runs build only the
+changed layers. The image name is
+`ghcr.io/<owner>/<repo>-<app>:<tag>` — forks adopting another
+registry (Docker Hub, ECR, GAR) override the `images:` line in
+`docker/metadata-action`.
+
+Pull a published image:
+
+```bash
+docker pull ghcr.io/de-novo/turbo-template-api:latest
+docker pull ghcr.io/de-novo/turbo-template-web:latest
+```
+
+The workflow runs in addition to (not instead of) `docker-compose.prod.yml`,
+which remains the local-prod sanity stack.
+
 ## Build pipeline
 
 Both Dockerfiles use a three-stage layout.
