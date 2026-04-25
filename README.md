@@ -62,7 +62,7 @@ pnpm db:studio
 
 `DATABASE_URL` is optional for template bootstrapping. Drizzle schema generation
 works without a live database; migrate/studio require a reachable PostgreSQL
-database. The defaults in `.env.example` match `docker-compose.yml`.
+database. The defaults in `env/local/api.env.example` match `docker-compose.yml`.
 
 Start local development:
 
@@ -363,6 +363,7 @@ package via their own toolchains and are not Dockerized.
 
 ## References
 
+- [Capabilities (what this template enables)](./docs/capabilities.md)
 - [Technical stack baseline](./docs/technical-stack.md)
 - [Template strategy](./docs/template-strategy.md)
 - [Deployment guide](./docs/deployment.md)

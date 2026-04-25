@@ -1,6 +1,6 @@
 # Template Strategy
 
-Last checked: 2026-04-24
+Last checked: 2026-04-25
 
 This repository should become a fast-start template for projects that share the
 same TypeScript, Next.js, NestJS, Turborepo, Biome, shadcn, design-system,
@@ -144,6 +144,8 @@ apps/web
 apps/api
 apps/desktop
 apps/mobile
+apps/mfe-host          # Module Federation host (Vite + React)
+apps/mfe-dashboard     # canonical MFE remote, shadow-DOM custom element
 ```
 
 Packages:
@@ -151,6 +153,7 @@ Packages:
 ```text
 packages/contracts
 packages/auth
+packages/auth-server   # Better Auth runtime factory
 packages/platform
 packages/infrastructure
 packages/clients
@@ -158,14 +161,32 @@ packages/ui-primitives
 packages/design-system
 packages/config
 packages/db
+packages/env           # per-app env loaders + foreign-key guards
+packages/mfe           # MFE manifest + lifecycle event contracts
 ```
 
-Current verification gate:
+Per-app env example files live under `env/{local,production}/<app>.env.example`
+and are validated by `pnpm env:check` (a part of CI).
+
+Operations lanes (opt-in):
+
+```text
+.changeset/                    # Changesets for packages/* versioning
+ops/gitops/                    # Argo CD + KSOPS Kubernetes manifests
+.sops.yaml.example             # SOPS encryption rule template
+docker-compose.prod.yml        # local-prod sanity stack
+apps/{web,api}/Dockerfile      # multi-stage container images
+```
+
+Current verification gate (matches `.github/workflows/ci.yml`):
 
 ```bash
-pnpm check
-pnpm build
-pnpm design:lint
+pnpm check         # biome lint + tsc --noEmit
+pnpm env:check     # validate every env/*/*.env.example
+pnpm test          # vitest fanout
+pnpm test:scripts  # rename-template self-tests
+pnpm build         # turbo build pipeline
+pnpm design:lint   # local-only by design (see "Avoid day-one overreach")
 ```
 
 ## Prebuilt Shared Code
@@ -175,9 +196,15 @@ Prewrite shared code where the abstraction is already clear.
 Good day-one candidates:
 
 - `@repo/contracts`: shared API response envelope, error schema, pagination,
-  ID schema, env schema conventions.
+  ID schema, notes reference contract.
 - `@repo/auth`: session shape, user identity shape, role/permission constants,
   service-auth claim schema.
+- `@repo/auth-server`: `createAuth(db, options)` Better Auth runtime factory
+  with social/OIDC/SSO plugins; mountable on api, web, or a standalone
+  service per the chosen topology.
+- `@repo/env`: per-app env loaders (`@repo/env/apps/<name>`) with
+  `assertNoForeignKeys` guards so web/desktop/mobile bundles cannot read
+  server-only secrets.
 - `@repo/platform`: app error taxonomy, result helpers, logger context shape,
   feature flag key registry, time/id helpers.
 - `@repo/infrastructure`: Redis/Kafka/cache interfaces and Effect-backed
@@ -186,6 +213,7 @@ Good day-one candidates:
 - `@repo/design-system`: token export, shell layout primitives, status badges,
   empty/loading/error states.
 - `@repo/ui-primitives`: shadcn primitive landing zone.
+- `@repo/mfe`: Module Federation manifest contract + lifecycle event helpers.
 - `@repo/config`: shared tsconfig and tool conventions.
 
 Avoid day-one overreach:

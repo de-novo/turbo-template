@@ -46,16 +46,26 @@ apps/
   api/              # NestJS application
   desktop/          # Vite React desktop shell, Tauri-ready
   mobile/           # Expo React Native mobile shell
+  mfe-host/         # Module Federation host (Vite + React)
+  mfe-dashboard/    # canonical MFE remote (shadow-DOM custom element)
 packages/
   ui-primitives/    # shadcn/ui generated primitives and thin wrappers
   design-system/    # service-owned tokens, components, layouts, patterns
   contracts/        # Zod schemas, DTOs, shared API contracts
   auth/             # shared auth/session/permission policy contracts
+  auth-server/      # Better Auth runtime factory + session converter
   clients/          # typed API clients and external service SDK wrappers
+  env/              # per-app env loaders + foreign-key guards
   infrastructure/   # Redis, Kafka, queue, cache, logger, config adapters
-  platform/         # cross-cutting errors, env, observability, feature flags
-  config/           # shared tsconfig, Biome, test/build conventions if needed
-  db/               # ORM schema/migrations if this project owns DB access
+  mfe/              # MFE manifest contract + lifecycle event helpers
+  platform/         # cross-cutting errors, observability, feature flags
+  config/           # shared tsconfig, Biome, test/build conventions
+  db/               # Drizzle schema/migrations and PostgreSQL client
+env/
+  local/            # *.env.example per app for development
+  production/       # *.env.example per app for production
+ops/
+  gitops/           # opt-in Argo CD + KSOPS manifests (SOPS lane)
 ```
 
 Recommended workspace files:
@@ -67,7 +77,9 @@ packages:
   - "packages/*"
 
 catalog:
+  "@better-auth/sso": "1.6.9"
   "@biomejs/biome": "2.4.13"
+  "@changesets/cli": "2.31.0"
   "@google/design.md": "0.1.1"
   "@nestjs/core": "11.1.19"
   "@tailwindcss/postcss": "4.2.4"
@@ -88,9 +100,13 @@ catalog:
   "tailwindcss": "4.2.4"
   "typescript": "6.0.3"
   "vite": "8.0.10"
+  "vitest": "4.1.5"
   "zod": "4.3.6"
   "zustand": "5.0.12"
 ```
+
+The full pnpm catalog (40+ entries) lives in `pnpm-workspace.yaml`. The
+table above lists the load-bearing decisions only.
 
 Template naming policy:
 
@@ -596,7 +612,12 @@ Rules:
 
 ## Suggested First Bootstrap
 
-If starting from this empty workspace, bootstrap in this order:
+The template already implements every step below. The list is preserved
+for forks that strip the template back and rebuild a subset, and for
+new projects deciding which packages to keep. The primary path for
+consumers is `pnpm template:rename`, not re-bootstrapping from empty.
+
+If starting from an empty workspace, bootstrap in this order:
 
 1. Add root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.gitignore`, `.nvmrc`.
 2. Create `packages/contracts` with Zod and TypeScript build/typecheck.
