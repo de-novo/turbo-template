@@ -186,7 +186,11 @@ Intentionally not shipped. Add when the product needs them:
   Image push to GHCR is shipped via
   `.github/workflows/release-images.yml`; the deploy step
   downstream of that is platform-specific.
-- E2E test framework (Playwright / Cypress).
+- E2E test framework — `apps/e2e` ships a Playwright workspace with
+  a chromium-only baseline suite and `pnpm test:e2e` /
+  `pnpm test:e2e:install` shortcuts. The suite is intentionally
+  outside the default `pnpm test` fanout (script is named `test:e2e`,
+  not `test`). A CI workflow that drives it is fork-specific.
 - BullMQ / Inngest queue. The api ships an `@nestjs/schedule` cron
   reference (`apps/api/src/jobs/cache-cleanup.job.ts`); swap for a
   real queue when the product picks one.

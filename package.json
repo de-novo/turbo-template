@@ -32,6 +32,8 @@
 		"template:rename": "node scripts/rename-template.mjs",
 		"test": "turbo run test",
 		"test:coverage": "turbo run test:coverage",
+		"test:e2e": "pnpm --filter @repo/e2e test:e2e",
+		"test:e2e:install": "pnpm --filter @repo/e2e install:browsers",
 		"test:scripts": "vitest run scripts/rename-template.test.mjs",
 		"typecheck": "turbo run typecheck",
 		"design:lint": "design.md lint DESIGN.md",
