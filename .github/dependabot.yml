@@ -1,0 +1,89 @@
+version: 2
+
+# Group routine version bumps so Dependabot doesn't open one PR per
+# package. Security advisories still produce dedicated PRs regardless.
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    versioning-strategy: "increase"
+    groups:
+      types:
+        patterns:
+          - "@types/*"
+      biome:
+        patterns:
+          - "@biomejs/*"
+      effect:
+        patterns:
+          - "effect"
+          - "@effect/*"
+      nestjs:
+        patterns:
+          - "@nestjs/*"
+      next-react:
+        patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+      drizzle:
+        patterns:
+          - "drizzle-orm"
+          - "drizzle-kit"
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "vitest"
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+      better-auth:
+        patterns:
+          - "better-auth"
+          - "@better-auth/*"
+      changesets:
+        patterns:
+          - "@changesets/*"
+      commitlint-husky:
+        patterns:
+          - "@commitlint/*"
+          - "husky"
+          - "lint-staged"
+      tauri:
+        patterns:
+          - "@tauri-apps/*"
+      expo:
+        patterns:
+          - "expo"
+          - "expo-*"
+          - "@expo/*"
+          - "react-native*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: "docker"
+    directory: "/apps/api"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 2
+
+  - package-ecosystem: "docker"
+    directory: "/apps/web"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 2
