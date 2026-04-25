@@ -36,11 +36,21 @@ pnpm --filter @repo/desktop build:native    # tauri build → installers
 Tauri config: `apps/desktop/src-tauri/tauri.conf.json`. The `frontendDist`
 field points at the Vite output (`../dist`).
 
+## Signing (production)
+
+The committed `tauri.conf.json` is unsigned. Production builds need
+platform-specific signing identities (Apple Developer ID + notarization,
+Windows Authenticode). See
+[docs/desktop-signing.md](../../docs/desktop-signing.md) for the
+per-platform fields, env var names, and CI shape. Real cert paths and
+identifiers must live in your fork's secret store, not in this repo.
+
 ## Env
 
 Vite exposes only variables prefixed `VITE_*` to client code. Place
-per-app overrides in `apps/desktop/.env` or `.env.local`. Defaults live
-in the root `.env.example`.
+per-app overrides in `apps/desktop/.env` or `.env.local`. Defaults
+live in `env/local/desktop.env.example` and the loader at
+`packages/env/src/apps/desktop.ts`.
 
 ## Allowed dependencies
 

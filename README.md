@@ -369,6 +369,7 @@ package via their own toolchains and are not Dockerized.
 - [Technical stack baseline](./docs/technical-stack.md)
 - [Template strategy](./docs/template-strategy.md)
 - [Deployment guide](./docs/deployment.md)
+- [Desktop signing (Tauri 2)](./docs/desktop-signing.md)
 - [Secret management (SOPS + GitOps)](./docs/secret-management.md)
 - [Release strategy](./docs/release-strategy.md)
 - [Project design-system brief](./DESIGN.md)

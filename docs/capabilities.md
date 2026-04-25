@@ -185,7 +185,9 @@ Intentionally not shipped. Add when the product needs them:
   real queue when the product picks one.
 - Production observability stack (Pino emits JSON; the receiver is
   platform-specific).
-- EAS or Tauri native build CI.
+- EAS or Tauri native build CI. Tauri signing fields are documented
+  in [docs/desktop-signing.md](./desktop-signing.md); the workflow
+  itself is fork-specific.
 - Analytics or feature-flag platform (only the key registry).
 - Database ORM choice for projects that don't own DB access.
 - A `release.yml` GitHub workflow for changesets — docs-only path.
