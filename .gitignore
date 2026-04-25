@@ -6,6 +6,11 @@
 .next
 .omx
 .turbo
+
+# Playwright artifacts
+test-results
+playwright-report
+playwright/.cache
 *.tsbuildinfo
 build.log
 coverage
