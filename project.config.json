@@ -4,5 +4,6 @@
   "packageScope": "@repo",
   "projectTimezone": "Asia/Seoul",
   "authMode": "better-auth-embedded",
-  "authTopology": "modular-monolith"
+  "authTopology": "modular-monolith",
+  "surfaces": ["web", "api", "desktop", "mobile", "mfe-host", "mfe-dashboard"]
 }

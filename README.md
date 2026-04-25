@@ -90,6 +90,39 @@ mfe host: http://localhost:3100
 mfe dashboard remote: http://localhost:3101
 ```
 
+## Continuous Integration
+
+The template ships a GitHub Actions workflow at `.github/workflows/ci.yml`. It runs on every push to
+`main` and every pull request, and fails the build if the verification gate or any app build breaks:
+
+```text
+pnpm install --frozen-lockfile
+pnpm check       # lint, tsconfig, typecheck, format, env, DESIGN.md
+pnpm build       # turbo build for every app and package
+```
+
+The workflow uses Node from `.nvmrc`, caches pnpm via `actions/setup-node`, caches Turborepo's local
+`.turbo` directory, and cancels in-progress runs for the same ref.
+
+### Turborepo remote cache (optional)
+
+For faster CI on larger repos, enable Turborepo remote cache. Set repository secret `TURBO_TOKEN`
+and repository variable `TURBO_TEAM`, then uncomment the matching `env` lines in `ci.yml`. Local
+cache continues to work without these.
+
+### Release lane (disabled by default)
+
+`.github/workflows/release.yml` is an inert Changesets-based release stub. The template does not
+publish packages by default. To enable it:
+
+1. `pnpm add -Dw @changesets/cli`
+2. `pnpm changeset init`
+3. Set `NPM_TOKEN` as a repository secret if publishing.
+4. Remove the `if: false` guard in `release.yml`.
+
+Until those steps run the workflow performs no work, so it stays out of the way for solo and
+internal-only projects.
+
 ## Package Boundaries
 
 Planned workspace shape:
@@ -250,6 +283,8 @@ pnpm template:auth -- --mode central-auth-service --topology msa --issuer-url ht
 Keep provider-specific SDK setup in the owning app/service. Keep session shape, user identity,
 permission names, token claims, and service-auth semantics in `packages/auth`.
 
+<!-- surface:mfe-host:start -->
+
 ## Micro Frontend Template
 
 The template includes a runtime-composed micro frontend lane:
@@ -299,6 +334,8 @@ VITE_MFE_DASHBOARD_MANIFEST_URL=https://cdn.example.com/mfe/dashboard/mfe-manife
 If a project later needs Webpack Module Federation, Vite federation, single-spa, or iframe-based
 isolation, keep `packages/mfe` as the contract boundary and swap the remote loading strategy inside
 the host.
+
+<!-- surface:mfe-host:end -->
 
 ## Deployment Environment And Secrets
 
@@ -621,6 +658,20 @@ node scripts/rename-template.mjs \
   --slug "new-product" \
   --scope "@company"
 ```
+
+## Prune Unused Surfaces
+
+The template ships every surface enabled (`web`, `api`, `desktop`, `mobile`, `mfe-host`,
+`mfe-dashboard`). Solo or focused projects can drop the ones they will not use:
+
+```bash
+pnpm template:surfaces --drop mobile,desktop,mfe-host,mfe-dashboard
+pnpm template:surfaces --keep web,api --apply
+```
+
+The default mode is dry-run; pass `--apply` to actually remove app directories, env example files,
+and the matching root `dev:<surface>` scripts. `project.config.json` is updated to reflect the
+remaining `surfaces` list. After pruning, run `pnpm install` and `pnpm check` to verify.
 
 ## References
 

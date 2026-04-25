@@ -1,0 +1,63 @@
+# Release workflow stub (disabled).
+#
+# This stub is intentionally inert. It exists so projects copying the template
+# can enable a Changesets-based release pipeline by:
+#   1. Adding @changesets/cli to the repo (`pnpm add -Dw @changesets/cli`).
+#   2. Running `pnpm changeset init` to generate `.changeset/`.
+#   3. Setting NPM_TOKEN as a repository secret (only if publishing packages).
+#   4. Removing the `if: false` guards below.
+#
+# Until those steps run, the workflow performs no work.
+
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    name: Changesets release
+    if: false # Remove this line to activate.
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Create release pull request or publish
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          publish: pnpm changeset publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

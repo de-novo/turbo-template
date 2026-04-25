@@ -29,6 +29,7 @@
     "lint": "biome lint --error-on-warnings .",
     "template:auth": "node scripts/select-auth-strategy.mjs",
     "template:rename": "node scripts/rename-template.mjs",
+    "template:surfaces": "node scripts/select-surfaces.mjs",
     "tsconfig:check": "node scripts/check-tsconfig-references.mjs",
     "typecheck": "turbo run typecheck",
     "design:lint": "design.md lint DESIGN.md"
