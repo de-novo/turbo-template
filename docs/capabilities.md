@@ -113,12 +113,14 @@ See [deployment.md](./deployment.md) and
 Every PR runs the same checks locally and in CI:
 
 ```bash
-pnpm check         # biome lint + tsc --noEmit (per-package via Turbo)
-pnpm env:check     # @repo/env validates every env/*/*.env.example
-pnpm test          # vitest fanout — every app + package
-pnpm test:scripts  # rename-template self-tests
-pnpm build         # turbo build — typed compile + Next/Vite/NestJS
-pnpm design:lint   # DESIGN.md schema check (local-only by design)
+pnpm check          # biome lint + tsc --noEmit (per-package via Turbo)
+pnpm env:check      # @repo/env validates every env/*/*.env.example
+pnpm test           # vitest fanout — every app + package
+pnpm test:coverage  # vitest fanout with v8 coverage (informational)
+pnpm test:scripts   # rename-template self-tests
+pnpm build          # turbo build — typed compile + Next/Vite/NestJS
+pnpm design:lint    # DESIGN.md schema check (local-only by design)
+pnpm syncpack:check # catalog drift detection across packages
 ```
 
 Commit-time guards:

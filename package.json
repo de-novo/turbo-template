@@ -30,6 +30,7 @@
 		"syncpack:fix": "syncpack fix-mismatches && syncpack format",
 		"template:rename": "node scripts/rename-template.mjs",
 		"test": "turbo run test",
+		"test:coverage": "turbo run test:coverage",
 		"test:scripts": "vitest run scripts/rename-template.test.mjs",
 		"typecheck": "turbo run typecheck",
 		"design:lint": "design.md lint DESIGN.md",
@@ -40,6 +41,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
 		"@changesets/cli": "catalog:",
+		"@vitest/coverage-v8": "catalog:",
 		"@commitlint/cli": "catalog:",
 		"@commitlint/config-conventional": "catalog:",
 		"@google/design.md": "catalog:",
