@@ -1,0 +1,8 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
+	"extends": ["@repo/config/biome/node"],
+	"root": false,
+	"files": {
+		"includes": ["**", "!**/dist", "!**/node_modules", "!**/coverage"]
+	}
+}

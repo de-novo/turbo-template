@@ -1,0 +1,34 @@
+{
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1777039420487,
+			"tag": "0000_elite_magma",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1777050781451,
+			"tag": "0001_military_shinko_yamashiro",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1777051547993,
+			"tag": "0002_flowery_paladin",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1777052989022,
+			"tag": "0003_peaceful_sunset_bain",
+			"breakpoints": true
+		}
+	]
+}

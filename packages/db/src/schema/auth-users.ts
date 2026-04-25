@@ -1,0 +1,28 @@
+import {
+	boolean,
+	pgTable,
+	text,
+	timestamp,
+	uniqueIndex,
+} from "drizzle-orm/pg-core";
+
+export const user = pgTable(
+	"user",
+	{
+		id: text("id").primaryKey(),
+		name: text("name").notNull(),
+		email: text("email").notNull(),
+		emailVerified: boolean("email_verified").notNull().default(false),
+		image: text("image"),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+	},
+	(table) => [uniqueIndex("user_email_unique").on(table.email)],
+);
+
+export type User = typeof user.$inferSelect;
+export type NewUser = typeof user.$inferInsert;

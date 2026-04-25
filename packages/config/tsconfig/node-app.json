@@ -1,0 +1,12 @@
+{
+	"extends": "./base.json",
+	"compilerOptions": {
+		"composite": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"types": ["node"],
+		"verbatimModuleSyntax": false
+	}
+}

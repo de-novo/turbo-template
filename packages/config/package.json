@@ -1,0 +1,41 @@
+{
+	"name": "@repo/config",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./biome/base": "./biome/base.json",
+		"./biome/node": "./biome/node.json",
+		"./biome/react": "./biome/react.json",
+		"./tsconfig/base": "./tsconfig/base.json",
+		"./tsconfig/library": "./tsconfig/library.json",
+		"./tsconfig/library-react": "./tsconfig/library-react.json",
+		"./tsconfig/node-app": "./tsconfig/node-app.json",
+		"./tsconfig/nextjs": "./tsconfig/nextjs.json",
+		"./tsconfig/vite-react": "./tsconfig/vite-react.json",
+		"./tsconfig/expo": "./tsconfig/expo.json"
+	},
+	"files": [
+		"dist",
+		"biome",
+		"tsconfig"
+	],
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"check": "pnpm lint && pnpm typecheck",
+		"lint": "biome lint .",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "tsc -p tsconfig.json --noEmit"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@types/node": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
+	}
+}

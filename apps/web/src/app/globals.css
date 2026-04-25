@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@source "../../../../packages/design-system/src";
+@source "../../../../packages/ui-primitives/src";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: #f8fafc;
+  color: #111827;
+  font-family: Geist, ui-sans-serif, system-ui, sans-serif;
+}

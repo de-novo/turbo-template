@@ -1,0 +1,9 @@
+{
+	"extends": "@repo/config/tsconfig/library",
+	"compilerOptions": {
+		"outDir": "dist",
+		"rootDir": "src"
+	},
+	"include": ["src/**/*.ts"],
+	"references": [{ "path": "../contracts" }]
+}

@@ -1,0 +1,27 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.expo
+.next
+.omx
+.turbo
+*.tsbuildinfo
+build.log
+coverage
+dist
+node_modules
+pnpm-debug.log*
+
+# SOPS / GitOps secrets
+# Real .sops.yaml is project-specific; only the .example template is committed.
+.sops.yaml
+# Decrypted secret manifests must never be committed.
+*.dec.yaml
+# Encrypted *.enc.yaml ARE committed; only the unencrypted seed files
+# (.enc.yaml.example) ship as templates.
+ops/gitops/**/*.enc.yaml
+!ops/gitops/**/*.enc.yaml.example
+# age private keys live outside the repo; refuse them defensively.
+*.age
+*.agekey

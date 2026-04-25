@@ -1,0 +1,51 @@
+{
+	"name": "fullstack-typescript-template",
+	"version": "0.0.0",
+	"private": true,
+	"packageManager": "pnpm@10.33.2",
+	"engines": {
+		"node": ">=24.0.0",
+		"pnpm": ">=10.0.0"
+	},
+	"scripts": {
+		"build": "turbo run build",
+		"check": "turbo run check",
+		"dev": "turbo run dev",
+		"dev:api": "pnpm --filter @repo/api dev",
+		"dev:desktop": "pnpm --filter @repo/desktop dev",
+		"dev:mfe": "turbo run dev --filter @repo/mfe-host --filter @repo/mfe-dashboard",
+		"dev:mfe-dashboard": "pnpm --filter @repo/mfe-dashboard dev",
+		"dev:mfe-host": "pnpm --filter @repo/mfe-host dev",
+		"dev:mobile": "pnpm --filter @repo/mobile dev",
+		"dev:web": "pnpm --filter @repo/web dev",
+		"db:generate": "pnpm --filter @repo/db db:generate",
+		"db:migrate": "pnpm --filter @repo/db db:migrate",
+		"db:studio": "pnpm --filter @repo/db db:studio",
+		"env:check": "pnpm --filter @repo/env check:examples",
+		"format": "biome format --write .",
+		"lint": "biome lint .",
+		"prepare": "husky",
+		"template:rename": "node scripts/rename-template.mjs",
+		"test": "turbo run test",
+		"test:scripts": "vitest run scripts/rename-template.test.mjs",
+		"typecheck": "turbo run typecheck",
+		"design:lint": "design.md lint DESIGN.md",
+		"commitlint": "commitlint",
+		"changeset": "changeset",
+		"version-packages": "changeset version"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@changesets/cli": "catalog:",
+		"@commitlint/cli": "catalog:",
+		"@commitlint/config-conventional": "catalog:",
+		"@google/design.md": "catalog:",
+		"@repo/config": "workspace:*",
+		"@types/node": "catalog:",
+		"husky": "catalog:",
+		"lint-staged": "catalog:",
+		"turbo": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
+	}
+}

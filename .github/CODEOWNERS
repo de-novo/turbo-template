@@ -1,0 +1,10 @@
+# CODEOWNERS — uncomment and edit once team/users exist.
+# Syntax: <path-glob> @user-or-team
+#
+# Examples:
+# *                             @your-org/platform
+# /apps/web/                    @your-org/web
+# /apps/api/                    @your-org/api
+# /packages/contracts/          @your-org/platform
+# /packages/design-system/      @your-org/design
+# /.github/                     @your-org/platform
