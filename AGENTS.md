@@ -1,0 +1,80 @@
+# AGENTS.md
+
+Guidance for AI coding agents (Claude Code, Cursor, Cline, Copilot Workspace, etc.) working in this
+repository.
+
+## What this repository is
+
+A TypeScript Turborepo monorepo template that downstream products fork via `pnpm template:rename`.
+Six applications (`web`, `api`, `desktop`, `mobile`, `mfe-host`, `mfe-dashboard`) and eleven
+`@repo/*` packages on Node 24 / pnpm 10 / Turborepo 2.9 / Biome 2 / TypeScript 6.
+
+Start with [docs/template-strategy.md](./docs/template-strategy.md) and
+[docs/technical-stack.md](./docs/technical-stack.md) for naming and stack decisions.
+
+## Run commands
+
+Use these instead of inventing alternatives:
+
+```bash
+pnpm install
+pnpm dev                  # all surfaces
+pnpm dev:web | dev:api | dev:desktop | dev:mobile | dev:mfe | dev:mfe-host | dev:mfe-dashboard
+pnpm check                # biome lint + tsconfig:check + typecheck + format:check + env:check + design:lint
+pnpm env:check            # validate env/*/*.env.example
+pnpm test                 # turbo run test (vitest + jest-expo for mobile)
+pnpm test:e2e             # Playwright web smoke (opt-in, not in pnpm test)
+pnpm build                # turbo build
+pnpm db:generate | db:migrate | db:studio
+pnpm template:rename --name "..." --slug "..." [--scope @acme]
+pnpm template:auth        # select AUTH_MODE / AUTH_TOPOLOGY
+pnpm template:surfaces --keep web,api  # prune unused apps from a fork
+pnpm syncpack:check       # workspace catalog drift gate
+pnpm licenses:check       # production license allow-list
+```
+
+CI (`.github/workflows/ci.yml`) runs install → audit (high+) → licenses → syncpack → check → build,
+then a separate `test` job. `.github/workflows/security.yml` runs Trivy + CodeQL on push, PR, and
+weekly schedule.
+
+## Hard rules
+
+- **Do not amend or force-push.** Always create a new commit.
+- **Conventional commits are NOT used.** This repo uses a structured commit body: `Constraint: ...`
+  / `Rejected: ... | reason` / `Confidence: high|med|low` / `Scope-risk: narrow|medium|broad` /
+  `Directive: ...` / `Tested: ...` / `Not-tested: ...`. See `git log -1 --format=fuller` for the
+  most recent example.
+- **Tests live in
+  `src/**/\*.{test,spec}.ts(x)`and are excluded from`tsc`build via per-package`tsconfig.json` `exclude`.\*\*
+  Don't add test files in dist/.
+- **Do not import from `process.env` directly** outside the per-app env adapter
+  (`apps/*/src/env.ts`). Use `@repo/env/apps/<name>` loaders.
+- **No new `tsconfig.references` arrays.** `pnpm tsconfig:check` will reject them; Turborepo derives
+  the dependency graph from `package.json` `workspace:*`.
+- **Foreign env prefixes are forbidden by the loader.** API rejects `NEXT_PUBLIC_*`, `VITE_*`,
+  `EXPO_PUBLIC_*`. Web rejects `VITE_*` and `EXPO_PUBLIC_*`. Etc.
+- **`@repo/contracts` stays runtime-light.** No NestJS, Next.js, browser-only APIs, or ORM clients
+  in there.
+- **`packages/db/src/env.ts` does not exist.** `DATABASE_URL` is owned by `@repo/env/apps/api` only.
+
+## Where things live
+
+- API request scope (request id, ALS-backed logger context): `apps/api/src/middleware/` and
+  `apps/api/src/logger.ts`.
+- Global error envelope: `apps/api/src/filters/app-error.filter.ts` →
+  `@repo/platform/toPublicError` + `errorCodeToHttpStatus`.
+- Health probes: `apps/api/src/health/health.controller.ts` (`/health/live`, `/health/ready`).
+- Prometheus scrape: `apps/api/src/metrics/metrics.controller.ts` (`/metrics`).
+- Rate limiting: `@nestjs/throttler` registered globally in `apps/api/src/app.module.ts`;
+  `@SkipThrottle()` on probes and metrics.
+- OpenTelemetry: `@repo/infrastructure` `initOpenTelemetry()`; opt-in via
+  `OTEL_EXPORTER_OTLP_ENDPOINT`.
+- Logger: `@repo/platform` `createPinoLogger()` + `withLoggerContext()`.
+
+## When you finish work
+
+1. Run `pnpm format` then the full gate locally (`pnpm check && pnpm build && pnpm test`).
+2. If you touched `apps/web`, check `apps/web/next-env.d.ts` was not flipped to the dev variant;
+   restore via `git checkout -- apps/web/next-env.d.ts` if it was.
+3. Write the commit body in the documented style (above). Do not skip `Tested:` / `Not-tested:`
+   lines.
