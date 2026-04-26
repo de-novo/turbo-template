@@ -22,7 +22,10 @@ COPY --from=deps /root/.local/share/pnpm/store /root/.local/share/pnpm/store
 COPY . .
 RUN pnpm install --offline --frozen-lockfile
 RUN pnpm --filter @repo/api... build
-RUN pnpm deploy --filter=@repo/api --prod /out
+# pnpm v10 made `pnpm deploy` require `inject-workspace-packages=true` by
+# default; the `--legacy` flag preserves the symlinked-deps path the rest of
+# the workspace already uses without forcing inject-workspace globally.
+RUN pnpm deploy --legacy --filter=@repo/api --prod /out
 
 # ---- runtime stage: prod-only NestJS bundle ----
 FROM node:${NODE_VERSION} AS runtime
