@@ -28,11 +28,13 @@ RUN pnpm deploy --filter=@repo/api --prod /out
 FROM node:${NODE_VERSION} AS runtime
 ENV NODE_ENV=production
 ENV PORT=4000
-RUN addgroup -S app && adduser -S app -G app
+RUN addgroup -S app && adduser -S app -G app && apk add --no-cache wget
 WORKDIR /app
 
 COPY --from=builder --chown=app:app /out ./
 
 USER app
 EXPOSE 4000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD wget --quiet --spider --tries=1 "http://127.0.0.1:${PORT}/health/live" || exit 1
 CMD ["node", "dist/main.js"]

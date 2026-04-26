@@ -1,0 +1,19 @@
+# CODEOWNERS — every PR auto-requests review from the listed owners.
+# Replace the placeholder owner with your fork's owner / team handle.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything not matched below.
+*       @de-novo
+
+# Workspace contracts and shared infrastructure are higher-risk; consider
+# requiring multiple reviewers in the matching branch protection rule.
+/packages/contracts/         @de-novo
+/packages/auth/              @de-novo
+/packages/platform/          @de-novo
+/packages/infrastructure/    @de-novo
+
+# CI, security, and release workflows.
+/.github/workflows/          @de-novo
+
+# Architecture decisions are durable; review them deliberately.
+/docs/adr/                   @de-novo

@@ -38,7 +38,9 @@
     "test:e2e": "pnpm --filter @repo/web test:e2e",
     "tsconfig:check": "node scripts/check-tsconfig-references.mjs",
     "typecheck": "turbo run typecheck",
-    "design:lint": "design.md lint DESIGN.md"
+    "design:lint": "design.md lint DESIGN.md",
+    "doctor": "node scripts/preflight.mjs",
+    "test:scripts": "node --test scripts/*.test.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

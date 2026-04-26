@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "name": "turbo-template",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-24-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "remoteUser": "node",
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "TURBO_TELEMETRY_DISABLED": "1"
+  },
+  "postCreateCommand": "corepack enable && corepack prepare pnpm@10 --activate && pnpm install --frozen-lockfile",
+  "postAttachCommand": "node scripts/preflight.mjs",
+  "forwardPorts": [3000, 3001, 3100, 3101, 4000, 8081],
+  "portsAttributes": {
+    "3000": { "label": "web (Next.js)" },
+    "3001": { "label": "desktop (Vite)" },
+    "3100": { "label": "mfe-host" },
+    "3101": { "label": "mfe-dashboard" },
+    "4000": { "label": "api (NestJS)" },
+    "8081": { "label": "mobile (Expo Metro)" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "biomejs.biome",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-playwright.playwright",
+        "vitest.explorer"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "biomejs.biome"
+      }
+    }
+  }
+}
