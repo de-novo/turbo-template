@@ -1,12 +1,28 @@
 # Fullstack TypeScript Template
 
-This repository is a reusable TypeScript monorepo template for web, API, shared contracts, shared
-infrastructure, and product design-system work.
+A reusable TypeScript monorepo template for web, API, shared contracts, shared infrastructure, and
+product design-system work — sized to grow from a solo project into an enterprise codebase without
+rewrites.
 
-The project baseline is documented in [docs/technical-stack.md](./docs/technical-stack.md).
+## What you get out of the box
 
-Template naming and bootstrap conventions are documented in
-[docs/template-strategy.md](./docs/template-strategy.md).
+- **6 runnable apps**: `web` (Next.js 16), `api` (NestJS 11), `desktop` (Vite + Tauri 2), `mobile`
+  (Expo 55 / React Native), `mfe-host` + `mfe-dashboard` (manifest-driven micro frontend).
+- **12 `@repo/*` packages**: contracts, env, auth, platform, infrastructure, clients, db,
+  design-system, ui-primitives, mfe, testing, config. See
+  [docs/capabilities.md](./docs/capabilities.md) for the full table.
+- **Opt-in lanes**: GHCR Docker images (`release-images.yml`), SOPS + age + KSOPS GitOps secrets,
+  OpenTelemetry exporter, Tauri code signing, EAS Build profiles, syncpack drift gate, license
+  allow-list, Trivy + CodeQL + CycloneDX SBOM scans.
+- **Verified gate on day one**: `pnpm check` (lint + typecheck + format + env + DESIGN.md),
+  `pnpm test` (Vitest + jest-expo), `pnpm test:e2e` (Playwright), `pnpm build` (Turbo pipeline),
+  `pnpm audit` (high+ severity gate), `pnpm syncpack:check`, `pnpm licenses:check`.
+
+The project baseline is documented in [docs/technical-stack.md](./docs/technical-stack.md). Template
+naming and bootstrap conventions are documented in
+[docs/template-strategy.md](./docs/template-strategy.md). The list of every shipped surface +
+operational lane (and what is intentionally deferred) lives in
+[docs/capabilities.md](./docs/capabilities.md).
 
 ## Stack Baseline
 
@@ -29,54 +45,55 @@ Template naming and bootstrap conventions are documented in
 
 ## Quick Start
 
-Install dependencies:
-
 ```bash
 pnpm install
+pnpm check          # lint + tsconfig + typecheck + format + env + design (CI gate)
+pnpm test           # vitest + jest-expo across all packages and apps
+pnpm build          # turbo build for every app and package
+pnpm dev            # all surfaces (or pnpm dev:web | dev:api | dev:desktop | ...)
 ```
 
-Run the full verification gate:
-
-```bash
-pnpm check
-pnpm build
-```
+If `pnpm install` errors, confirm Node 24 (`node -v`) and pnpm 10 (`pnpm -v`); both are pinned via
+`.nvmrc` and `packageManager` in the root `package.json`.
 
 `pnpm check` is intentionally strict: Biome lint runs with warnings as failures, TypeScript runs
 repo-wide type checks, Biome/Prettier formatting is checked, env examples are validated, and
 `DESIGN.md` is validated.
 
-Validate env examples only:
+### Verifying before a PR
+
+CI runs the same commands plus a few security/drift gates. To match locally:
 
 ```bash
-pnpm env:check
+pnpm check
+pnpm test
+pnpm build
+pnpm syncpack:check    # workspace catalog drift gate
+pnpm licenses:check    # production license allow-list
+pnpm audit --prod --audit-level=high
 ```
 
-Database schema commands:
+E2E is opt-in and not part of `pnpm test`:
 
 ```bash
-pnpm db:generate
-pnpm db:migrate
-pnpm db:studio
+pnpm --filter @repo/web exec playwright install chromium  # one-time
+pnpm test:e2e
 ```
 
-`DATABASE_URL` is optional for template bootstrapping. Drizzle schema generation works without a
-live database; migrate/studio require a reachable PostgreSQL database.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full PR checklist and commit-body convention (this
+repo uses a structured `Constraint:` / `Rejected:` / `Confidence:` / `Scope-risk:` / `Directive:` /
+`Tested:` / `Not-tested:` body, not Conventional Commits).
 
-Start local development:
-
-```bash
-pnpm dev
-```
-
-Or run one surface at a time:
+### Per-surface dev
 
 ```bash
 pnpm dev:web
 pnpm dev:api
 pnpm dev:desktop
 pnpm dev:mobile
-pnpm dev:mfe
+pnpm dev:mfe              # host + dashboard remote together
+pnpm dev:mfe-host         # host only
+pnpm dev:mfe-dashboard    # remote only
 ```
 
 Default app ports:
@@ -89,6 +106,29 @@ mobile metro: http://localhost:8081
 mfe host: http://localhost:3100
 mfe dashboard remote: http://localhost:3101
 ```
+
+### Database
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+pnpm db:studio
+```
+
+`DATABASE_URL` is optional for template bootstrapping. Drizzle schema generation works without a
+live database; `migrate` and `studio` require a reachable PostgreSQL. The shipped schema is
+`@repo/db/schema/system-events` only — product schemas land in `packages/db/src/schema/` as forks
+add them.
+
+### Optional env files
+
+```bash
+cp env/local/api.env.example apps/api/.env
+cp env/local/web.env.example apps/web/.env.local
+```
+
+Real `.env` files are gitignored; the `.env.example` pairs are the source of truth for required keys
+per app. `pnpm env:check` validates every example through `@repo/env/apps/<name>` loaders.
 
 ## Continuous Integration
 
@@ -110,18 +150,20 @@ For faster CI on larger repos, enable Turborepo remote cache. Set repository sec
 and repository variable `TURBO_TEAM`, then uncomment the matching `env` lines in `ci.yml`. Local
 cache continues to work without these.
 
-### Release lane (disabled by default)
+### Other shipped workflows
 
-`.github/workflows/release.yml` is an inert Changesets-based release stub. The template does not
-publish packages by default. To enable it:
-
-1. `pnpm add -Dw @changesets/cli`
-2. `pnpm changeset init`
-3. Set `NPM_TOKEN` as a repository secret if publishing.
-4. Remove the `if: false` guard in `release.yml`.
-
-Until those steps run the workflow performs no work, so it stays out of the way for solo and
-internal-only projects.
+- **`release-images.yml`** — builds `apps/api` + `apps/web` Docker images on every push to `main`
+  and on `v*` tags, pushes to `ghcr.io/<owner>/<repo>-<app>` with build provenance attestation and
+  SBOM. See [docs/deployment.md](./docs/deployment.md).
+- **`security.yml`** — runs Trivy (config + IaC scan) and CodeQL (TypeScript / JavaScript) on push,
+  PR, and weekly Mondays at 06:00 UTC. Findings land in the GitHub Security tab.
+- **`sbom.yml`** — generates a CycloneDX SBOM on each release and attaches it to the GitHub release.
+- **`release.yml`** — an inert Changesets stub (`if: false`). The template does not publish packages
+  by default. To enable it:
+  1. `pnpm add -Dw @changesets/cli`
+  2. `pnpm changeset init`
+  3. Set `NPM_TOKEN` as a repository secret if publishing.
+  4. Remove the `if: false` guard in `release.yml`.
 
 ## Package Boundaries
 
@@ -645,18 +687,13 @@ Internal packages should normally keep the stable `@repo/*` scope. After copying
 change the project display name and slug first:
 
 ```bash
-node scripts/rename-template.mjs \
-  --name "New Product" \
-  --slug "new-product"
+pnpm template:rename --name "New Product" --slug "new-product"
 ```
 
 Only change package scope when packages must be published or consumed outside this monorepo:
 
 ```bash
-node scripts/rename-template.mjs \
-  --name "New Product" \
-  --slug "new-product" \
-  --scope "@company"
+pnpm template:rename --name "New Product" --slug "new-product" --scope "@company"
 ```
 
 ## Prune Unused Surfaces
@@ -673,9 +710,39 @@ The default mode is dry-run; pass `--apply` to actually remove app directories, 
 and the matching root `dev:<surface>` scripts. `project.config.json` is updated to reflect the
 remaining `surfaces` list. After pruning, run `pnpm install` and `pnpm check` to verify.
 
-## References
+## Where to read next
 
-- [Technical stack baseline](./docs/technical-stack.md)
-- [Template strategy](./docs/template-strategy.md)
-- [Project design-system brief](./DESIGN.md)
-- [google-labs-code/design.md](https://github.com/google-labs-code/design.md)
+For contributors:
+
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — local setup, verification gate, PR checklist, commit style.
+- [SECURITY.md](./SECURITY.md) — vulnerability reporting, what hardening already ships.
+- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) — Contributor Covenant 2.1.
+- [AGENTS.md](./AGENTS.md) — guidance for AI coding agents (Claude Code, Cursor, etc.) working in
+  this repo.
+
+For architects:
+
+- [docs/capabilities.md](./docs/capabilities.md) — every app, package, and operational lane the
+  template ships, plus what is intentionally deferred.
+- [docs/template-strategy.md](./docs/template-strategy.md) — naming, scope, package boundaries, what
+  to keep stable.
+- [docs/technical-stack.md](./docs/technical-stack.md) — versions, language standards, package
+  ownership, dependency direction.
+- [docs/adr/](./docs/adr/) — durable architecture decisions. Start with
+  [0001 — Avoid day-one overreach](./docs/adr/0001-avoid-day-one-overreach.md) for the scope
+  philosophy.
+
+For operators:
+
+- [docs/deployment.md](./docs/deployment.md) — Dockerfile shape, GHCR publishing pipeline, runtime
+  config, health probes.
+- [docs/secret-management.md](./docs/secret-management.md) — env contracts, deployment patterns,
+  GitOps secret lane.
+- [docs/desktop-signing.md](./docs/desktop-signing.md) — per-platform Tauri 2 code signing.
+- [packages/env/README.md](./packages/env/README.md) — per-app env loader contract.
+
+External:
+
+- [DESIGN.md](./DESIGN.md) — agent-readable design-system brief.
+- [google-labs-code/design.md](https://github.com/google-labs-code/design.md) — the
+  `@google/design.md` CLI used to lint `DESIGN.md`.

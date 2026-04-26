@@ -12,7 +12,11 @@ cp env/local/web.env.example apps/web/.env.local
 pnpm dev
 ```
 
-Per-app dev commands: `pnpm dev:web | dev:api | dev:desktop | dev:mobile | dev:mfe`.
+Per-app dev commands:
+`pnpm dev:web | dev:api | dev:desktop | dev:mobile | dev:mfe | dev:mfe-host | dev:mfe-dashboard`.
+
+`dev:mfe` runs the host plus the dashboard remote together. Run individual halves only when you want
+to iterate on one without the other.
 
 ## Verification gate
 
