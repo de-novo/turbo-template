@@ -22,7 +22,7 @@ catalog:
   "@tauri-apps/api": "2.10.1"
   "@tauri-apps/cli": "2.10.1"
   "@tailwindcss/vite": "4.2.4"
-  "@types/node": "24.10.1"
+  "@types/node": "25.6.0"
   "@types/pg": "8.20.0"
   "@types/react": "19.2.7"
   "@types/react-dom": "19.2.3"
