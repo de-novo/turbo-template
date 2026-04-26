@@ -1,10 +1,13 @@
 # Technical Stack Baseline
 
-Last checked: 2026-04-24
+Last checked: 2026-04-26
 
 This document defines the initial TypeScript monorepo baseline for this template. The goal is to
 keep the stack current, boring where possible, and friendly to multi-app growth: web, API, shared
 UI, shared contracts, and internal packages.
+
+Pair with [docs/template-strategy.md](./template-strategy.md) for naming, bootstrap, and scope
+decisions, and [docs/capabilities.md](./capabilities.md) for the as-shipped surface map.
 
 ## Baseline Decision
 
@@ -27,7 +30,7 @@ Recommended runtime and major versions:
 | Desktop app          | vite / @tauri-apps/\*     |         8.0.10 / 2.10.1 | Use Vite for fast desktop shell iteration and Tauri v2 for native packaging.                    |
 | Mobile app           | expo / react-native       |        55.0.17 / 0.83.6 | Use Expo SDK-compatible React Native for fast iOS, Android, and mobile-web startup.             |
 | Micro frontend       | vite / custom elements    |                  8.0.10 | Use manifest-based host/remote templates before adding heavier federation runtime.              |
-| API app              | @nestjs/core              |                 11.1.19 | Use NestJS 11 on Node 20+ compatible runtime.                                                   |
+| API app              | @nestjs/core              |                  11.1.9 | Use NestJS 11 on Node 20+ compatible runtime.                                                   |
 | Styling              | tailwindcss               |                   4.2.4 | Use Tailwind v4 CSS-first setup.                                                                |
 | Tailwind PostCSS     | @tailwindcss/postcss      |                   4.2.4 | Use official Next.js PostCSS plugin path.                                                       |
 | UI primitives        | shadcn                    |                   4.4.0 | Use shadcn CLI with monorepo support.                                                           |
@@ -59,10 +62,11 @@ packages/
   clients/          # typed API clients and external service SDK wrappers
   env/              # app-scoped env schemas, loaders, and example validation
   mfe/              # micro frontend manifest and lifecycle contracts
-  infrastructure/   # Redis, Kafka, queue, cache, logger, config adapters
-  platform/         # cross-cutting errors, observability, feature flags
-  config/           # shared tsconfig, Biome, test/build conventions if needed
-  db/               # ORM schema/migrations if this project owns DB access
+  infrastructure/   # Redis, Kafka, queue, cache, logger, observability adapters
+  platform/         # cross-cutting errors, logger, feature flags, time/id helpers
+  testing/          # shared Vitest node/jsdom config presets
+  config/           # shared project config (`projectConfig` from JSON)
+  db/               # Drizzle schema + client factory (DB-aware health helper)
 ```
 
 Recommended workspace files:
@@ -76,7 +80,7 @@ packages:
 catalog:
   "@biomejs/biome": "2.4.13"
   "@google/design.md": "0.1.1"
-  "@nestjs/core": "11.1.19"
+  "@nestjs/core": "11.1.9"
   "@tailwindcss/postcss": "4.2.4"
   "@tanstack/react-query": "5.100.1"
   "@tauri-apps/api": "2.10.1"
@@ -107,28 +111,19 @@ Template naming policy:
 - Rename package scope only when packages must be published or consumed outside this monorepo.
 - See [template-strategy.md](./template-strategy.md) for the full decision.
 
-```json
-{
-  "packageManager": "pnpm@10.33.2",
-  "engines": {
-    "node": ">=24.0.0",
-    "pnpm": ">=10.0.0"
-  },
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "check": "pnpm lint && pnpm tsconfig:check && pnpm typecheck && pnpm format:check && pnpm env:check && pnpm design:lint",
-    "typecheck": "turbo run typecheck",
-    "env:check": "pnpm --filter @repo/env check:examples",
-    "format": "pnpm format:biome && pnpm format:prettier",
-    "format:biome": "biome format --write .",
-    "format:check": "biome format . && prettier --check .",
-    "format:prettier": "prettier --write .",
-    "lint": "biome lint --error-on-warnings .",
-    "tsconfig:check": "node scripts/check-tsconfig-references.mjs"
-  }
-}
-```
+The shipped root `package.json` is the source of truth for the canonical script list. The most
+load-bearing entries:
+
+| Script                                                         | Purpose                                                                                          |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `pnpm install`                                                 | Install with `pnpm@10.33.2` pinned via `packageManager`.                                         |
+| `pnpm dev` / `dev:*`                                           | Run all surfaces or one (`web`, `api`, `desktop`, `mobile`, `mfe`, `mfe-host`, `mfe-dashboard`). |
+| `pnpm check`                                                   | Lint + tsconfig check + typecheck + format check + env example check + DESIGN lint.              |
+| `pnpm test` / `test:e2e` / `test:coverage`                     | Vitest fanout + Playwright web smoke + informational coverage.                                   |
+| `pnpm build`                                                   | Turbo build pipeline.                                                                            |
+| `pnpm db:generate` / `db:migrate` / `db:studio`                | Drizzle CLI wrappers.                                                                            |
+| `pnpm template:rename` / `template:auth` / `template:surfaces` | Fork-time rename, auth selection, surface pruning.                                               |
+| `pnpm syncpack:check` / `licenses:check`                       | Catalog drift + production license allow-list (CI gates).                                        |
 
 ## Turborepo Standard
 

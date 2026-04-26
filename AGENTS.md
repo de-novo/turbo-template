@@ -6,11 +6,14 @@ repository.
 ## What this repository is
 
 A TypeScript Turborepo monorepo template that downstream products fork via `pnpm template:rename`.
-Six applications (`web`, `api`, `desktop`, `mobile`, `mfe-host`, `mfe-dashboard`) and eleven
-`@repo/*` packages on Node 24 / pnpm 10 / Turborepo 2.9 / Biome 2 / TypeScript 6.
+Six applications (`web`, `api`, `desktop`, `mobile`, `mfe-host`, `mfe-dashboard`) and twelve
+`@repo/*` packages (`auth`, `clients`, `config`, `contracts`, `db`, `design-system`, `env`,
+`infrastructure`, `mfe`, `platform`, `testing`, `ui-primitives`) on Node 24 / pnpm 10 / Turborepo
+2.9 / Biome 2 / TypeScript 6.
 
-Start with [docs/template-strategy.md](./docs/template-strategy.md) and
-[docs/technical-stack.md](./docs/technical-stack.md) for naming and stack decisions.
+Start with [docs/capabilities.md](./docs/capabilities.md) for the surface map,
+[docs/template-strategy.md](./docs/template-strategy.md) for naming/scope decisions, and
+[docs/technical-stack.md](./docs/technical-stack.md) for stack-level rationale.
 
 ## Run commands
 
@@ -44,9 +47,9 @@ weekly schedule.
   / `Rejected: ... | reason` / `Confidence: high|med|low` / `Scope-risk: narrow|medium|broad` /
   `Directive: ...` / `Tested: ...` / `Not-tested: ...`. See `git log -1 --format=fuller` for the
   most recent example.
-- **Tests live in
-  `src/**/\*.{test,spec}.ts(x)`and are excluded from`tsc`build via per-package`tsconfig.json` `exclude`.\*\*
-  Don't add test files in dist/.
+- **Tests live alongside source as `*.test.ts` or `*.spec.ts` (also `.tsx`).** Each package's
+  `tsconfig.json` excludes them so `tsc` does not emit test files into `dist/`. Don't add test files
+  anywhere `tsc` would emit them.
 - **Do not import from `process.env` directly** outside the per-app env adapter
   (`apps/*/src/env.ts`). Use `@repo/env/apps/<name>` loaders.
 - **No new `tsconfig.references` arrays.** `pnpm tsconfig:check` will reject them; Turborepo derives
@@ -59,7 +62,9 @@ weekly schedule.
 
 ## Where things live
 
-- API request scope (request id, ALS-backed logger context): `apps/api/src/middleware/` and
+API (`apps/api`):
+
+- Request scope (request id, ALS-backed logger context): `apps/api/src/middleware/` and
   `apps/api/src/logger.ts`.
 - Global error envelope: `apps/api/src/filters/app-error.filter.ts` →
   `@repo/platform/toPublicError` + `errorCodeToHttpStatus`.
@@ -67,9 +72,31 @@ weekly schedule.
 - Prometheus scrape: `apps/api/src/metrics/metrics.controller.ts` (`/metrics`).
 - Rate limiting: `@nestjs/throttler` registered globally in `apps/api/src/app.module.ts`;
   `@SkipThrottle()` on probes and metrics.
+- API env DI: `apps/api/src/api-env.module.ts` provides `loadApiEnv()` via `API_ENV` token.
+
+Web (`apps/web`):
+
+- App Router root: `apps/web/src/app/{layout,page,providers}.tsx`.
+- Client-only error boundary: `apps/web/src/components/error-boundary.tsx` (uses duck-typed
+  `AppError` shape because `@repo/platform` cannot be bundled for the client — see commit
+  `33af446`).
+- E2E spec: `apps/web/e2e/`. Playwright config in `apps/web/playwright.config.ts`.
+
+Desktop / Mobile / MFE:
+
+- `apps/desktop/src/main.tsx` (Vite + Tauri shell).
+- `apps/mobile/app/{_layout,index}.tsx` + `apps/mobile/eas.json` (EAS Build profiles).
+- `apps/mfe-host/src/main.tsx` (manifest-driven host) and `apps/mfe-dashboard/src/register.tsx`
+  (custom-element remote).
+
+Cross-cutting (`packages/*`):
+
 - OpenTelemetry: `@repo/infrastructure` `initOpenTelemetry()`; opt-in via
   `OTEL_EXPORTER_OTLP_ENDPOINT`.
-- Logger: `@repo/platform` `createPinoLogger()` + `withLoggerContext()`.
+- Logger + ALS context: `@repo/platform` `createPinoLogger()` + `withLoggerContext()`.
+- Error taxonomy: `@repo/contracts/errorCodeSchema` + `@repo/platform/errorCodeToHttpStatus`.
+- Env contracts: `@repo/env/apps/<name>` per-app loaders. Examples in `env/{local,production}/`.
+- Test harness: `@repo/testing/vitest/{node,jsdom}` shared configs.
 
 ## When you finish work
 

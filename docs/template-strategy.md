@@ -1,10 +1,13 @@
 # Template Strategy
 
-Last checked: 2026-04-24
+Last checked: 2026-04-26
 
-This repository should become a fast-start template for projects that share the same TypeScript,
-Next.js, NestJS, Turborepo, Biome, shadcn, design-system, contracts, auth, infrastructure, and
-Effect standards.
+This repository is a fast-start template for projects that share the same TypeScript, Next.js,
+NestJS, Turborepo, Biome, shadcn, design-system, contracts, auth, infrastructure, and Effect
+standards.
+
+Pair with [docs/technical-stack.md](./technical-stack.md) for stack-level rationale and
+[docs/capabilities.md](./capabilities.md) for the as-shipped surface map.
 
 ## Naming Decision
 
@@ -131,13 +134,23 @@ turbo.json
 biome.json
 tsconfig.base.json
 .gitignore
+.dockerignore
+.editorconfig
+.npmrc
 .nvmrc
+.syncpackrc.json
+.vscode/{settings,extensions}.json
 project.config.json
 scripts/check-tsconfig-references.mjs
 scripts/rename-template.mjs
 scripts/select-auth-strategy.mjs
+scripts/select-surfaces.mjs
+AGENTS.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
 DESIGN.md
 README.md
+SECURITY.md
 ```
 
 Apps:
@@ -147,20 +160,25 @@ apps/web
 apps/api
 apps/desktop
 apps/mobile
+apps/mfe-host
+apps/mfe-dashboard
 ```
 
 Packages:
 
 ```text
-packages/contracts
 packages/auth
-packages/platform
-packages/infrastructure
 packages/clients
-packages/ui-primitives
-packages/design-system
 packages/config
+packages/contracts
 packages/db
+packages/design-system
+packages/env
+packages/infrastructure
+packages/mfe
+packages/platform
+packages/testing
+packages/ui-primitives
 ```
 
 Current verification gate:
@@ -206,7 +224,10 @@ Avoid day-one overreach:
 - Do not create real Kafka/Redis production clients before env/config contracts and usage are known.
 - Do not add a database ORM until the DB ownership is decided.
 - Do not generate domain-specific modules before the bounded contexts are known.
-- Do not make `DESIGN.md` CLI validation a hard build gate while the format is still alpha.
+
+`DESIGN.md` lint is part of `pnpm check`. The CLI is still alpha but the gate has been stable;
+relaxing it again is a deliberate choice, not a default. See ADR
+[0001 — Avoid day-one overreach](./adr/0001-avoid-day-one-overreach.md) for the broader rule.
 
 ## Recommended Approach
 
