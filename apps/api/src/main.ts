@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { loadApiEnv } from "@repo/env/apps/api";
 import { initOpenTelemetry } from "@repo/infrastructure";
@@ -21,14 +20,6 @@ const app = await NestFactory.create(AppModule, {
 });
 
 app.use(requestIdMiddleware);
-// biome-ignore lint/correctness/useHookAtTopLevel: app.useGlobalPipes is the Nest API surface, not a React hook
-app.useGlobalPipes(
-  new ValidationPipe({
-    transform: true,
-    whitelist: true,
-    forbidNonWhitelisted: true,
-  }),
-);
 
 await app.listen(env.PORT);
 
