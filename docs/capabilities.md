@@ -54,7 +54,9 @@ runtime mount point is selectable via `AUTH_MODE` and `AUTH_TOPOLOGY` env:
 Run `pnpm template:auth` to switch. The auth env keys (`AUTH_MODE`, `AUTH_TOPOLOGY`,
 `AUTH_ISSUER_URL`, `AUTH_SERVICE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`) are documented in
 [README.md](../README.md#auth-strategy-selection) and the per-app loader at
-`packages/env/src/apps/api.ts`.
+`packages/env/src/apps/api.ts`. Concrete wiring per non-default mode:
+[external-oidc](./auth-recipes/external-oidc.md), [sso-gateway](./auth-recipes/sso-gateway.md),
+[central-auth-service](./auth-recipes/central-auth-service.md).
 
 ## Operational lanes
 
