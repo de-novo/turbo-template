@@ -8,6 +8,10 @@ dev-friendly `apps/desktop`; production builds must add the appropriate signing 
 This guide documents the shape of each lane without checking real certificates into the repo. Real
 cert paths and identifiers belong in your fork's secret store, not here.
 
+The Tauri config file lives at `apps/desktop/src-tauri/tauri.conf.json`. The blocks below are edits
+to that file; keep public fields (productName, identifier, sizes) committed and place real signing
+identifiers in CI secrets.
+
 ## macOS
 
 Tauri's macOS bundler signs `.app` and `.dmg` with `codesign` and notarizes through Apple's notary

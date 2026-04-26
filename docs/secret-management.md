@@ -7,16 +7,11 @@ environment and keep the app-level env contract the same.
 
 Default recommendation:
 
-```text
-Local development:
-  ignored app-scoped .env files or shell env
-
-Cloud/Kubernetes without GitOps-encrypted secrets:
-  platform secret store, Vault, External Secrets Operator, or CSI driver
-
-Argo CD GitOps with secrets in the repo:
-  SOPS + age + KSOPS as an explicit opt-in lane
-```
+| Environment                                          | Where the real values live                                             | When to pick this lane                                                          |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Local development                                    | Gitignored app-scoped `.env` files or shell env                        | Always, for solo / contributor laptops.                                         |
+| Cloud or Kubernetes without GitOps-encrypted secrets | Platform secret store, Vault, External Secrets Operator, or CSI driver | Default for managed clusters; the secrets never enter git.                      |
+| Argo CD GitOps with secrets in the repo              | SOPS + age + KSOPS as an explicit opt-in lane                          | Pick only when the GitOps repository must contain encrypted Kubernetes Secrets. |
 
 Do not commit raw secrets. Do not commit age private keys. Do not inject one global secret blob into
 all apps.
@@ -55,6 +50,7 @@ Required setup:
 Example commands:
 
 ```bash
+mkdir -p ~/.config/sops/age   # macOS / fresh Linux installs need the parent dir first
 age-keygen -o ~/.config/sops/age/turbo-template.txt
 export SOPS_AGE_KEY_FILE=~/.config/sops/age/turbo-template.txt
 cp .sops.yaml.example .sops.yaml

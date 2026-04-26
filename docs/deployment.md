@@ -63,10 +63,26 @@ docker build -f apps/web/Dockerfile -t local/web .
 Both images expect environment from the matching `@repo/env/apps/<name>` schema. Pull the production
 keys from `env/production/<app>.env.example` as the source of truth.
 
-| App | Required in production                                                                                                                        |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| api | `DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET` (when `AUTH_MODE=better-auth-embedded`); auth issuer/service URLs for the other modes |
-| web | `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WEB_URL` (auth issuer/service URLs when `NEXT_PUBLIC_AUTH_MODE` is non-default)                           |
+api required keys (per `AUTH_MODE`):
+
+| `AUTH_MODE`            | Required keys                                                                                                                      |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `better-auth-embedded` | `DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET` (≥ 32 chars).                                                              |
+| `external-oidc`        | `DATABASE_URL`, `AUTH_ISSUER_URL`. The IdP owns login; this app validates issuer/audience.                                         |
+| `sso-gateway`          | `DATABASE_URL`, `AUTH_ISSUER_URL`, `AUTH_SERVICE_URL`. Edge gateway validates SSO; the app consumes forwarded claims.              |
+| `central-auth-service` | `DATABASE_URL`, `AUTH_ISSUER_URL`, `AUTH_SERVICE_URL`. Internal auth-service owns login/session/token exchange for MSA topologies. |
+
+`PORT`, `PROJECT_NAME`, `PROJECT_SLUG`, `PROJECT_TIMEZONE`, `LOG_LEVEL`, and `AUTH_TOPOLOGY` have
+safe defaults from `@repo/env/apps/api`. `requireInProduction` enforces the table above when
+`APP_ENV=production`.
+
+web required keys:
+
+| Key                                          | Notes                                                           |
+| -------------------------------------------- | --------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WEB_URL` | Always required in production.                                  |
+| `NEXT_PUBLIC_AUTH_ISSUER_URL`                | Required when `NEXT_PUBLIC_AUTH_MODE` is anything but embedded. |
+| `NEXT_PUBLIC_AUTH_SERVICE_URL`               | Required for `sso-gateway` and `central-auth-service`.          |
 
 Optional observability:
 

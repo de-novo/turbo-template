@@ -22,6 +22,12 @@ Skip an ADR for:
 ## How
 
 1. Copy `_template.md` to `NNNN-short-kebab-title.md` where `NNNN` is the next four-digit number.
+   For the next ADR after `0002`, that is:
+
+   ```bash
+   cp docs/adr/_template.md docs/adr/0003-short-kebab-title.md
+   ```
+
 2. Fill in the sections. Keep each section short — bullets are fine.
 3. Update the index below.
 4. Commit with `Constraint:` / `Rejected:` / etc. body documenting the change (this repo does not

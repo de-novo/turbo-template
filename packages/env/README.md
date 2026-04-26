@@ -37,17 +37,23 @@ Common building blocks (`@repo/env`):
 
 ## Adding a new app
 
-1. Add a loader at `packages/env/src/apps/<name>.ts` mirroring an existing one. Pick the right
-   prefix:
+1. Add a loader at `packages/env/src/apps/<name>.ts` mirroring an existing one. The canonical
+   server-side example is `packages/env/src/apps/api.ts`; the canonical Vite-client example is
+   `packages/env/src/apps/desktop.ts`. Pick the right prefix:
    - server: no prefix (api). Forbid `EXPO_PUBLIC_/NEXT_PUBLIC_/VITE_`.
    - Next.js client: `NEXT_PUBLIC_*`. Forbid the secret keys plus `EXPO_PUBLIC_/VITE_`.
    - Vite client (desktop, mfe-host): `VITE_*`. Forbid secret keys plus `EXPO_PUBLIC_/NEXT_PUBLIC_`.
    - Expo client (mobile): `EXPO_PUBLIC_*`. Forbid secret keys plus `NEXT_PUBLIC_/VITE_`.
 2. Add an export in `packages/env/src/index.ts` and matching subpath under `exports` in
    `package.json`.
-3. Add `env/local/<name>.env.example` and `env/production/<name>.env.example`.
-4. Wire `loadXxxEnv` into the app's `apps/<name>/src/env.ts` adapter.
-5. `pnpm env:check` validates the example files round-trip through the new loader.
+3. **Register the new loader in `packages/env/src/check-examples.ts`** so `pnpm env:check` parses
+   the matching examples through the new loader. Without this step, missing example files pass
+   silently.
+4. Add `env/local/<name>.env.example` and `env/production/<name>.env.example`.
+5. Wire `loadXxxEnv` into the app's `apps/<name>/src/env.ts` adapter. For an example consumer, see
+   `apps/web/src/env.ts` (Next.js, takes a public-prefix subset of `process.env`) or
+   `apps/api/src/api-env.module.ts` (NestJS DI provider that wraps `loadApiEnv()`).
+6. `pnpm env:check` validates the example files round-trip through the new loader.
 
 ## Why no shared loader
 

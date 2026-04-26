@@ -32,7 +32,8 @@ Include:
 
 ## Hardening already in place
 
-- Per-IP rate limiting on `apps/api` via `@nestjs/throttler` (default: 100 req/min).
+- Per-IP rate limiting on `apps/api` via `@nestjs/throttler` (default: 100 req/min,
+  `apps/api/src/app.module.ts`). `/health/*` and `/metrics` opt out via `@SkipThrottle()`.
 - Conservative web security headers on every response (`X-Frame-Options`, `X-Content-Type-Options`,
   `Referrer-Policy`, `Permissions-Policy`, `Strict-Transport-Security`).
 - Foreign env-prefix rejection at the `@repo/env` boundary so client bundles cannot see server

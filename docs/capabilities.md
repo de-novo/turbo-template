@@ -51,8 +51,10 @@ runtime mount point is selectable via `AUTH_MODE` and `AUTH_TOPOLOGY` env:
 - **sso-gateway** — edge gateway owns SSO; apps consume forwarded claims.
 - **central-auth-service** — internal auth-service for MSA topologies.
 
-Run `pnpm template:auth` to switch; see `docs/auth-topology.md` (when present in the fork) for
-product-specific recipe details.
+Run `pnpm template:auth` to switch. The auth env keys (`AUTH_MODE`, `AUTH_TOPOLOGY`,
+`AUTH_ISSUER_URL`, `AUTH_SERVICE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`) are documented in
+[README.md](../README.md#auth-strategy-selection) and the per-app loader at
+`packages/env/src/apps/api.ts`.
 
 ## Operational lanes
 
@@ -89,8 +91,8 @@ rationale.
   noop adapters only.
 - **`@opentelemetry/auto-instrumentations-node`.** OTel SDK is wired but auto-patching every
   transport is opt-in.
-- **`docker-compose.prod.yml` with bundled Postgres.** Production deploys go through GHCR
-  - a managed DB; local dev runs `apps/api` against an externally-managed Postgres.
+- **`docker-compose.prod.yml` with bundled Postgres.** Production deploys go through GHCR and a
+  managed DB; local dev runs `apps/api` against an externally-managed Postgres.
 - **A jobs / scheduled-task module.** `@nestjs/schedule` is not pulled in; add it when the first
   cron / interval lands.
 - **`@nestjs/swagger` / OpenAPI doc generation.** Add when the API contract becomes an external
