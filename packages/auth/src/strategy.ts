@@ -11,9 +11,9 @@ export const authStrategySchema = z.enum([
 
 export const authStrategyConfigSchema = z.object({
   audience: z.string().min(1).optional(),
-  issuerUrl: z.string().url().optional(),
+  issuerUrl: z.url().optional(),
   mode: authStrategySchema.default("better-auth-embedded"),
-  serviceUrl: z.string().url().optional(),
+  serviceUrl: z.url().optional(),
   topology: authTopologySchema.default("modular-monolith"),
 });
 

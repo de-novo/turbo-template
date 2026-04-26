@@ -9,7 +9,7 @@ export const organizationMembershipSchema = z.object({
 
 export const userIdentitySchema = z.object({
   userId: idSchema,
-  email: z.string().email(),
+  email: z.email(),
   name: z.string().min(1).optional(),
   memberships: z.array(organizationMembershipSchema).default([]),
 });

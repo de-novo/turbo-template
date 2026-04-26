@@ -1,9 +1,9 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Inject } from "@nestjs/common";
 import type { ApiResponse } from "@repo/contracts";
 import { databaseNotConfigured } from "@repo/db";
-import { loadApiEnv } from "@repo/env/apps/api";
 import { createMemoryCache, healthy, type HealthStatus } from "@repo/infrastructure";
 import { runWorkflow } from "@repo/platform";
+import { API_ENV, type ApiEnv } from "./api-env.module.js";
 import { logger } from "./logger.js";
 
 type HealthResponse = {
@@ -17,9 +17,10 @@ export class AppController {
   private readonly cache = createMemoryCache();
   private readonly health = healthy("api");
 
+  constructor(@Inject(API_ENV) private readonly env: ApiEnv) {}
+
   @Get("/health")
   async healthCheck(): Promise<ApiResponse<HealthResponse>> {
-    const env = loadApiEnv();
     await runWorkflow(this.cache.set("health:last-check", new Date().toISOString()));
     const status = await runWorkflow(this.health.check());
 
@@ -33,7 +34,7 @@ export class AppController {
       ok: true,
       data: {
         database: databaseNotConfigured,
-        service: env.PROJECT_SLUG,
+        service: this.env.PROJECT_SLUG,
         status,
       },
     };

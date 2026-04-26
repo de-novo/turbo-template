@@ -16,7 +16,7 @@ export const mfeHostEnvSchema = z
       .url()
       .default("http://localhost:3101/mfe-manifest.dev.json"),
     VITE_MFE_HOST_ENV: appEnvironmentSchema.default("local"),
-    VITE_MFE_HOST_URL: z.string().url().default("http://localhost:3100"),
+    VITE_MFE_HOST_URL: z.url().default("http://localhost:3100"),
   })
   .superRefine((value, ctx) => {
     requireInProduction(ctx, value.VITE_MFE_HOST_ENV, value, [

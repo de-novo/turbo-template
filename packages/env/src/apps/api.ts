@@ -27,18 +27,18 @@ export const apiEnvSchema = projectEnvSchema
   .extend({
     APP_ENV: appEnvironmentSchema.default("local"),
     AUTH_AUDIENCE: z.string().min(1).default("repo-api"),
-    AUTH_ISSUER_URL: z.string().url().optional(),
+    AUTH_ISSUER_URL: z.url().optional(),
     AUTH_MODE: z
       .enum(["better-auth-embedded", "external-oidc", "sso-gateway", "central-auth-service"])
       .default("better-auth-embedded"),
-    AUTH_SERVICE_URL: z.string().url().optional(),
+    AUTH_SERVICE_URL: z.url().optional(),
     AUTH_TOPOLOGY: z.enum(["single-app", "modular-monolith", "msa"]).default("modular-monolith"),
     BETTER_AUTH_SECRET: z.string().min(32).optional(),
-    BETTER_AUTH_URL: z.string().url().optional(),
-    DATABASE_URL: z.string().url().optional(),
+    BETTER_AUTH_URL: z.url().optional(),
+    DATABASE_URL: z.url().optional(),
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
     NODE_ENV: nodeEnvironmentSchema.default("development"),
-    OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
+    OTEL_EXPORTER_OTLP_ENDPOINT: z.url().optional(),
     OTEL_SERVICE_VERSION: z.string().min(1).optional(),
     PORT: z.coerce.number().int().positive().default(4000),
   })

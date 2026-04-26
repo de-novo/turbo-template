@@ -15,17 +15,17 @@ const webEnvKeys = [
 
 export const webEnvSchema = z
   .object({
-    NEXT_PUBLIC_API_URL: z.string().url().default("http://localhost:4000"),
+    NEXT_PUBLIC_API_URL: z.url().default("http://localhost:4000"),
     NEXT_PUBLIC_APP_ENV: appEnvironmentSchema.default("local"),
-    NEXT_PUBLIC_AUTH_ISSUER_URL: z.string().url().optional(),
+    NEXT_PUBLIC_AUTH_ISSUER_URL: z.url().optional(),
     NEXT_PUBLIC_AUTH_MODE: z
       .enum(["better-auth-embedded", "external-oidc", "sso-gateway", "central-auth-service"])
       .default("better-auth-embedded"),
-    NEXT_PUBLIC_AUTH_SERVICE_URL: z.string().url().optional(),
+    NEXT_PUBLIC_AUTH_SERVICE_URL: z.url().optional(),
     NEXT_PUBLIC_AUTH_TOPOLOGY: z
       .enum(["single-app", "modular-monolith", "msa"])
       .default("modular-monolith"),
-    NEXT_PUBLIC_WEB_URL: z.string().url().default("http://localhost:3000"),
+    NEXT_PUBLIC_WEB_URL: z.url().default("http://localhost:3000"),
   })
   .superRefine((value, ctx) => {
     requireInProduction(ctx, value.NEXT_PUBLIC_APP_ENV, value, [

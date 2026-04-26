@@ -7,9 +7,9 @@ const desktopEnvKeys = ["VITE_API_URL", "VITE_APP_ENV", "VITE_DESKTOP_URL"] as c
 
 export const desktopEnvSchema = z
   .object({
-    VITE_API_URL: z.string().url().default("http://localhost:4000"),
+    VITE_API_URL: z.url().default("http://localhost:4000"),
     VITE_APP_ENV: appEnvironmentSchema.default("local"),
-    VITE_DESKTOP_URL: z.string().url().default("http://localhost:3001"),
+    VITE_DESKTOP_URL: z.url().default("http://localhost:3001"),
   })
   .superRefine((value, ctx) => {
     requireInProduction(ctx, value.VITE_APP_ENV, value, ["VITE_API_URL", "VITE_DESKTOP_URL"]);
