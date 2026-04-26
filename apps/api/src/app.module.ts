@@ -6,6 +6,7 @@ import { AppController } from "./app.controller.js";
 import { AppErrorFilter } from "./filters/app-error.filter.js";
 import { HealthModule } from "./health/health.module.js";
 import { MetricsModule } from "./metrics/metrics.module.js";
+import { NotesModule } from "./notes/notes.module.js";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MetricsModule } from "./metrics/metrics.module.js";
     ApiEnvModule,
     HealthModule,
     MetricsModule,
+    NotesModule,
   ],
   controllers: [AppController],
   providers: [

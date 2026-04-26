@@ -73,6 +73,11 @@ API (`apps/api`):
 - Rate limiting: `@nestjs/throttler` registered globally in `apps/api/src/app.module.ts`;
   `@SkipThrottle()` on probes and metrics.
 - API env DI: `apps/api/src/api-env.module.ts` provides `loadApiEnv()` via `API_ENV` token.
+- Better Auth runtime mount (when `AUTH_MODE=better-auth-embedded`): `apps/api/src/auth/auth.ts`
+  - Express-level mount in `apps/api/src/main.ts`. Memory adapter by default; swap to Drizzle for
+    production.
+- Reference domain module: `apps/api/src/notes/` (controller + service + test) — copy this shape for
+  new domain modules. The contract lives in `@repo/contracts/notes`.
 
 Web (`apps/web`):
 
