@@ -26,7 +26,10 @@
     "format:biome": "biome format --write .",
     "format:check": "biome format . && prettier --check .",
     "format:prettier": "prettier --write .",
+    "licenses:check": "license-checker-rseidelsohn --production --excludePrivatePackages --onlyAllow=\"MIT;ISC;Apache-2.0;BSD-2-Clause;BSD-3-Clause;CC0-1.0;CC-BY-3.0;CC-BY-4.0;0BSD;Unlicense;MIT-0;Python-2.0;BlueOak-1.0.0;Apache 2.0;WTFPL;UPL-1.0;Artistic-2.0\" --summary",
     "lint": "biome lint --error-on-warnings .",
+    "syncpack:check": "syncpack lint",
+    "syncpack:fix": "syncpack fix-mismatches && syncpack format",
     "template:auth": "node scripts/select-auth-strategy.mjs",
     "template:rename": "node scripts/rename-template.mjs",
     "template:surfaces": "node scripts/select-surfaces.mjs",
@@ -40,8 +43,16 @@
     "@biomejs/biome": "catalog:",
     "@google/design.md": "catalog:",
     "@types/node": "catalog:",
+    "license-checker-rseidelsohn": "catalog:",
     "prettier": "catalog:",
+    "syncpack": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:"
+  },
+  "pnpm": {
+    "overrides": {
+      "multer": ">=2.1.1",
+      "path-to-regexp": ">=8.4.0"
+    }
   }
 }

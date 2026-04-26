@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/syncpack@14/schema.json",
+  "versionGroups": [
+    {
+      "label": "apps/mobile pins react / react-native to versions Expo SDK 55 expects; do not chase the catalog here.",
+      "packages": ["@repo/mobile"],
+      "dependencies": ["react", "react-dom", "react-native", "react-native-*", "@types/react"],
+      "isIgnored": true
+    },
+    {
+      "label": "apps/mobile pins typescript to the version Expo's bundler ships with.",
+      "packages": ["@repo/mobile"],
+      "dependencies": ["typescript"],
+      "isIgnored": true
+    }
+  ]
+}

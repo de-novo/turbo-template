@@ -52,6 +52,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Audit dependencies (gate on high+critical)
+        run: pnpm audit --prod --audit-level=high
+
+      - name: Check production licenses (allow-list)
+        run: pnpm licenses:check
+
+      - name: Syncpack lint (catalog drift)
+        run: pnpm syncpack:check
+
       - name: Verification gate (lint, tsconfig, typecheck, format, env, design)
         run: pnpm check
 
