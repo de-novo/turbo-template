@@ -2,7 +2,9 @@ import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { loadApiEnv } from "@repo/env/apps/api";
 import { initOpenTelemetry } from "@repo/infrastructure";
+import { toNodeHandler } from "better-auth/node";
 import { AppModule } from "./app.module.js";
+import { createAuth } from "./auth/auth.js";
 import { logger } from "./logger.js";
 import { requestIdMiddleware } from "./middleware/request-id.middleware.js";
 
@@ -20,6 +22,18 @@ const app = await NestFactory.create(AppModule, {
 });
 
 app.use(requestIdMiddleware);
+
+// Mount Better Auth at /api/auth/* via the raw Express adapter so the prefix is
+// preserved (express's `app.use(prefix)` strips the mount, breaking Better
+// Auth's internal routing). The handler runs before Nest's controllers see the
+// request, so Better Auth gets raw bodies. The shipped configuration uses an
+// in-process memory adapter (see apps/api/src/auth/auth.ts); production swaps
+// to the Drizzle adapter.
+if (env.AUTH_MODE === "better-auth-embedded") {
+  const auth = createAuth(env);
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.all("/api/auth/*splat", toNodeHandler(auth));
+}
 
 await app.listen(env.PORT);
 
