@@ -8,6 +8,7 @@ catalog:
   "@expo/metro-config": "55.0.17"
   "@expo/metro-runtime": "55.0.10"
   "@google/design.md": "0.1.1"
+  "@next/bundle-analyzer": "16.2.4"
   "@nestjs/common": "11.1.9"
   "@nestjs/core": "11.1.9"
   "@jest/globals": "29.7.0"

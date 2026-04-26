@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "analyze": "ANALYZE=true next build",
     "build": "next build",
     "check": "pnpm lint && pnpm typecheck",
     "dev": "next dev --port 3000",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@next/bundle-analyzer": "catalog:",
     "@playwright/test": "catalog:",
     "@repo/testing": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
