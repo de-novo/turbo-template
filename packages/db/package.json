@@ -17,6 +17,7 @@
     "db:studio": "drizzle-kit studio --config drizzle.config.ts",
     "lint": "biome lint .",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

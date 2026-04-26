@@ -13,6 +13,7 @@
     "dev:web": "expo start --web",
     "lint": "biome lint .",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

@@ -35,6 +35,7 @@
     "check:examples": "tsx src/check-examples.ts",
     "lint": "biome lint .",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

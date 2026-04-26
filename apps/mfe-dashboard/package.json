@@ -9,6 +9,7 @@
     "dev": "vite --host 0.0.0.0 --port 3101",
     "lint": "biome lint .",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
