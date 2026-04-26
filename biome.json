@@ -41,6 +41,7 @@
       },
       "style": {
         "noNonNullAssertion": "error",
+        "useExportType": "error",
         "useImportType": "error"
       }
     },

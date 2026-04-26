@@ -23,8 +23,9 @@ export function initOpenTelemetry(options: ObservabilityOptions): ObservabilityH
     ...(options.serviceVersion ? { "service.version": options.serviceVersion } : {}),
   });
 
+  const normalized = endpoint.replace(/\/$/, "");
   const traceExporter = new OTLPTraceExporter({
-    url: `${endpoint.replace(/\/$/, "")}/v1/traces`,
+    url: normalized.endsWith("/v1/traces") ? normalized : `${normalized}/v1/traces`,
   });
 
   const sdk = new NodeSDK({
