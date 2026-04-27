@@ -3,6 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { createDatabaseClient } from "@repo/db";
 import { loadApiEnv } from "@repo/env/apps/api";
 import { initOpenTelemetry } from "@repo/infrastructure";
+import { apiReference } from "@scalar/express-api-reference";
 import { toNodeHandler } from "better-auth/node";
 import { AppModule } from "./app.module.js";
 import { createAuth } from "./auth/auth.js";
@@ -32,15 +33,26 @@ const dbClient = env.DATABASE_URL
   ? createDatabaseClient({ connectionString: env.DATABASE_URL })
   : null;
 
+const expressApp = app.getHttpAdapter().getInstance();
+
 // Mount Better Auth at /api/auth/* via the raw Express adapter so the prefix is
 // preserved (express's `app.use(prefix)` strips the mount, breaking Better
 // Auth's internal routing). The handler runs before Nest's controllers see the
 // request, so Better Auth gets raw bodies.
 if (env.AUTH_MODE === "better-auth-embedded") {
   const auth = createAuth(env, dbClient ?? undefined);
-  const expressApp = app.getHttpAdapter().getInstance();
   expressApp.all("/api/auth/*splat", toNodeHandler(auth));
 }
+
+// Scalar UI for the OpenAPI document. Reads from /openapi.json which is served
+// by OpenApiController and generated on the fly from @repo/contracts schemas.
+expressApp.use(
+  "/docs",
+  apiReference({
+    url: "/openapi.json",
+    pageTitle: `${env.PROJECT_NAME} API`,
+  }),
+);
 
 await app.listen(env.PORT);
 
@@ -51,6 +63,7 @@ logger.log({
     observability: observability ? "enabled" : "disabled",
     database: dbClient ? "connected" : "not-configured",
     auth: env.AUTH_MODE === "better-auth-embedded" ? (dbClient ? "drizzle" : "memory") : "external",
+    docs: `http://localhost:${env.PORT}/docs`,
   },
 });
 
