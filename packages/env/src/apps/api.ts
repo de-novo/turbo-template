@@ -23,6 +23,8 @@ const apiEnvKeys = [
   "BETTER_AUTH_SECRET",
   "JOBS_ENABLED",
   "CORS_ORIGINS",
+  "EXPOSE_DOCS",
+  "SHUTDOWN_TIMEOUT_MS",
 ] as const;
 
 export const apiEnvSchema = projectEnvSchema
@@ -49,10 +51,15 @@ export const apiEnvSchema = projectEnvSchema
           : undefined,
       ),
     DATABASE_URL: z.url().optional(),
+    EXPOSE_DOCS: z
+      .union([z.boolean(), z.enum(["true", "false"])])
+      .transform((v) => v === true || v === "true")
+      .default(true),
     JOBS_ENABLED: z
       .union([z.boolean(), z.enum(["true", "false"])])
       .transform((v) => v === true || v === "true")
       .default(false),
+    SHUTDOWN_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
     NODE_ENV: nodeEnvironmentSchema.default("development"),
     OTEL_EXPORTER_OTLP_ENDPOINT: z.url().optional(),

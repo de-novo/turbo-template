@@ -61,15 +61,19 @@ if (authInstance) {
   expressApp.all("/api/auth/*splat", toNodeHandler(authInstance));
 }
 
-// Scalar UI for the OpenAPI document. Reads from /openapi.json which is served
-// by OpenApiController and generated on the fly from @repo/contracts schemas.
-expressApp.use(
-  "/docs",
-  apiReference({
-    url: "/openapi.json",
-    pageTitle: `${env.PROJECT_NAME} API`,
-  }),
-);
+// Scalar UI for the OpenAPI document. Mounted only when EXPOSE_DOCS=true (the
+// default in dev). Production deploys typically set EXPOSE_DOCS=false to avoid
+// publishing the API surface; OpenApiController guards `/openapi.json` with the
+// same flag so the doc and the renderer stay in sync.
+if (env.EXPOSE_DOCS) {
+  expressApp.use(
+    "/docs",
+    apiReference({
+      url: "/openapi.json",
+      pageTitle: `${env.PROJECT_NAME} API`,
+    }),
+  );
+}
 
 await app.listen(env.PORT);
 
@@ -81,16 +85,56 @@ logger.log({
     database: dbClient ? "connected" : "not-configured",
     auth: env.AUTH_MODE === "better-auth-embedded" ? (dbClient ? "drizzle" : "memory") : "external",
     jobs: env.JOBS_ENABLED ? "enabled" : "disabled",
-    docs: `http://localhost:${env.PORT}/docs`,
+    docs: env.EXPOSE_DOCS ? `http://localhost:${env.PORT}/docs` : "disabled",
   },
 });
 
+// Graceful shutdown order:
+//   1. Stop accepting new connections (httpServer.close()) so probes route to
+//      another replica while in-flight requests finish.
+//   2. Close the Nest application (lifecycle hooks: jobs, modules, …).
+//   3. Drain the DB pool and OTel exporter.
+//   4. Force-exit if any of the above hangs past SHUTDOWN_TIMEOUT_MS.
+let shuttingDown = false;
 const shutdown = async (signal: string) => {
+  if (shuttingDown) return;
+  shuttingDown = true;
+
   logger.log({ level: "info", message: `Received ${signal}; shutting down.` });
-  await app.close();
-  if (dbClient) await dbClient.close();
-  await observability?.shutdown();
-  process.exit(0);
+
+  const forceExit = setTimeout(() => {
+    logger.log({
+      level: "error",
+      message: `Shutdown exceeded ${env.SHUTDOWN_TIMEOUT_MS}ms; forcing exit.`,
+    });
+    process.exit(1);
+  }, env.SHUTDOWN_TIMEOUT_MS);
+  forceExit.unref();
+
+  try {
+    const httpServer = app.getHttpServer() as { close(cb?: (err?: Error) => void): void };
+    await new Promise<void>((resolve) => {
+      httpServer.close((err) => {
+        if (err) {
+          logger.log({
+            level: "warn",
+            message: "httpServer.close error",
+            details: { err: String(err) },
+          });
+        }
+        resolve();
+      });
+    });
+    await app.close();
+    if (dbClient) await dbClient.close();
+    await observability?.shutdown();
+    clearTimeout(forceExit);
+    process.exit(0);
+  } catch (err) {
+    logger.log({ level: "error", message: "Shutdown failed", details: { err: String(err) } });
+    clearTimeout(forceExit);
+    process.exit(1);
+  }
 };
 
 process.once("SIGINT", () => void shutdown("SIGINT"));

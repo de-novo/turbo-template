@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { logger } from "../logger.js";
+import { httpRequestDurationSeconds, httpRequestsTotal } from "../metrics/http-metrics.js";
 
 // Liveness/readiness/metrics get hit on a tight schedule (Kubernetes probes,
 // Prometheus scrape). Logging every one of them is pure noise. Operators who
@@ -27,9 +28,21 @@ export function requestLoggerMiddleware(req: Request, res: Response, next: NextF
   const requestIdStr = typeof requestId === "string" ? requestId : undefined;
 
   res.on("finish", () => {
-    const elapsedMs = Number(process.hrtime.bigint() - startNs) / 1_000_000;
+    const elapsedNs = process.hrtime.bigint() - startNs;
+    const elapsedMs = Number(elapsedNs) / 1_000_000;
+    const elapsedSeconds = Number(elapsedNs) / 1_000_000_000;
     const status = res.statusCode;
     const level = status >= 500 ? "error" : status >= 400 ? "warn" : "info";
+
+    // Use the matched Express route template (e.g. "/notes/:id"), not the raw
+    // path, for the metric label. Raw paths produce one bucket per id and blow
+    // up Prometheus cardinality. `req.route` is populated by the time `finish`
+    // fires; unmatched paths fall through to "<unmatched>".
+    const route = req.route?.path ?? "<unmatched>";
+    const labels = { method: req.method, route, status: String(status) };
+    httpRequestDurationSeconds.observe(labels, elapsedSeconds);
+    httpRequestsTotal.inc(labels);
+
     logger.log({
       level,
       message: `${req.method} ${req.path} ${status} ${elapsedMs.toFixed(1)}ms`,

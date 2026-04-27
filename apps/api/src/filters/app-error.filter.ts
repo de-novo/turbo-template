@@ -1,7 +1,13 @@
-import { type ArgumentsHost, Catch, type ExceptionFilter } from "@nestjs/common";
+import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException } from "@nestjs/common";
 import type { ApiResponse } from "@repo/contracts";
 import { loadApiEnv } from "@repo/env/apps/api";
-import { errorCodeToHttpStatus, getLoggerContext, toPublicError } from "@repo/platform";
+import {
+  AppError,
+  errorCodeToHttpStatus,
+  getLoggerContext,
+  httpStatusToErrorCode,
+  toPublicError,
+} from "@repo/platform";
 import type { Response } from "express";
 import { logger } from "../logger.js";
 
@@ -16,7 +22,19 @@ export class AppErrorFilter implements ExceptionFilter {
     const res = ctx.getResponse<Response>();
     const requestId = getLoggerContext()?.requestId;
 
-    const publicError = toPublicError(exception, requestId);
+    // Translate Nest's HttpException (e.g. the default 404 for unmatched
+    // routes) into the AppError taxonomy so consumers always see the same
+    // `{ ok:false, error:{ code, message } }` envelope. Anything else falls
+    // through to toPublicError, which maps unknown throwables to INTERNAL/500.
+    const normalized =
+      exception instanceof HttpException && !(exception instanceof AppError)
+        ? new AppError({
+            code: httpStatusToErrorCode(exception.getStatus()),
+            message: exception.message,
+          })
+        : exception;
+
+    const publicError = toPublicError(normalized, requestId);
     const status = errorCodeToHttpStatus[publicError.code];
 
     logger.log({
