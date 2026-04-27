@@ -64,6 +64,34 @@ updates:
           - "@expo/*"
           - "react-native*"
 
+    # Ignore bumps that conflict with deliberate runtime locks. See
+    # docs/technical-stack.md and .syncpackrc.json for the rationale; reopen
+    # these as part of a deliberate runtime/SDK upgrade, not an automated PR.
+    ignore:
+      # Node 24 LTS: @types/node major must match the runtime.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # Expo SDK 55 locks React Native and the related modules.
+      - dependency-name: "react-native"
+      - dependency-name: "react-native-*"
+      # apps/mobile pins react / react-dom / @types/react to versions Expo SDK 55
+      # expects; chasing the catalog there breaks Metro bundling.
+      - dependency-name: "react"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-patch"]
+      # jest-expo@55 depends on jest 29.x; do not chase jest 30.
+      - dependency-name: "jest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jest-expo"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@jest/globals"
+        update-types: ["version-update:semver-major"]
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
