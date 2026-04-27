@@ -12,3 +12,9 @@ test("loadApiEnv hydrates safe local defaults from an empty source", () => {
 test("loadApiEnv rejects foreign public prefixes from another app surface", () => {
   expect(() => loadApiEnv({ NEXT_PUBLIC_APP_NAME: "leak" })).toThrow();
 });
+
+test("loadApiEnv ignores framework-internal keys (vite/vitest injects VITE_USER_NODE_ENV)", () => {
+  // vitest injects VITE_USER_NODE_ENV into process.env when any .env file is
+  // loaded. It's not a user-set value and must not trip the foreign-key guard.
+  expect(() => loadApiEnv({ VITE_USER_NODE_ENV: "test" })).not.toThrow();
+});

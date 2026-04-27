@@ -45,12 +45,37 @@ operational lane (and what is intentionally deferred) lives in
 
 ## Quick Start
 
+5-minute path from clone to running:
+
 ```bash
-pnpm install
+pnpm bootstrap      # preflight + pnpm install + copy env examples to per-app .env files
+pnpm dev            # turbo run dev across every surface
+```
+
+`pnpm bootstrap` is idempotent (re-running won't overwrite your edits — pass `--force` if you want
+to). It runs `scripts/bootstrap.mjs`, which:
+
+1. Calls `pnpm doctor` (Node 24 / pnpm 10 / git checks) and bails early on a wrong toolchain.
+2. Runs `pnpm install`.
+3. Copies `env/local/*.env.example` to each app's canonical dev location (`apps/api/.env`,
+   `apps/web/.env.local`, `apps/desktop/.env`, `apps/mobile/.env.local`, `apps/mfe-host/.env`),
+   leaving any file you've already edited untouched.
+4. Prints suggested next commands.
+
+The API + web boot to fully working defaults without a database (Better Auth uses an in-memory
+adapter). For persistent auth and the notes example, add a Postgres step:
+
+```bash
+pnpm dev:db && pnpm db:migrate    # docker compose up + Drizzle migrations
+pnpm dev:api                      # picks up DATABASE_URL → Drizzle adapter
+```
+
+Other one-shot commands:
+
+```bash
 pnpm check          # lint + tsconfig + typecheck + format + env + design (CI gate)
 pnpm test           # vitest + jest-expo across all packages and apps
 pnpm build          # turbo build for every app and package
-pnpm dev            # all surfaces (or pnpm dev:web | dev:api | dev:desktop | ...)
 ```
 
 If `pnpm install` errors, confirm Node 24 (`node -v`) and pnpm 10 (`pnpm -v`); both are pinned via
@@ -120,11 +145,17 @@ live database; `migrate` and `studio` require a reachable PostgreSQL. The shippe
 `@repo/db/schema/system-events` only — product schemas land in `packages/db/src/schema/` as forks
 add them.
 
-### Optional env files
+### Env files
+
+`pnpm bootstrap` (above) copies `env/local/*.env.example` into per-app dev locations on first run.
+To do it manually:
 
 ```bash
-cp env/local/api.env.example apps/api/.env
-cp env/local/web.env.example apps/web/.env.local
+cp env/local/api.env.example      apps/api/.env
+cp env/local/web.env.example      apps/web/.env.local
+cp env/local/desktop.env.example  apps/desktop/.env
+cp env/local/mobile.env.example   apps/mobile/.env.local
+cp env/local/mfe-host.env.example apps/mfe-host/.env
 ```
 
 Real `.env` files are gitignored; the `.env.example` pairs are the source of truth for required keys
@@ -719,6 +750,11 @@ For contributors:
 - [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) — Contributor Covenant 2.1.
 - [AGENTS.md](./AGENTS.md) — guidance for AI coding agents (Claude Code, Cursor, etc.) working in
   this repo.
+
+For contributors making common changes:
+
+- [docs/recipes/](./docs/recipes/) — cookbook walkthroughs (add a domain module, add an env key, add
+  a scheduled job, switch the auth mode, generate a client SDK).
 
 For architects:
 

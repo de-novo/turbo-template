@@ -109,6 +109,8 @@ rationale.
 ## Where to start reading
 
 - [README.md](../README.md) — top-level orientation.
+- [docs/recipes/](./recipes/) — cookbook walkthroughs for common changes (add a domain module, add
+  an env key, add a scheduled job, switch the auth mode, generate a client SDK).
 - [docs/template-strategy.md](./template-strategy.md) — naming, scope, what to keep stable.
 - [docs/technical-stack.md](./technical-stack.md) — versions, language standards, package ownership.
 - [docs/secret-management.md](./secret-management.md) — env contract + GitOps secret lane.
