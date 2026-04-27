@@ -19,6 +19,8 @@ const securityHeaders = [
   },
 ];
 
+const apiUrl = process.env["NEXT_PUBLIC_API_URL"] ?? "http://localhost:4000";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
@@ -31,6 +33,15 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+    ];
+  },
+  // Proxy auth + reference API routes through Next so the browser sees them as
+  // same-origin. Avoids CORS / cookie-domain mismatches in dev (web on :3000,
+  // api on :4000) and lets prod point a single env var at the API URL.
+  async rewrites() {
+    return [
+      { source: "/api/auth/:path*", destination: `${apiUrl}/api/auth/:path*` },
+      { source: "/api/me", destination: `${apiUrl}/me` },
     ];
   },
 };

@@ -34,6 +34,23 @@ export default function HomePage() {
         description={`Create domain modules after the first product boundary is clear. API: ${webEnv.NEXT_PUBLIC_API_URL}`}
         title="Template scaffold is ready"
       />
+      <section className="mt-6 flex flex-wrap gap-3">
+        <a
+          className="rounded bg-slate-900 px-4 py-2 font-medium text-sm text-white"
+          href="/sign-up"
+        >
+          Create account
+        </a>
+        <a
+          className="rounded border border-slate-300 px-4 py-2 font-medium text-sm"
+          href="/sign-in"
+        >
+          Sign in
+        </a>
+        <a className="rounded border border-slate-300 px-4 py-2 font-medium text-sm" href="/me">
+          /me (protected)
+        </a>
+      </section>
     </AppShell>
   );
 }
