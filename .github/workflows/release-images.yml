@@ -46,7 +46,7 @@ jobs:
 
       - name: Resolve image metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}-${{ matrix.app }}
           tags: |
@@ -75,7 +75,7 @@ jobs:
           sbom: true
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: ghcr.io/${{ github.repository }}-${{ matrix.app }}
           subject-digest: ${{ steps.build.outputs.digest }}
