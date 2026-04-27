@@ -28,8 +28,6 @@ export type { DatabaseClient };
   exports: [DATABASE_CLIENT],
 })
 export class DbModule implements OnApplicationShutdown {
-  constructor() {}
-
   async onApplicationShutdown(): Promise<void> {
     // Pool close is best-effort here; the provider closure holds the client
     // reference but Nest's DI resolves the value once. The Express layer's

@@ -118,7 +118,7 @@ step("Suggested next commands", () => {
     "",
     "  open http://localhost:4000/docs   # Scalar UI for the API",
   ];
-  process.stdout.write(lines.join("\n") + "\n");
+  process.stdout.write(`${lines.join("\n")}\n`);
 });
 
 process.stdout.write("\n✓ Setup complete.\n");

@@ -21,7 +21,7 @@ function makeFixture() {
   // default name/slug/scope tokens.
   writeFileSync(
     join(dir, "project.config.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         projectName: "Fullstack TypeScript Template",
         projectSlug: "fullstack-typescript-template",
@@ -30,7 +30,7 @@ function makeFixture() {
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
   writeFileSync(
     join(dir, "README.md"),

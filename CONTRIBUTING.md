@@ -6,14 +6,24 @@ fork via `pnpm template:rename`; the rules below keep the baseline coherent.
 ## Local setup
 
 ```bash
-pnpm install
-cp env/local/api.env.example apps/api/.env
-cp env/local/web.env.example apps/web/.env.local
-pnpm dev
+pnpm bootstrap     # preflight + pnpm install + copy env/local examples to per-app .env files
+pnpm dev           # turbo run dev across every surface
 ```
+
+`pnpm bootstrap` is idempotent — re-running won't overwrite your edits. See
+[README — Quick Start](./README.md#quick-start) for the full flow including the optional Postgres
+step. To copy env files manually instead, see the README's "Env files" section.
 
 Per-app dev commands:
 `pnpm dev:web | dev:api | dev:desktop | dev:mobile | dev:mfe | dev:mfe-host | dev:mfe-dashboard`.
+
+While iterating, the most useful root scripts:
+
+```bash
+pnpm test:watch    # vitest in watch mode (root)
+pnpm lint:fix      # biome lint --write across the workspace
+pnpm format        # biome format + prettier write
+```
 
 `dev:mfe` runs the host plus the dashboard remote together. Run individual halves only when you want
 to iterate on one without the other.
