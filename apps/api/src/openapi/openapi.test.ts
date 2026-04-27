@@ -23,9 +23,7 @@ describe("buildOpenApiDocument", () => {
   });
 
   it("documents the Notes CRUD surface", () => {
-    expect(Object.keys(doc.paths)).toEqual(
-      expect.arrayContaining(["/notes", "/notes/{id}"]),
-    );
+    expect(Object.keys(doc.paths)).toEqual(expect.arrayContaining(["/notes", "/notes/{id}"]));
   });
 
   it("includes the Better Auth surface only when enabled", () => {

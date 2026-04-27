@@ -162,9 +162,7 @@ export function buildOpenApiDocument(env: ApiEnv): unknown {
 
   if (env.AUTH_MODE === "better-auth-embedded") {
     paths["/api/auth/{path}"] = {
-      parameters: [
-        { name: "path", in: "path", required: true, schema: { type: "string" } },
-      ],
+      parameters: [{ name: "path", in: "path", required: true, schema: { type: "string" } }],
       get: {
         tags: ["auth"],
         summary: "Better Auth (managed). See https://better-auth.com/docs for the full surface.",
