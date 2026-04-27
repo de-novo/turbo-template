@@ -10,7 +10,7 @@
   "scripts": {
     "build": "turbo run build",
     "check": "pnpm lint && pnpm tsconfig:check && pnpm typecheck && pnpm format:check && pnpm env:check && pnpm design:lint",
-    "clean": "rm -rf .turbo coverage playwright-report test-results && find apps packages -type d \\( -name dist -o -name .next -o -name .turbo -o -name coverage -o -name .expo \\) -prune -exec rm -rf {} + && find apps packages -name '*.tsbuildinfo' -not -path '*/node_modules/*' -delete",
+    "clean": "node scripts/clean.mjs",
     "dev": "turbo run dev",
     "dev:api": "pnpm --filter @repo/api dev",
     "dev:desktop": "pnpm --filter @repo/desktop dev",

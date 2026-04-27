@@ -1,0 +1,31 @@
+# Normalize line endings on commit so a Windows clone doesn't corrupt POSIX
+# shebangs or change the diff of every file the moment a Windows user touches
+# it. `* text=auto eol=lf` says: detect text vs binary, and check text out
+# with LF on every platform (with `core.autocrlf` honored on Windows for the
+# working tree if the user has it set).
+* text=auto eol=lf
+
+# Files whose tooling explicitly requires CRLF on Windows.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Treat binary blobs as binary (Git won't try to diff or LF-normalize them).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.svg binary
+*.pdf binary
+*.mp4 binary
+*.mov binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+
+# Keep noisy lockfile diffs collapsed in PRs.
+pnpm-lock.yaml -diff linguist-generated
