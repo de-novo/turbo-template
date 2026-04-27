@@ -8,6 +8,13 @@
       "when": 1777039420487,
       "tag": "0000_elite_magma",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777267723260,
+      "tag": "0001_add_auth_tables",
+      "breakpoints": true
     }
   ]
 }

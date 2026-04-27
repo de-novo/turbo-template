@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { ApiEnvModule } from "./api-env.module.js";
-import { AppController } from "./app.controller.js";
+import { DbModule } from "./db/db.module.js";
 import { AppErrorFilter } from "./filters/app-error.filter.js";
 import { HealthModule } from "./health/health.module.js";
 import { MetricsModule } from "./metrics/metrics.module.js";
@@ -14,11 +14,11 @@ import { NotesModule } from "./notes/notes.module.js";
       throttlers: [{ name: "default", ttl: 60_000, limit: 100 }],
     }),
     ApiEnvModule,
+    DbModule,
     HealthModule,
     MetricsModule,
     NotesModule,
   ],
-  controllers: [AppController],
   providers: [
     {
       provide: APP_FILTER,

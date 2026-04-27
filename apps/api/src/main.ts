@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
+import { createDatabaseClient } from "@repo/db";
 import { loadApiEnv } from "@repo/env/apps/api";
 import { initOpenTelemetry } from "@repo/infrastructure";
 import { toNodeHandler } from "better-auth/node";
@@ -23,14 +24,20 @@ const app = await NestFactory.create(AppModule, {
 
 app.use(requestIdMiddleware);
 
+// Open the database client once at boot when DATABASE_URL is set. The same
+// client is passed into Better Auth so sessions persist across restarts; if
+// DATABASE_URL is unset, Better Auth falls back to its memory adapter and the
+// client stays null. Closed below on shutdown.
+const dbClient = env.DATABASE_URL
+  ? createDatabaseClient({ connectionString: env.DATABASE_URL })
+  : null;
+
 // Mount Better Auth at /api/auth/* via the raw Express adapter so the prefix is
 // preserved (express's `app.use(prefix)` strips the mount, breaking Better
 // Auth's internal routing). The handler runs before Nest's controllers see the
-// request, so Better Auth gets raw bodies. The shipped configuration uses an
-// in-process memory adapter (see apps/api/src/auth/auth.ts); production swaps
-// to the Drizzle adapter.
+// request, so Better Auth gets raw bodies.
 if (env.AUTH_MODE === "better-auth-embedded") {
-  const auth = createAuth(env);
+  const auth = createAuth(env, dbClient ?? undefined);
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.all("/api/auth/*splat", toNodeHandler(auth));
 }
@@ -42,12 +49,15 @@ logger.log({
   message: `API listening on http://localhost:${env.PORT}`,
   details: {
     observability: observability ? "enabled" : "disabled",
+    database: dbClient ? "connected" : "not-configured",
+    auth: env.AUTH_MODE === "better-auth-embedded" ? (dbClient ? "drizzle" : "memory") : "external",
   },
 });
 
 const shutdown = async (signal: string) => {
   logger.log({ level: "info", message: `Received ${signal}; shutting down.` });
   await app.close();
+  await dbClient?.close();
   await observability?.shutdown();
   process.exit(0);
 };

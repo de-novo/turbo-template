@@ -74,8 +74,10 @@ API (`apps/api`):
   `@SkipThrottle()` on probes and metrics.
 - API env DI: `apps/api/src/api-env.module.ts` provides `loadApiEnv()` via `API_ENV` token.
 - Better Auth runtime mount (when `AUTH_MODE=better-auth-embedded`): `apps/api/src/auth/auth.ts`
-  - Express-level mount in `apps/api/src/main.ts`. Memory adapter by default; swap to Drizzle for
-    production.
+  - Express-level mount in `apps/api/src/main.ts`. Drizzle adapter when `DATABASE_URL` is set
+    (production path), in-process memory adapter otherwise (solo / demo).
+- DB client DI: `apps/api/src/db/db.module.ts` provides a `DatabaseClient` (or `null` when
+  `DATABASE_URL` is unset) via the `DATABASE_CLIENT` token.
 - Reference domain module: `apps/api/src/notes/` (controller + service + test) — copy this shape for
   new domain modules. The contract lives in `@repo/contracts/notes`.
 

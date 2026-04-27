@@ -12,6 +12,14 @@ record. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ### Added
 
+- DB + Auth production path: `packages/db/src/schema/auth.ts` (Better Auth tables for the `pg`
+  provider), Drizzle migration baseline at `packages/db/drizzle/`, `packages/db/src/seed.ts` +
+  `pnpm db:seed`, `docker-compose.dev.yml` (Postgres 17 alpine on host:5433 → container:5432) +
+  `pnpm dev:db / dev:db:logs / dev:db:stop / dev:db:reset`, and `apps/api/src/db/db.module.ts` DI
+  provider for the shared `DatabaseClient`. Better Auth now uses the Drizzle adapter when
+  `DATABASE_URL` is set (production path) and falls back to the in-process memory adapter otherwise
+  (solo / demo). `/health/ready` actually probes the DB via `SELECT 1` when the client is
+  configured.
 - `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/{bug_report,feature_request}.md`, and
   `.github/CODEOWNERS` so PRs and issues come pre-shaped to the structured-commit convention.
 - `scripts/preflight.mjs` (`pnpm doctor`) — checks Node 24 / pnpm 10 / git presence before
@@ -22,6 +30,11 @@ record. See [CONTRIBUTING.md](./CONTRIBUTING.md).
   frozen-lockfile install, preflight on attach, and forwarded dev ports.
 - `apps/api/Dockerfile` HEALTHCHECK against `/health/live` so `docker run` (without Kubernetes)
   marks the container unhealthy when the API is not responding.
+
+### Removed
+
+- `apps/api/src/app.controller.ts` (and its test) — the `/health` endpoint moved into
+  `HealthController` along with `/health/live` + `/health/ready`. `/health` stays as an alias.
 
 ## Phase 6 (port from origin)
 
