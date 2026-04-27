@@ -13,6 +13,7 @@ For the **what ships**, see [docs/capabilities.md](../capabilities.md).
 | [Add an env key](./add-env-key.md)                      | Schema → example → loader → consume. Keeps `pnpm env:check` and CI green.                                    |
 | [Add a scheduled job](./add-scheduled-job.md)           | A new `@nestjs/schedule` cron / interval / timeout, behind `JOBS_ENABLED`.                                   |
 | [Switch the auth mode](./switch-auth-mode.md)           | Move from Better Auth embedded to external OIDC, SSO gateway, or central auth-service.                       |
+| [Protect an API route](./protect-an-api-route.md)       | `AuthenticatedGuard` + `@CurrentUser()` for `AUTH_MODE=better-auth-embedded`.                                |
 | [Generate a typed client SDK](./generate-client-sdk.md) | Consume `/openapi.json` from web/desktop/mobile with full type safety.                                       |
 
 If you're touching something not listed here, the most useful next read is usually the closest

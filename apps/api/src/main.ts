@@ -1,12 +1,13 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
-import { createDatabaseClient } from "@repo/db";
 import { loadApiEnv } from "@repo/env/apps/api";
 import { initOpenTelemetry } from "@repo/infrastructure";
 import { apiReference } from "@scalar/express-api-reference";
 import { toNodeHandler } from "better-auth/node";
 import { AppModule } from "./app.module.js";
-import { createAuth } from "./auth/auth.js";
+import type { AuthInstance } from "./auth/auth.js";
+import { AUTH_INSTANCE } from "./auth/auth.module.js";
+import { DATABASE_CLIENT, type DatabaseClient } from "./db/db.module.js";
 import { logger } from "./logger.js";
 import { requestIdMiddleware } from "./middleware/request-id.middleware.js";
 
@@ -25,13 +26,11 @@ const app = await NestFactory.create(AppModule, {
 
 app.use(requestIdMiddleware);
 
-// Open the database client once at boot when DATABASE_URL is set. The same
-// client is passed into Better Auth so sessions persist across restarts; if
-// DATABASE_URL is unset, Better Auth falls back to its memory adapter and the
-// client stays null. Closed below on shutdown.
-const dbClient = env.DATABASE_URL
-  ? createDatabaseClient({ connectionString: env.DATABASE_URL })
-  : null;
+// `DbModule` provides the DatabaseClient (or null when DATABASE_URL is unset)
+// and `AuthModule` builds the Better Auth instance from it. Pull both out of
+// Nest's DI tree so main.ts owns boot wiring without duplicating construction.
+const dbClient = app.get<DatabaseClient | null>(DATABASE_CLIENT, { strict: false });
+const authInstance = app.get<AuthInstance | null>(AUTH_INSTANCE, { strict: false });
 
 const expressApp = app.getHttpAdapter().getInstance();
 
@@ -39,9 +38,8 @@ const expressApp = app.getHttpAdapter().getInstance();
 // preserved (express's `app.use(prefix)` strips the mount, breaking Better
 // Auth's internal routing). The handler runs before Nest's controllers see the
 // request, so Better Auth gets raw bodies.
-if (env.AUTH_MODE === "better-auth-embedded") {
-  const auth = createAuth(env, dbClient ?? undefined);
-  expressApp.all("/api/auth/*splat", toNodeHandler(auth));
+if (authInstance) {
+  expressApp.all("/api/auth/*splat", toNodeHandler(authInstance));
 }
 
 // Scalar UI for the OpenAPI document. Reads from /openapi.json which is served
@@ -71,7 +69,7 @@ logger.log({
 const shutdown = async (signal: string) => {
   logger.log({ level: "info", message: `Received ${signal}; shutting down.` });
   await app.close();
-  await dbClient?.close();
+  if (dbClient) await dbClient.close();
   await observability?.shutdown();
   process.exit(0);
 };

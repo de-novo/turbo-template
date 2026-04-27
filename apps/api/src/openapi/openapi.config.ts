@@ -161,6 +161,38 @@ export function buildOpenApiDocument(env: ApiEnv): unknown {
   };
 
   if (env.AUTH_MODE === "better-auth-embedded") {
+    paths["/me"] = {
+      get: {
+        tags: ["auth"],
+        summary: "Authenticated user (demo of AuthenticatedGuard + @CurrentUser).",
+        responses: {
+          "200": {
+            description: "The current user.",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    ok: { const: true },
+                    data: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string" },
+                        email: { type: "string", format: "email" },
+                        name: { type: "string" },
+                      },
+                      required: ["id", "email"],
+                    },
+                  },
+                  required: ["ok", "data"],
+                },
+              },
+            },
+          },
+          "401": jsonResponse("No active session.", "PublicError"),
+        },
+      },
+    };
     paths["/api/auth/{path}"] = {
       parameters: [{ name: "path", in: "path", required: true, schema: { type: "string" } }],
       get: {
