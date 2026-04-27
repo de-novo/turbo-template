@@ -12,6 +12,61 @@ record. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 (no entries yet)
 
+## v0.1.1 — 2026-04-27
+
+Production-hardening patch. No breaking changes; every addition is either a new opt-in env var or a
+stricter default that's safe to inherit. Container images are published as
+`ghcr.io/de-novo/turbo-template-{api,web}:v0.1.1`.
+
+### Added
+
+- **Per-request access log middleware** (`apps/api/src/middleware/request-logger.middleware.ts`).
+  One pino line per request with `method`, `path`, `status`, `latencyMs`, and `requestId` — joining
+  the same stream as application logs (and rendering nicely under `pino-pretty`). Skips `/health/*`
+  and `/metrics` so liveness probes and Prometheus scrapes don't bury real traffic. Status drives
+  log level (2xx/3xx → info, 4xx → warn, 5xx → error).
+- **HTTP request metrics** at `/metrics`: `http_request_duration_seconds` histogram (5ms→10s
+  buckets) and `http_requests_total` counter, both labeled by `method`, `route`, `status`. Route
+  uses Express's matched template (`req.route?.path`, falling back to `<unmatched>`) so cardinality
+  stays bounded.
+- **`pino-pretty` in dev**: `apps/api`'s `dev` script pipes JSON output through `pino-pretty` for
+  colorized human-readable logs. Production deploys (`node dist/main.js`) keep structured JSON
+  intact for log shippers.
+- **Mermaid dependency-direction diagram** in README — replaces the ASCII tree. GitHub renders
+  inline; same rules, harder to drift.
+- **`CORS_ORIGINS`** env (`packages/env/src/apps/api.ts`): comma-separated allowlist. Required in
+  production via `requireInProduction`; local dev defaults to localhost:{3000,3001,3100,3101} so
+  `pnpm dev` keeps working without env tuning. Pairs with `credentials: true`.
+- **Per-route auth rate limit**: Better Auth `rateLimit.customRules` caps `/sign-in/email` and
+  `/sign-up/email` at 5 attempts per 15 min per IP. In-memory storage by default; multi-replica
+  deploys should switch to `storage: "database"` (see `apps/api/src/auth/auth.ts` doc comment).
+- **`EXPOSE_DOCS`** env: gate `/openapi.json` and `/docs` behind a flag (default `true` in dev).
+  Production deploys typically set `false` so the API surface isn't published. `OpenApiController`
+  throws `NOT_FOUND` (not `UNAUTHORIZED`) when disabled — doesn't signal that the route exists.
+- **`SHUTDOWN_TIMEOUT_MS`** env (default 30 s): force-exit safety net for graceful shutdown.
+- **`pnpm lint:fix` and `pnpm test:watch`** root scripts.
+
+### Changed
+
+- **Graceful shutdown order**: `httpServer.close()` first (drains keep-alive connections so probes
+  route to another replica) → `app.close()` (Nest lifecycle hooks) → `dbClient.close()` +
+  `observability.shutdown()`. Prior code called `app.close()` directly, leaving the http server
+  accepting new connections during the drain. Wraps the whole thing in `SHUTDOWN_TIMEOUT_MS`.
+- **`AppErrorFilter` translates Nest's `HttpException`** (incl. the default 404 for unmatched
+  routes) into the `AppError` taxonomy so every error response uses the canonical
+  `{ ok: false, error: { code, message } }` envelope. Previously these became `INTERNAL/500`.
+- **Stack traces stripped from production logs**: `AppErrorFilter` only includes `exception.stack`
+  in `details` when `APP_ENV !== "production"`. Removes internal-path leakage from prod log shippers
+  without losing the dev debugging signal.
+- **CORS default**: `cors: true` (Origin reflection) replaced with
+  `{ origin: corsOrigin, credentials: true }`. Reflection paired poorly with credentialed requests.
+- **CONTRIBUTING.md** Local setup uses `pnpm bootstrap` instead of manual `cp env/local/*`.
+- **`apps/api/src/db/db.module.ts`**: empty `constructor()` removed (lint info
+  `noUselessConstructor`).
+- **`scripts/{bootstrap,rename-template.test}.mjs`**: string-concatenation `+ "\n"` switched to
+  template literals (lint info `useTemplate`). `pnpm lint` now reports zero warnings AND zero infos,
+  so future regressions surface immediately.
+
 ## v0.1.0 — 2026-04-27
 
 First tagged template baseline. The repo is configured as a GitHub template (`is_template=true`);
