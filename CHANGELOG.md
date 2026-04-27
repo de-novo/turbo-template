@@ -10,31 +10,62 @@ record. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Unreleased
 
+(no entries yet)
+
+## v0.1.0 — 2026-04-27
+
+First tagged template baseline. The repo is configured as a GitHub template (`is_template=true`);
+fork via `gh repo create --template`, `npx degit`, or the GitHub UI. See
+[README — Quick Start](./README.md#quick-start).
+
 ### Added
 
-- DB + Auth production path: `packages/db/src/schema/auth.ts` (Better Auth tables for the `pg`
-  provider), Drizzle migration baseline at `packages/db/drizzle/`, `packages/db/src/seed.ts` +
-  `pnpm db:seed`, `docker-compose.dev.yml` (Postgres 17 alpine on host:5433 → container:5432) +
+- **DB + Auth production path**: `packages/db/src/schema/auth.ts` (Better Auth tables for `pg`),
+  Drizzle migration baseline at `packages/db/drizzle/`, `packages/db/src/seed.ts` + `pnpm db:seed`,
+  `docker-compose.dev.yml` (Postgres 17 alpine, host:5433 → container:5432) +
   `pnpm dev:db / dev:db:logs / dev:db:stop / dev:db:reset`, and `apps/api/src/db/db.module.ts` DI
-  provider for the shared `DatabaseClient`. Better Auth now uses the Drizzle adapter when
-  `DATABASE_URL` is set (production path) and falls back to the in-process memory adapter otherwise
-  (solo / demo). `/health/ready` actually probes the DB via `SELECT 1` when the client is
-  configured.
-- `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/{bug_report,feature_request}.md`, and
-  `.github/CODEOWNERS` so PRs and issues come pre-shaped to the structured-commit convention.
-- `scripts/preflight.mjs` (`pnpm doctor`) — checks Node 24 / pnpm 10 / git presence before
-  `pnpm install` errors with a confusing diagnostic.
-- `scripts/rename-template.test.mjs` (`pnpm test:scripts`) — protects the rename script from silent
-  regressions across `--help`, `--dry-run`, `--name`, `--slug`, and `--scope`.
-- `.devcontainer/devcontainer.json` — VS Code Remote Containers one-click setup with Node 24, pnpm,
-  frozen-lockfile install, preflight on attach, and forwarded dev ports.
-- `apps/api/Dockerfile` HEALTHCHECK against `/health/live` so `docker run` (without Kubernetes)
-  marks the container unhealthy when the API is not responding.
+  provider for the shared `DatabaseClient`. Better Auth uses the Drizzle adapter when `DATABASE_URL`
+  is set (production path) and falls back to the memory adapter otherwise. `/health/ready` actually
+  probes the DB via `SELECT 1` when the client is configured.
+- **API integration tests** (supertest): 5 tests for `/notes` against the in-memory module + 3 tests
+  for the Better Auth runtime mount.
+- **OpenAPI 3.1 + Scalar UI**: `GET /openapi.json` generated from `@repo/contracts` Zod schemas via
+  Zod 4's built-in `z.toJSONSchema`, served by `OpenApiController`; Scalar UI mounted at
+  `GET /docs`. ADR [0003](./docs/adr/0003-openapi-from-zod-contracts.md) records the choice.
+- **Optional scheduled jobs** behind `JOBS_ENABLED=true`: `@nestjs/schedule` wired via
+  `jobsModule(enabled)` factory; sample `HeartbeatJob` logs an info pulse every hour. Production
+  guidance for leader-election lives in `env/README.md`.
+- **API auth guard pattern** (embedded mode): `AuthModule` provides `AUTH_INSTANCE` to the rest of
+  Nest's DI tree (replacing main.ts's standalone construction). `AuthenticatedGuard` +
+  `@CurrentUser()` gate routes against the Better Auth session. Reference endpoint: `GET /me`. See
+  recipe [protect-an-api-route](./docs/recipes/protect-an-api-route.md).
+- **Web auth integration**: `/sign-in`, `/sign-up`, `/me` pages in `apps/web` use the Better Auth
+  React client. Next.js rewrite proxies `/api/auth/*` and `/api/me` to `NEXT_PUBLIC_API_URL` so the
+  browser sees same-origin (no CORS, no Domain= cookie quirks).
+- **`pnpm bootstrap`** (`scripts/bootstrap.mjs` + 4 tests): preflight → install → idempotent copy of
+  `env/local/*.env.example` to per-app dev locations. Used as the devcontainer's
+  `postCreateCommand`.
+- **`docs/recipes/`**: cookbook walkthroughs — add an API domain module, add an env key, add a
+  scheduled job, switch the auth mode, protect an API route, generate a typed client SDK.
+- **GitHub-template fork paths** documented in README (gh CLI, `npx degit`, UI).
+- **Tailwind class regex** for `cn()` and `cva()` in `.vscode/settings.json`; devcontainer adds
+  Docker-in-Docker so `pnpm dev:db` works inside the container.
+- **`.github/PULL_REQUEST_TEMPLATE.md`**, `.github/ISSUE_TEMPLATE/{bug_report,feature_request}.md`,
+  `.github/CODEOWNERS`.
+- **`scripts/preflight.mjs`** (`pnpm doctor`) — Node 24 / pnpm 10 / git checks.
+- **`scripts/rename-template.test.mjs`** (`pnpm test:scripts`) covers `--help`, `--dry-run`,
+  `--name`, `--slug`, `--scope`.
+- **`apps/api/Dockerfile` HEALTHCHECK** against `/health/live`.
+
+### Changed
+
+- `@repo/env` `assertNoForeignKeys` ignores framework-internal keys (currently `VITE_USER_NODE_ENV`)
+  so vitest's auto-loaded `.env` doesn't trip the strict guard.
 
 ### Removed
 
-- `apps/api/src/app.controller.ts` (and its test) — the `/health` endpoint moved into
-  `HealthController` along with `/health/live` + `/health/ready`. `/health` stays as an alias.
+- `apps/api/src/app.controller.ts` (and its test) — `/health` moved into `HealthController`
+  alongside `/health/live` + `/health/ready`. `/health` stays as an alias.
 
 ## Phase 6 (port from origin)
 
