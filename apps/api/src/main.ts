@@ -10,6 +10,7 @@ import { AUTH_INSTANCE } from "./auth/auth.module.js";
 import { DATABASE_CLIENT, type DatabaseClient } from "./db/db.module.js";
 import { logger } from "./logger.js";
 import { requestIdMiddleware } from "./middleware/request-id.middleware.js";
+import { requestLoggerMiddleware } from "./middleware/request-logger.middleware.js";
 
 const env = loadApiEnv();
 
@@ -25,6 +26,7 @@ const app = await NestFactory.create(AppModule, {
 });
 
 app.use(requestIdMiddleware);
+app.use(requestLoggerMiddleware);
 
 // `DbModule` provides the DatabaseClient (or null when DATABASE_URL is unset)
 // and `AuthModule` builds the Better Auth instance from it. Pull both out of
