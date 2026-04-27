@@ -45,15 +45,34 @@ operational lane (and what is intentionally deferred) lives in
 
 ## Quick Start
 
-5-minute path from clone to running:
+### Use this template
+
+The repo is configured as a GitHub template repository. Pick whichever fork mechanism you prefer:
 
 ```bash
-pnpm bootstrap      # preflight + pnpm install + copy env examples to per-app .env files
-pnpm dev            # turbo run dev across every surface
+# GitHub CLI — creates a new repo on your account from this template:
+gh repo create my-app --template de-novo/turbo-template --public --clone
+cd my-app
+
+# OR: degit — clones the working tree without git history (no GitHub account required):
+npx degit de-novo/turbo-template my-app
+cd my-app && git init
+
+# OR: the GitHub UI — click "Use this template" on the repo page.
 ```
 
-`pnpm bootstrap` is idempotent (re-running won't overwrite your edits — pass `--force` if you want
-to). It runs `scripts/bootstrap.mjs`, which:
+Once you have a copy:
+
+```bash
+pnpm bootstrap         # preflight + pnpm install + copy env examples to per-app .env files
+pnpm template:rename   # interactive: change the project name, slug, and package scope
+pnpm dev               # turbo run dev across every surface
+```
+
+### What `pnpm bootstrap` does
+
+It is idempotent (re-running won't overwrite your edits — pass `--force` if you want to). It runs
+`scripts/bootstrap.mjs`, which:
 
 1. Calls `pnpm doctor` (Node 24 / pnpm 10 / git checks) and bails early on a wrong toolchain.
 2. Runs `pnpm install`.
