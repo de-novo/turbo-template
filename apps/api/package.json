@@ -17,6 +17,7 @@
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
     "@nestjs/platform-express": "catalog:",
+    "@nestjs/schedule": "catalog:",
     "@nestjs/throttler": "catalog:",
     "@scalar/express-api-reference": "catalog:",
     "better-auth": "catalog:",

@@ -63,6 +63,7 @@ logger.log({
     observability: observability ? "enabled" : "disabled",
     database: dbClient ? "connected" : "not-configured",
     auth: env.AUTH_MODE === "better-auth-embedded" ? (dbClient ? "drizzle" : "memory") : "external",
+    jobs: env.JOBS_ENABLED ? "enabled" : "disabled",
     docs: `http://localhost:${env.PORT}/docs`,
   },
 });

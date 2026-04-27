@@ -35,6 +35,10 @@ Rules:
     `NEXT_PUBLIC_AUTH_ISSUER_URL`, `NEXT_PUBLIC_AUTH_SERVICE_URL`
 - Use `better-auth-embedded` for a fast modular-monolith start, then switch to `external-oidc`,
   `sso-gateway`, or `central-auth-service` when SSO/MSA ownership is decided.
+- Scheduled jobs are off by default. Set `JOBS_ENABLED=true` on exactly one replica to enable
+  `@nestjs/schedule` (the sample heartbeat job lives in `apps/api/src/jobs/`). In multi-replica
+  deployments, prefer a separate scheduler workload or a leader-election lock so cron tasks aren't
+  multiplied by the replica count.
 
 Validate examples:
 

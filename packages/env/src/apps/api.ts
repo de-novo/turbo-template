@@ -21,6 +21,7 @@ const apiEnvKeys = [
   "DATABASE_URL",
   "BETTER_AUTH_URL",
   "BETTER_AUTH_SECRET",
+  "JOBS_ENABLED",
 ] as const;
 
 export const apiEnvSchema = projectEnvSchema
@@ -36,6 +37,10 @@ export const apiEnvSchema = projectEnvSchema
     BETTER_AUTH_SECRET: z.string().min(32).optional(),
     BETTER_AUTH_URL: z.url().optional(),
     DATABASE_URL: z.url().optional(),
+    JOBS_ENABLED: z
+      .union([z.boolean(), z.enum(["true", "false"])])
+      .transform((v) => v === true || v === "true")
+      .default(false),
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
     NODE_ENV: nodeEnvironmentSchema.default("development"),
     OTEL_EXPORTER_OTLP_ENDPOINT: z.url().optional(),
