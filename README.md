@@ -252,20 +252,60 @@ packages/
   db/               # ORM schema/migrations if this project owns DB access
 ```
 
-Core dependency direction:
+Core dependency direction (apps consume packages, packages flow downward to the foundational layer
+and never the other way):
 
-```text
-apps/web
-  -> packages/design-system
-  -> packages/clients
-  -> packages/auth
-  -> packages/contracts
+```mermaid
+graph TD
+    %% apps
+    web[apps/web]
+    api[apps/api]
+    desktop[apps/desktop]
+    mobile[apps/mobile]
+    mfeh[apps/mfe-host]
 
-apps/api
-  -> packages/auth
-  -> packages/contracts
-  -> packages/env
-  -> packages/infrastructure
+    %% integration layer
+    clients[clients]
+    ds[design-system]
+    infra[infrastructure]
+    db[db]
+    env[env]
+    mfe[mfe]
+
+    %% foundational layer
+    platform[platform]
+    contracts[contracts]
+    auth[auth]
+    uiprim[ui-primitives]
+
+    web --> ds
+    web --> clients
+    web --> auth
+    web --> contracts
+    web --> env
+
+    api --> contracts
+    api --> auth
+    api --> infra
+    api --> platform
+    api --> db
+    api --> env
+
+    desktop --> ds
+    desktop --> clients
+    mobile --> contracts
+    mfeh --> mfe
+    mfeh --> ds
+
+    clients --> contracts
+    clients --> auth
+    ds --> uiprim
+    ds --> platform
+    infra --> platform
+    db --> contracts
+    db --> auth
+    env --> contracts
+    platform --> contracts
 ```
 
 `packages/contracts` stays runtime-light and should not depend on app, framework, database, Redis,

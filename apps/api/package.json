@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "check": "pnpm lint && pnpm typecheck",
-    "dev": "tsx watch src/main.ts",
+    "dev": "tsx watch src/main.ts | pino-pretty -c -t SYS:HH:MM:ss.l --ignore pid,hostname",
     "lint": "biome lint .",
     "start": "node dist/main.js",
     "test": "vitest run",
@@ -39,6 +39,7 @@
     "express": "catalog:",
     "@types/node": "catalog:",
     "@types/supertest": "catalog:",
+    "pino-pretty": "catalog:",
     "supertest": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
