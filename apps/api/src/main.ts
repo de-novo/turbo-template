@@ -20,8 +20,25 @@ const observability = initOpenTelemetry({
   ...(env.OTEL_SERVICE_VERSION ? { serviceVersion: env.OTEL_SERVICE_VERSION } : {}),
 });
 
+// CORS: in production, require an explicit allowlist via CORS_ORIGINS (comma-
+// separated). In local dev, default to the per-surface localhost origins so
+// `pnpm dev` "just works" without env tuning. `cors: true` is intentionally
+// avoided — it reflects every Origin and pairs poorly with `credentials: true`.
+const defaultDevOrigins = [
+  "http://localhost:3000", // web
+  "http://localhost:3001", // desktop
+  "http://localhost:3100", // mfe-host
+  "http://localhost:3101", // mfe-dashboard
+];
+const corsOrigin =
+  env.CORS_ORIGINS && env.CORS_ORIGINS.length > 0
+    ? env.CORS_ORIGINS
+    : env.APP_ENV === "production"
+      ? false
+      : defaultDevOrigins;
+
 const app = await NestFactory.create(AppModule, {
-  cors: true,
+  cors: { origin: corsOrigin, credentials: true },
   logger: false,
 });
 

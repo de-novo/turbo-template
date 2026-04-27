@@ -22,6 +22,7 @@ const apiEnvKeys = [
   "BETTER_AUTH_URL",
   "BETTER_AUTH_SECRET",
   "JOBS_ENABLED",
+  "CORS_ORIGINS",
 ] as const;
 
 export const apiEnvSchema = projectEnvSchema
@@ -36,6 +37,17 @@ export const apiEnvSchema = projectEnvSchema
     AUTH_TOPOLOGY: z.enum(["single-app", "modular-monolith", "msa"]).default("modular-monolith"),
     BETTER_AUTH_SECRET: z.string().min(32).optional(),
     BETTER_AUTH_URL: z.url().optional(),
+    CORS_ORIGINS: z
+      .string()
+      .optional()
+      .transform((v) =>
+        v
+          ? v
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : undefined,
+      ),
     DATABASE_URL: z.url().optional(),
     JOBS_ENABLED: z
       .union([z.boolean(), z.enum(["true", "false"])])
@@ -48,7 +60,7 @@ export const apiEnvSchema = projectEnvSchema
     PORT: z.coerce.number().int().positive().default(4000),
   })
   .superRefine((value, ctx) => {
-    requireInProduction(ctx, value.APP_ENV, value, ["DATABASE_URL"]);
+    requireInProduction(ctx, value.APP_ENV, value, ["DATABASE_URL", "CORS_ORIGINS"]);
 
     if (value.AUTH_MODE === "better-auth-embedded") {
       requireInProduction(ctx, value.APP_ENV, value, ["BETTER_AUTH_SECRET", "BETTER_AUTH_URL"]);

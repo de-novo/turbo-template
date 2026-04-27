@@ -37,6 +37,23 @@ export function createAuth(env: ApiEnv, db?: DatabaseClient) {
     emailAndPassword: {
       enabled: true,
     },
+    // Built-in rate limiting. Better Auth's default only enables this in
+    // production; we force it on so `customRules` apply even during local
+    // development brute-force testing. The custom buckets cap login + sign-up
+    // at 5 attempts per 15 minutes per IP — well below what a real user needs,
+    // tight enough to make password spraying unusable.
+    //
+    // Storage defaults to in-memory. Single-replica deploys can leave it as-is;
+    // multi-replica setups should switch to `storage: "database"` (requires
+    // adding the rate-limit table to `packages/db/src/schema/auth.ts`) or to a
+    // shared `secondary-storage` (Redis).
+    rateLimit: {
+      enabled: true,
+      customRules: {
+        "/sign-in/email": { window: 60 * 15, max: 5 },
+        "/sign-up/email": { window: 60 * 15, max: 5 },
+      },
+    },
   });
 }
 
