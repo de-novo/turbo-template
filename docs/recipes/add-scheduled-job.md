@@ -46,14 +46,14 @@ Trigger options the template uses:
 - `@Interval("name", milliseconds)` — fixed interval after each run completes.
 - `@Timeout("name", milliseconds)` — fires once after delay (good for warm-up tasks).
 
-## 2. Register in `JobsModule`
+## 2. Register in `jobsModule(enabled)`
 
 `apps/api/src/jobs/jobs.module.ts`:
 
 ```ts
 import { ExpireTokensJob } from "./expire-tokens.job.js";
 
-// inside forRoot(true):
+// inside the enabled branch of jobsModule(enabled):
 return {
   module: JobsModule,
   imports: [ScheduleModule.forRoot(), ApiEnvModule, DbModule],
@@ -61,9 +61,12 @@ return {
 };
 ```
 
-> **Why `forRoot(enabled)`?** `JOBS_ENABLED=false` returns an empty module so cron tasks aren't
-> multiplied by the replica count in production. See ADR / env README for the leader-election
-> guidance.
+> **Why `jobsModule(enabled)` instead of `JobsModule.forRoot(enabled)`?** Functionally equivalent,
+> but Biome's `noStaticOnlyClass` rule flags the static-method form. We keep the `JobsModule` class
+> as the marker NestJS uses to identify the module, and expose a top-level factory function.
+>
+> **Why gate on `enabled`?** `JOBS_ENABLED=false` returns an empty module so cron tasks aren't
+> multiplied by the replica count in production. See env README for the leader-election guidance.
 
 ## 3. Test the wiring (not the schedule)
 

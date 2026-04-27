@@ -6,7 +6,7 @@ import { ApiEnvModule } from "./api-env.module.js";
 import { DbModule } from "./db/db.module.js";
 import { AppErrorFilter } from "./filters/app-error.filter.js";
 import { HealthModule } from "./health/health.module.js";
-import { JobsModule } from "./jobs/jobs.module.js";
+import { jobsModule } from "./jobs/jobs.module.js";
 import { MetricsModule } from "./metrics/metrics.module.js";
 import { NotesModule } from "./notes/notes.module.js";
 import { OpenApiModule } from "./openapi/openapi.module.js";
@@ -24,7 +24,7 @@ const env = loadApiEnv();
     MetricsModule,
     NotesModule,
     OpenApiModule,
-    JobsModule.forRoot(env.JOBS_ENABLED),
+    jobsModule(env.JOBS_ENABLED),
   ],
   providers: [
     {
