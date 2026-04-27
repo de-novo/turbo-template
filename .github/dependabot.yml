@@ -91,6 +91,10 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "@jest/globals"
         update-types: ["version-update:semver-major"]
+      # apps/mobile pins typescript to the version Expo's bundler ships with;
+      # do not chase TS major bumps there. Catalog-wide TS bumps are unaffected.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
