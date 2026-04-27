@@ -1,5 +1,11 @@
 # Fullstack TypeScript Template
 
+[![CI](https://github.com/de-novo/turbo-template/actions/workflows/ci.yml/badge.svg)](https://github.com/de-novo/turbo-template/actions/workflows/ci.yml)
+[![Security](https://github.com/de-novo/turbo-template/actions/workflows/security.yml/badge.svg)](https://github.com/de-novo/turbo-template/actions/workflows/security.yml)
+[![Release](https://img.shields.io/github/v/release/de-novo/turbo-template?label=release)](https://github.com/de-novo/turbo-template/releases)
+[![Node](https://img.shields.io/badge/node-24-blue)](./.nvmrc)
+[![pnpm](https://img.shields.io/badge/pnpm-10-orange)](./package.json)
+
 A reusable TypeScript monorepo template for web, API, shared contracts, shared infrastructure, and
 product design-system work — sized to grow from a solo project into an enterprise codebase without
 rewrites.
