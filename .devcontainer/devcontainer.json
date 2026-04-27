@@ -4,22 +4,24 @@
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-24-bookworm",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "remoteUser": "node",
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "TURBO_TELEMETRY_DISABLED": "1"
   },
-  "postCreateCommand": "corepack enable && corepack prepare pnpm@10 --activate && pnpm install --frozen-lockfile",
+  "postCreateCommand": "corepack enable && corepack prepare pnpm@10 --activate && pnpm bootstrap -- --skip-preflight",
   "postAttachCommand": "node scripts/preflight.mjs",
-  "forwardPorts": [3000, 3001, 3100, 3101, 4000, 8081],
+  "forwardPorts": [3000, 3001, 3100, 3101, 4000, 5433, 8081],
   "portsAttributes": {
     "3000": { "label": "web (Next.js)" },
     "3001": { "label": "desktop (Vite)" },
     "3100": { "label": "mfe-host" },
     "3101": { "label": "mfe-dashboard" },
     "4000": { "label": "api (NestJS)" },
+    "5433": { "label": "postgres (dev)" },
     "8081": { "label": "mobile (Expo Metro)" }
   },
   "customizations": {

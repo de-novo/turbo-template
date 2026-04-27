@@ -85,6 +85,17 @@ If `pnpm install` errors, confirm Node 24 (`node -v`) and pnpm 10 (`pnpm -v`); b
 repo-wide type checks, Biome/Prettier formatting is checked, env examples are validated, and
 `DESIGN.md` is validated.
 
+### Editor / Codespaces
+
+`.vscode/` ships Biome as the default formatter (with format-on-save and organize-imports), Tailwind
+class regex for `cn()` and `cva()`, and a search-exclude list that hides build outputs.
+`.vscode/extensions.json` recommends the matching extensions.
+
+`.devcontainer/devcontainer.json` boots a Node 24 container with pnpm via corepack, Docker-in-Docker
+(so `pnpm dev:db` works inside the container), forwarded ports for every shipped surface, and runs
+`pnpm bootstrap` on create. Click "Reopen in Container" in VS Code, or open the repo on GitHub
+Codespaces — same toolchain everywhere.
+
 ### Verifying before a PR
 
 CI runs the same commands plus a few security/drift gates. To match locally:
