@@ -32,8 +32,12 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@repo/testing": "workspace:*",
+    "@nestjs/testing": "catalog:",
     "@types/express": "catalog:",
+    "express": "catalog:",
     "@types/node": "catalog:",
+    "@types/supertest": "catalog:",
+    "supertest": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
