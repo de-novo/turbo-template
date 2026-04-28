@@ -1,7 +1,13 @@
 # 0003 — OpenAPI from Zod contracts via z.toJSONSchema
 
-- **Status**: Accepted
+- **Status**: Superseded by [0011](./0011-api-docs-in-markdown.md)
 - **Date**: 2026-04-26
+- **Superseded**: 2026-04-28
+
+> **Superseded.** API documentation moved to hand-authored Markdown (`docs/api/<resource>.md`). The
+> `apps/api/src/openapi/` module, `/openapi.json` endpoint, and Scalar UI at `/docs` were all
+> removed in commit that lands ADR 0011. This ADR remains for historical context — read
+> [0011](./0011-api-docs-in-markdown.md) for the current approach.
 
 ## Context
 

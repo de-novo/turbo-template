@@ -16,7 +16,6 @@ tighten defaults but won't fail validation.
 | **`BETTER_AUTH_SECRET`**      | yes (embedded)     | 32-byte secret. The fallback baked into `auth.ts` is for local dev only.                                           |
 | **`BETTER_AUTH_URL`**         | yes (embedded)     | Public URL of the API; cookies are scoped to this host.                                                            |
 | **`CORS_ORIGINS`**            | yes                | Comma-separated allowlist. Unset in prod ⇒ CORS denies everything.                                                 |
-| `EXPOSE_DOCS`                 | no (default true)  | Set `false` to drop `/openapi.json` + `/docs` (returns 404, doesn't signal existence).                             |
 | `JOBS_ENABLED`                | no (default false) | Run `@nestjs/schedule` — only on **one replica** (separate workload or leader-election lock). See `env/README.md`. |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | no                 | Enables the OpenTelemetry tracing exporter. Without it the SDK is dormant.                                         |
 | `OTEL_SERVICE_VERSION`        | no                 | Reported on every span; defaults to `"0.0.0"` in the OpenAPI doc.                                                  |
@@ -103,9 +102,6 @@ curl -fs http://localhost:4000/health/ready
 
 # 3. /metrics exposes the histogram + counter:
 curl -s http://localhost:4000/metrics | grep http_request_duration_seconds_count
-
-# 4. /openapi.json is *not* available when EXPOSE_DOCS=false:
-EXPOSE_DOCS=false ... → curl /openapi.json should return 404.
 ```
 
 Tag your release, push the image, run migrations against the prod DB, then route traffic. Done.

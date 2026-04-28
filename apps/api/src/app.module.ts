@@ -11,7 +11,6 @@ import { jobsModule } from "./jobs/jobs.module.js";
 import { MeModule } from "./me/me.module.js";
 import { MetricsModule } from "./metrics/metrics.module.js";
 import { NotesModule } from "./notes/notes.module.js";
-import { OpenApiModule } from "./openapi/openapi.module.js";
 
 const env = loadApiEnv();
 
@@ -27,7 +26,6 @@ const env = loadApiEnv();
     MetricsModule,
     NotesModule,
     MeModule,
-    OpenApiModule,
     jobsModule(env.JOBS_ENABLED),
   ],
   providers: [

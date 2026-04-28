@@ -47,7 +47,7 @@ Skip an ADR for:
 - [0001 — Avoid day-one overreach](./0001-avoid-day-one-overreach.md) · Accepted
 - [0002 — Per-app env loaders with foreign-key guards](./0002-per-app-env-loaders.md) · Accepted
 - [0003 — OpenAPI from Zod contracts via z.toJSONSchema](./0003-openapi-from-zod-contracts.md) ·
-  Accepted
+  Superseded by 0011
 - [0004 — Multi-tenancy contract, resolution deferred](./0004-multi-tenancy-contract.md) · Accepted
 - [0005 — Outbox contract, relay deferred](./0005-outbox-contract.md) · Accepted
 - [0006 — Policy port, engine deferred](./0006-policy-port.md) · Accepted
@@ -55,3 +55,5 @@ Skip an ADR for:
 - [0008 — Notifier contract, provider deferred](./0008-notifier-contract.md) · Accepted
 - [0009 — Object storage contract, provider deferred](./0009-object-storage-contract.md) · Accepted
 - [0010 — Audit sink contract, persistence deferred](./0010-audit-sink-contract.md) · Accepted
+- [0011 — API documentation in Markdown, OpenAPI surface removed](./0011-api-docs-in-markdown.md) ·
+  Accepted

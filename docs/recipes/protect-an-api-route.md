@@ -71,11 +71,11 @@ export class AdminController {
 
 Mix it with method-level overrides if you need a public escape hatch.
 
-## 4. Update the OpenAPI document
+## 4. Update the API docs
 
-Add a `"401"` response (using the existing `PublicError` schema) to the route's responses block in
-`apps/api/src/openapi/openapi.config.ts`. The drift-guard test asserts schema parity, but doesn't
-check that protected routes are documented — keep them in sync by hand.
+Update the matching `docs/api/<resource>.md` — add `UNAUTHORIZED` to the route's **Errors** table
+and reflect the new auth posture in the routes table (`Auth: session required`). The recipe at
+[`document-an-api-route.md`](./document-an-api-route.md) is the convention.
 
 ## 5. Test it
 

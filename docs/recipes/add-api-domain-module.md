@@ -1,8 +1,8 @@
 # Add an API domain module
 
 The canonical example lives at `apps/api/src/notes/`. A new domain module follows the same shape:
-**contract first**, then service, then controller, then test, then OpenAPI route entry. Keep each
-step boring — the value is the consistency, not the cleverness.
+**contract first**, then service, then controller, then test, then `docs/api/<resource>.md`.
+Keep each step boring — the value is the consistency, not the cleverness.
 
 This recipe assumes a hypothetical `orders` domain. Substitute as needed.
 
@@ -37,9 +37,9 @@ Then export from `packages/contracts/src/index.ts`:
 export * from "./orders.js";
 ```
 
-> **Why:** the contract is the source of truth for both runtime validation (the API's
-> `ZodValidationPipe`) and the published OpenAPI document (`apps/api/src/openapi/openapi.config.ts`
-> calls `z.toJSONSchema(...)` over these). One change, both layers updated.
+> **Why:** the contract is the source of truth for runtime validation (the API's
+> `ZodValidationPipe`) and for the documentation referenced by `docs/api/<resource>.md`. One change,
+> both surfaces updated.
 
 ## 2. Service: pure logic, no HTTP
 
@@ -142,38 +142,15 @@ Add to `apps/api/src/app.module.ts` `imports: [...]`.
 look like prod; **do not** register a global `ValidationPipe` (it pulls `class-validator`, which the
 template doesn't ship).
 
-## 6. Document the route in `/openapi.json`
+## 6. Document the route in `docs/api/<resource>.md`
 
-Add to `apps/api/src/openapi/openapi.config.ts` under `paths`:
+Create `docs/api/orders.md` (or extend an existing file if the new route belongs to an existing
+resource group). Mirror the format of [`docs/api/notes.md`](../api/notes.md) — header + routes
+table + errors table + auth posture + curl block. Add the new file to the index in
+[`docs/api/README.md`](../api/README.md).
 
-```ts
-"/orders": {
-  get: {
-    tags: ["orders"],
-    summary: "List orders (paginated).",
-    parameters: [/* page, pageSize */],
-    responses: { "200": jsonResponse("Paginated list.", "ApiResponsePaginatedOrders") },
-  },
-  post: {
-    tags: ["orders"],
-    summary: "Create an order.",
-    requestBody: { required: true, content: { "application/json": { schema: ref("CreateOrderBody") } } },
-    responses: { "201": jsonResponse("Created.", "ApiResponseOrder") },
-  },
-},
-```
-
-And register the schemas in `components.schemas`:
-
-```ts
-Order: toSchema(orderSchema),
-CreateOrderBody: toSchema(createOrderBodySchema),
-ApiResponseOrder: toSchema(apiResponseSchema(orderSchema)),
-ApiResponsePaginatedOrders: toSchema(apiResponseSchema(paginatedSchema(orderSchema))),
-```
-
-The drift-guard test (`apps/api/src/openapi/openapi.test.ts`) catches schema desync — when you
-change the contract, run `pnpm --filter @repo/api test` to confirm the served doc matches.
+The recipe at [`document-an-api-route.md`](./document-an-api-route.md) documents the convention.
+There is no automated drift gate; reviewers flag PRs that change the API surface but not the docs.
 
 ## 7. Verify
 
@@ -181,7 +158,8 @@ change the contract, run `pnpm --filter @repo/api test` to confirm the served do
 pnpm --filter @repo/contracts build      # if other packages import the new types
 pnpm --filter @repo/api typecheck
 pnpm --filter @repo/api test
-pnpm dev:api                              # curl http://localhost:4000/openapi.json | jq '.paths | keys'
+pnpm dev:api                              # curl http://localhost:4000/orders
 ```
 
-The new path should appear at `/openapi.json` and render at `/docs`.
+The new routes should respond as expected; the matching shapes should appear in
+`docs/api/orders.md`.

@@ -19,7 +19,6 @@
     "@nestjs/platform-express": "catalog:",
     "@nestjs/schedule": "catalog:",
     "@nestjs/throttler": "catalog:",
-    "@scalar/express-api-reference": "catalog:",
     "better-auth": "catalog:",
     "@repo/contracts": "workspace:*",
     "@repo/db": "workspace:*",

@@ -2,7 +2,6 @@ import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { loadApiEnv } from "@repo/env/apps/api";
 import { initOpenTelemetry } from "@repo/infrastructure";
-import { apiReference } from "@scalar/express-api-reference";
 import { toNodeHandler } from "better-auth/node";
 import { AppModule } from "./app.module.js";
 import type { AuthInstance } from "./auth/auth.js";
@@ -61,20 +60,6 @@ if (authInstance) {
   expressApp.all("/api/auth/*splat", toNodeHandler(authInstance));
 }
 
-// Scalar UI for the OpenAPI document. Mounted only when EXPOSE_DOCS=true (the
-// default in dev). Production deploys typically set EXPOSE_DOCS=false to avoid
-// publishing the API surface; OpenApiController guards `/openapi.json` with the
-// same flag so the doc and the renderer stay in sync.
-if (env.EXPOSE_DOCS) {
-  expressApp.use(
-    "/docs",
-    apiReference({
-      url: "/openapi.json",
-      pageTitle: `${env.PROJECT_NAME} API`,
-    }),
-  );
-}
-
 await app.listen(env.PORT);
 
 logger.log({
@@ -85,7 +70,6 @@ logger.log({
     database: dbClient ? "connected" : "not-configured",
     auth: env.AUTH_MODE === "better-auth-embedded" ? (dbClient ? "drizzle" : "memory") : "external",
     jobs: env.JOBS_ENABLED ? "enabled" : "disabled",
-    docs: env.EXPOSE_DOCS ? `http://localhost:${env.PORT}/docs` : "disabled",
   },
 });
 
