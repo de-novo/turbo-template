@@ -11,6 +11,7 @@ import { jobsModule } from "./jobs/jobs.module.js";
 import { MeModule } from "./me/me.module.js";
 import { MetricsModule } from "./metrics/metrics.module.js";
 import { NotesModule } from "./notes/notes.module.js";
+import { TenantModule } from "./tenant/tenant.module.js";
 
 const env = loadApiEnv();
 
@@ -26,6 +27,7 @@ const env = loadApiEnv();
     MetricsModule,
     NotesModule,
     MeModule,
+    TenantModule,
     jobsModule(env.JOBS_ENABLED),
   ],
   providers: [

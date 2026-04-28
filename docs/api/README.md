@@ -39,6 +39,19 @@ When you add or change a route in `apps/api/src/<area>/`, update the matching
 convention. There is no automated drift gate — review is the enforcement mechanism (per ADR 0011's
 "Costs" section).
 
+## Tenancy
+
+The API mounts a global tenant middleware (per ADR [0013](../adr/0013-tenant-middleware-wiring.md))
+that consults the configured `TenantResolver`. The default is `noopTenantResolver` — no header is
+read, no scope is opened, and routes behave identically to a single-tenant deploy. When a fork wires
+a real resolver (per [`enable-multi-tenancy`](../recipes/enable-multi-tenancy.md)), the resolver
+decides which signal to read; the conventional choice is the `x-tenant-id` request header (constant
+exported from `@repo/contracts/tenant`).
+
+Once activated, every authenticated request that carries the agreed signal runs inside
+`withTenantContext`, and access-log lines pick up `tenantId` automatically. Per-route MD docs should
+call out the resolver's strict-vs-soft default in their auth posture section.
+
 ## What's not here
 
 - **`/api/auth/*` per-route detail.** Better Auth owns the surface; refer to its docs (linked from

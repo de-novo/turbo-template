@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { loadApiEnv } from "@repo/env/apps/api";
-import { initOpenTelemetry } from "@repo/infrastructure";
+import { initOpenTelemetry, type TenantResolver } from "@repo/infrastructure";
 import { toNodeHandler } from "better-auth/node";
 import { AppModule } from "./app.module.js";
 import type { AuthInstance } from "./auth/auth.js";
@@ -10,6 +10,8 @@ import { DATABASE_CLIENT, type DatabaseClient } from "./db/db.module.js";
 import { logger } from "./logger.js";
 import { requestIdMiddleware } from "./middleware/request-id.middleware.js";
 import { requestLoggerMiddleware } from "./middleware/request-logger.middleware.js";
+import { createTenantMiddleware } from "./tenant/tenant.middleware.js";
+import { TENANT_RESOLVER } from "./tenant/tenant.tokens.js";
 
 const env = loadApiEnv();
 
@@ -42,6 +44,14 @@ const app = await NestFactory.create(AppModule, {
 });
 
 app.use(requestIdMiddleware);
+// Tenant middleware runs the configured TenantResolver and, on a non-null
+// resolution, wraps the rest of the request in `withTenantContext` +
+// `withLoggerContext({ tenantId })`. Default resolver is `noopTenantResolver`
+// — solo deploys pay one Effect microtask per request and no scope is opened.
+// See ADR 0013 for the wiring rationale and `docs/recipes/enable-multi-tenancy.md`
+// for the activation path.
+const tenantResolver = app.get<TenantResolver>(TENANT_RESOLVER);
+app.use(createTenantMiddleware(tenantResolver));
 app.use(requestLoggerMiddleware);
 
 // `DbModule` provides the DatabaseClient (or null when DATABASE_URL is unset)

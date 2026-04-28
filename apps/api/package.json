@@ -35,6 +35,7 @@
     "@repo/testing": "workspace:*",
     "@nestjs/testing": "catalog:",
     "@types/express": "catalog:",
+    "effect": "catalog:",
     "express": "catalog:",
     "@types/node": "catalog:",
     "@types/supertest": "catalog:",

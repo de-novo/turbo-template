@@ -59,3 +59,5 @@ Skip an ADR for:
   Accepted
 - [0012 — API versioning: defer until the first breaking change](./0012-api-versioning.md) ·
   Accepted
+- [0013 — Tenant middleware: global mount, resolver-pluggable, noop default](./0013-tenant-middleware-wiring.md)
+  · Accepted
