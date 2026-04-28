@@ -1,8 +1,8 @@
 # Add an API domain module
 
 The canonical example lives at `apps/api/src/notes/`. A new domain module follows the same shape:
-**contract first**, then service, then controller, then test, then `docs/api/<resource>.md`.
-Keep each step boring — the value is the consistency, not the cleverness.
+**contract first**, then service, then controller, then test, then `docs/api/<resource>.md`. Keep
+each step boring — the value is the consistency, not the cleverness.
 
 This recipe assumes a hypothetical `orders` domain. Substitute as needed.
 

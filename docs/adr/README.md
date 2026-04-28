@@ -57,3 +57,5 @@ Skip an ADR for:
 - [0010 — Audit sink contract, persistence deferred](./0010-audit-sink-contract.md) · Accepted
 - [0011 — API documentation in Markdown, OpenAPI surface removed](./0011-api-docs-in-markdown.md) ·
   Accepted
+- [0012 — API versioning: defer until the first breaking change](./0012-api-versioning.md) ·
+  Accepted

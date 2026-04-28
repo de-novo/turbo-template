@@ -60,19 +60,20 @@ Run `pnpm template:auth` to switch. The auth env keys (`AUTH_MODE`, `AUTH_TOPOLO
 
 ## Operational lanes
 
-| Lane             | Where                                                                                         |
-| ---------------- | --------------------------------------------------------------------------------------------- |
-| Logging          | pino + `withLoggerContext` (ALS) in `@repo/platform`. Emits NDJSON.                           |
-| Tracing          | `initOpenTelemetry` in `@repo/infrastructure`; opt-in via `OTEL_EXPORTER_OTLP_ENDPOINT`.      |
-| Metrics          | `prom-client` default metrics on `apps/api/GET /metrics`.                                     |
-| Rate limiting    | `@nestjs/throttler` global guard, 100 req/min/IP. `@SkipThrottle()` on probes/metrics.        |
-| Health probes    | `apps/api/GET /health/live` + `/health/ready`.                                                |
-| Web headers      | Conservative defaults via `apps/web/next.config.ts headers()` (CSP intentionally omitted).    |
-| Container images | `apps/api/Dockerfile` + `apps/web/Dockerfile`, multi-stage. `release-images.yml` → GHCR.      |
-| GitOps secrets   | `ops/gitops` SOPS + age + KSOPS lane (opt-in).                                                |
-| CI security      | pnpm audit (high+) gate, license allow-list, syncpack drift, Trivy + CodeQL, weekly schedule. |
-| SBOM             | CycloneDX on each release via `.github/workflows/sbom.yml`.                                   |
-| Dependency bumps | Dependabot grouped weekly bumps; monthly Docker base-image bumps.                             |
+| Lane             | Where                                                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Logging          | pino + `withLoggerContext` (ALS) in `@repo/platform`. Emits NDJSON.                                                             |
+| Tracing          | `initOpenTelemetry` in `@repo/infrastructure`; opt-in via `OTEL_EXPORTER_OTLP_ENDPOINT`.                                        |
+| Metrics          | `prom-client` default metrics on `apps/api/GET /metrics`.                                                                       |
+| Rate limiting    | `@nestjs/throttler` global guard, 100 req/min/IP. `@SkipThrottle()` on probes/metrics.                                          |
+| Health probes    | `apps/api/GET /health/live` + `/health/ready`.                                                                                  |
+| Web headers      | Conservative defaults via `apps/web/next.config.ts headers()`. CSP deferred — see [enable-csp recipe](./recipes/enable-csp.md). |
+| Container images | `apps/api/Dockerfile` + `apps/web/Dockerfile`, multi-stage. `release-images.yml` → GHCR.                                        |
+| GitOps secrets   | `ops/gitops` SOPS + age + KSOPS lane (opt-in).                                                                                  |
+| CI security      | pnpm audit (high+) gate, license allow-list, syncpack drift, Trivy + CodeQL + gitleaks, weekly schedule.                        |
+| a11y gate        | `@axe-core/playwright` runs WCAG 2.1 A + AA against the web app via `pnpm --filter @repo/web test:e2e`.                         |
+| SBOM             | CycloneDX on each release via `.github/workflows/sbom.yml`.                                                                     |
+| Dependency bumps | Dependabot grouped weekly bumps; monthly Docker base-image bumps.                                                               |
 
 ## Testing baseline
 

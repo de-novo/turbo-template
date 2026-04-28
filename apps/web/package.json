@@ -29,6 +29,7 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "catalog:",
     "@biomejs/biome": "catalog:",
     "@next/bundle-analyzer": "catalog:",
     "@playwright/test": "catalog:",

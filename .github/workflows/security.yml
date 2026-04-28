@@ -47,6 +47,37 @@ jobs:
           sarif_file: trivy-results.sarif
           category: trivy
 
+  gitleaks:
+    name: Gitleaks — secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so gitleaks can scan past commits, not only the
+          # current snapshot. The action handles PR-vs-base diffing
+          # automatically when fetch-depth=0.
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          # gitleaks-action exits non-zero on findings, which fails the
+          # workflow. SARIF upload (next step) lands findings in the
+          # Security tab regardless.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload SARIF to GitHub Security
+        if: always() && hashFiles('results.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: results.sarif
+          category: gitleaks
+
   codeql:
     name: CodeQL — TypeScript / JavaScript
     runs-on: ubuntu-latest
