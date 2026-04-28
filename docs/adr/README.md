@@ -53,3 +53,5 @@ Skip an ADR for:
 - [0006 — Policy port, engine deferred](./0006-policy-port.md) · Accepted
 - [0007 — Job queue contract, backend deferred](./0007-job-queue-contract.md) · Accepted
 - [0008 — Notifier contract, provider deferred](./0008-notifier-contract.md) · Accepted
+- [0009 — Object storage contract, provider deferred](./0009-object-storage-contract.md) · Accepted
+- [0010 — Audit sink contract, persistence deferred](./0010-audit-sink-contract.md) · Accepted

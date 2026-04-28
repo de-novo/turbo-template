@@ -26,20 +26,20 @@ are. See [docs/deployment.md](./deployment.md).
 All `@repo/*` packages are `private: true`. Import direction is documented in
 [docs/technical-stack.md](./technical-stack.md) and enforced by example in each package's source.
 
-| Package                | Purpose                                                                                                                                                                         |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@repo/auth`           | Session, identity, permission, role Zod contracts (no runtime).                                                                                                                 |
-| `@repo/clients`        | `createFetchClient` reference plus contract-driven decoding.                                                                                                                    |
-| `@repo/config`         | `projectConfig` from JSON; future home for shared tsconfig presets.                                                                                                             |
-| `@repo/contracts`      | API envelope, error schema, ids, pagination, domain event shape, tenant context, outbox row, policy query, job descriptor, notification message, reference `notes` Zod schemas. |
-| `@repo/db`             | Drizzle schema (auth, system events, outbox) + client factory; DB-aware health helper.                                                                                          |
-| `@repo/design-system`  | `AppShell`, `EmptyState`, `StatusBadge`, `designTokens`.                                                                                                                        |
-| `@repo/env`            | Per-app env loaders with foreign-key + secret guards.                                                                                                                           |
-| `@repo/infrastructure` | Effect-backed cache / events / health / tenant-resolver / outbox-relay / policy-evaluator / job-queue / notifier adapters (in-memory + noop) + OTel init.                       |
-| `@repo/mfe`            | Manifest schema + lifecycle event helpers for the MFE lane.                                                                                                                     |
-| `@repo/platform`       | `AppError` taxonomy, pino `Logger` factory, `LoggerContext` + `TenantContext` ALS, result helpers, feature-flag registry, time helpers.                                         |
-| `@repo/testing`        | Shared Vitest node/jsdom configs (`@repo/testing/vitest/{node,jsdom}`).                                                                                                         |
-| `@repo/ui-primitives`  | shadcn-style primitives + `cn()` (tailwind-merge).                                                                                                                              |
+| Package                | Purpose                                                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@repo/auth`           | Session, identity, permission, role Zod contracts (no runtime).                                                                                                                                              |
+| `@repo/clients`        | `createFetchClient` reference plus contract-driven decoding.                                                                                                                                                 |
+| `@repo/config`         | `projectConfig` from JSON; future home for shared tsconfig presets.                                                                                                                                          |
+| `@repo/contracts`      | API envelope, error schema, ids, pagination, domain event shape, tenant context, outbox row, policy query, job descriptor, notification message, storage object, audit entry, reference `notes` Zod schemas. |
+| `@repo/db`             | Drizzle schema (auth, system events, outbox) + client factory; DB-aware health helper.                                                                                                                       |
+| `@repo/design-system`  | `AppShell`, `EmptyState`, `StatusBadge`, `designTokens`.                                                                                                                                                     |
+| `@repo/env`            | Per-app env loaders with foreign-key + secret guards.                                                                                                                                                        |
+| `@repo/infrastructure` | Effect-backed cache / events / health / tenant-resolver / outbox-relay / policy-evaluator / job-queue / notifier / object-storage / audit-sink adapters (in-memory + noop) + OTel init.                      |
+| `@repo/mfe`            | Manifest schema + lifecycle event helpers for the MFE lane.                                                                                                                                                  |
+| `@repo/platform`       | `AppError` taxonomy, pino `Logger` factory, `LoggerContext` + `TenantContext` ALS, result helpers, feature-flag registry, time helpers.                                                                      |
+| `@repo/testing`        | Shared Vitest node/jsdom configs (`@repo/testing/vitest/{node,jsdom}`).                                                                                                                                      |
+| `@repo/ui-primitives`  | shadcn-style primitives + `cn()` (tailwind-merge).                                                                                                                                                           |
 
 ## Authentication
 
@@ -125,6 +125,17 @@ rationale.
   / webhook channels. Picking the provider (Resend, SES, Postmark, Twilio, Firebase, custom webhook)
   and wiring it — typically behind a queue worker — is a deliberate fork choice. See ADR
   [0008 — Notifier contract](./adr/0008-notifier-contract.md).
+- **Real object storage provider.** `@repo/contracts/storage` and `@repo/infrastructure`'s
+  `noopObjectStorage` + `createMemoryObjectStorage` ship the put / get / head / delete / signUrl
+  contract for opaque blob storage. Picking the provider (AWS S3, Cloudflare R2, Google Cloud
+  Storage, Azure Blob, MinIO, Backblaze B2) and wiring its SDK is a deliberate fork choice. See ADR
+  [0009 — Object storage contract](./adr/0009-object-storage-contract.md).
+- **Real audit persistence.** `@repo/contracts/audit` and `@repo/infrastructure`'s `noopAuditSink` +
+  `createMemoryAuditSink` ship the audit-event contract and a recording sink for tests. Picking the
+  persistence story (DB-backed `audit_events` table, SIEM forwarding to Splunk / Datadog /
+  CloudWatch, immutable WORM via S3 Object Lock or GCS Bucket Lock) is a deliberate fork choice —
+  and is often wired through the outbox lane (ADR 0005) for durable async forwarding. See ADR
+  [0010 — Audit sink contract](./adr/0010-audit-sink-contract.md).
 - **Theme provider (`next-themes`) and form convention (`react-hook-form`).** The first product UI
   decides those.
 - **Changesets / Husky / lint-staged / commitlint.** This repo uses a structured commit body

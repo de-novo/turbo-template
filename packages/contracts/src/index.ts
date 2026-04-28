@@ -1,4 +1,5 @@
 export * from "./api.js";
+export * from "./audit.js";
 export * from "./errors.js";
 export * from "./events.js";
 export * from "./ids.js";
@@ -8,4 +9,5 @@ export * from "./notification.js";
 export * from "./outbox.js";
 export * from "./pagination.js";
 export * from "./policy.js";
+export * from "./storage.js";
 export * from "./tenant.js";
