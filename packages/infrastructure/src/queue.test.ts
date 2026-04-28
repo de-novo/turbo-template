@@ -1,4 +1,5 @@
 import type { JobDescriptor } from "@repo/contracts";
+import { AppError } from "@repo/platform";
 import { Effect } from "effect";
 import { expect, test } from "vitest";
 import { createMemoryJobQueue, noopJobQueue } from "./queue.js";
@@ -79,8 +80,16 @@ test("claimNext returns oldest first (FIFO by enqueuedAt)", async () => {
   expect(claimed?.id).toBe(a.id);
 });
 
-test("ack on a missing job rejects with NOT_FOUND", async () => {
+test("ack on a missing job fails through the typed error channel", async () => {
   const queue = createMemoryJobQueue();
-  const exit = await Effect.runPromiseExit(queue.ack("missing"));
-  expect(exit._tag).toBe("Failure");
+  const error = await Effect.runPromise(Effect.flip(queue.ack("missing")));
+  expect(error).toBeInstanceOf(AppError);
+  expect(error.code).toBe("NOT_FOUND");
+});
+
+test("nack on a missing job fails through the typed error channel", async () => {
+  const queue = createMemoryJobQueue();
+  const error = await Effect.runPromise(Effect.flip(queue.nack("missing", "boom")));
+  expect(error).toBeInstanceOf(AppError);
+  expect(error.code).toBe("NOT_FOUND");
 });

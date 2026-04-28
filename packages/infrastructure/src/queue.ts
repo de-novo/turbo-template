@@ -31,6 +31,9 @@ const emptySizes = (): Record<JobRecord["status"], number> => ({
   failed: 0,
 });
 
+const missingJob = (id: string) =>
+  new AppError({ code: "NOT_FOUND", message: `Job ${id} not found.` });
+
 export const noopJobQueue: JobQueue = {
   enqueue: (descriptor) =>
     Effect.succeed({
@@ -99,25 +102,29 @@ export function createMemoryJobQueue(): JobQueue {
         return next;
       }),
     ack: (id) =>
-      Effect.sync(() => {
+      Effect.suspend(() => {
         const record = records.get(id);
         if (!record) {
-          throw new AppError({ code: "NOT_FOUND", message: `Job ${id} not found.` });
+          return Effect.fail(missingJob(id));
         }
-        records.set(id, { ...record, status: "succeeded" });
+        return Effect.sync(() => {
+          records.set(id, { ...record, status: "succeeded" });
+        });
       }),
     nack: (id, reason) =>
-      Effect.sync(() => {
+      Effect.suspend(() => {
         const record = records.get(id);
         if (!record) {
-          throw new AppError({ code: "NOT_FOUND", message: `Job ${id} not found.` });
+          return Effect.fail(missingJob(id));
         }
-        const exhausted = record.attempt >= record.maxAttempts;
-        records.set(id, {
-          ...record,
-          status: exhausted ? "failed" : "pending",
-          attempt: exhausted ? record.attempt : record.attempt + 1,
-          lastError: reason,
+        return Effect.sync(() => {
+          const exhausted = record.attempt >= record.maxAttempts;
+          records.set(id, {
+            ...record,
+            status: exhausted ? "failed" : "pending",
+            attempt: exhausted ? record.attempt : record.attempt + 1,
+            lastError: reason,
+          });
         });
       }),
     sizeByStatus: () =>

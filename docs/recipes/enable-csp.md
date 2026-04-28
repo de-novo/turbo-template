@@ -38,10 +38,12 @@ Recommended: **nonce-based**. Next 16 ships with built-in support.
 Create `apps/web/middleware.ts`:
 
 ```ts
+import { loadWebEnv } from "@repo/env/apps/web";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
+  const env = loadWebEnv();
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const cspHeader = [
     `default-src 'self'`,
@@ -49,7 +51,7 @@ export function middleware(request: NextRequest) {
     `style-src 'self' 'nonce-${nonce}'`,
     `img-src 'self' blob: data:`,
     `font-src 'self'`,
-    `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL ?? ""}`,
+    `connect-src 'self' ${env.NEXT_PUBLIC_API_URL}`,
     `frame-ancestors 'none'`,
     `form-action 'self'`,
     `base-uri 'self'`,

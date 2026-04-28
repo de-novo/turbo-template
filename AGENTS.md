@@ -52,6 +52,9 @@ weekly schedule.
   anywhere `tsc` would emit them.
 - **Do not import from `process.env` directly** outside the per-app env adapter
   (`apps/*/src/env.ts`). Use `@repo/env/apps/<name>` loaders.
+- **Activation recipes must be copy-safe and follow the same env contract as source code.** Provider
+  examples should inject `API_ENV` / `ApiEnvModule` or use the relevant `@repo/env/apps/<name>`
+  loader; do not teach forks to bypass env validation with broad `process.env` reads.
 - **No new `tsconfig.references` arrays.** `pnpm tsconfig:check` will reject them; Turborepo derives
   the dependency graph from `package.json` `workspace:*`.
 - **Foreign env prefixes are forbidden by the loader.** API rejects `NEXT_PUBLIC_*`, `VITE_*`,
@@ -104,11 +107,15 @@ Cross-cutting (`packages/*`):
 - Error taxonomy: `@repo/contracts/errorCodeSchema` + `@repo/platform/errorCodeToHttpStatus`.
 - Env contracts: `@repo/env/apps/<name>` per-app loaders. Examples in `env/{local,production}/`.
 - Test harness: `@repo/testing/vitest/{node,jsdom}` shared configs.
+- Runtime activation ports: `@repo/infrastructure` owns ports and noop / memory adapters; `apps/api`
+  wires app-side DI tokens (`POLICY_EVALUATOR`, `AUDIT_SINK`, `JOB_QUEUE`, `NOTIFIER`,
+  `OBJECT_STORAGE`, `OUTBOX_RELAY`). Activation docs in `docs/recipes/enable-*.md` must stay aligned
+  with those ports and fail fast instead of silently no-oping unsupported runtime methods.
 
 ## When you finish work
 
 1. Run `pnpm format` then the full gate locally (`pnpm check && pnpm build && pnpm test`).
-2. If you touched `apps/web`, check `apps/web/next-env.d.ts` was not flipped to the dev variant;
-   restore via `git checkout -- apps/web/next-env.d.ts` if it was.
+2. If you touched `apps/web` or ran `pnpm build`, check `apps/web/next-env.d.ts` was not flipped by
+   Next's generated route import. Restore it to the tracked state before committing.
 3. Write the commit body in the documented style (above). Do not skip `Tested:` / `Not-tested:`
    lines.

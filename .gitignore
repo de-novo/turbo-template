@@ -9,7 +9,8 @@ env/**/*.env
 sops.agekey
 .expo
 .next
-.omx
+.claude/scheduled_tasks.lock
+.omx/
 .turbo
 *.tsbuildinfo
 build.log

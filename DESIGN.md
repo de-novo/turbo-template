@@ -80,6 +80,16 @@ components:
     textColor: "{colors.text-primary}"
     rounded: "{rounded.sm}"
     padding: 12px
+  divider:
+    backgroundColor: "{colors.border}"
+    height: 1px
+    rounded: "{rounded.sm}"
+    padding: 0px
+  selected-state:
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.on-accent}"
+    rounded: "{rounded.sm}"
+    padding: 8px
   app-shell:
     backgroundColor: "{colors.canvas}"
     textColor: "{colors.text-primary}"

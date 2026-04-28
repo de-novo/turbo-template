@@ -25,26 +25,29 @@ have a mobile app, defer SMS until a real need arrives.
 
 ## Step 2 — Implement `Notifier`
 
-For Resend — `apps/api/src/notifier/resend-notifier.ts`:
+For Resend — first add `RESEND_API_KEY` and `RESEND_FROM_ADDRESS` to `packages/env/src/apps/api.ts`
+and the env example files (per [`add-env-key.md`](./add-env-key.md)), then create
+`apps/api/src/notifier/resend-notifier.ts`:
 
 ```ts
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import type { NotificationMessage, NotificationResult } from "@repo/contracts";
 import type { Notifier } from "@repo/infrastructure";
 import { AppError } from "@repo/platform";
 import { Effect } from "effect";
 import { Resend } from "resend";
+import { API_ENV, type ApiEnv } from "../api-env.module.js";
 
 @Injectable()
 export class ResendNotifier implements Notifier {
   private readonly client: Resend;
   private readonly fromAddress: string;
 
-  constructor() {
-    const key = process.env.RESEND_API_KEY;
+  constructor(@Inject(API_ENV) env: ApiEnv) {
+    const key = env.RESEND_API_KEY;
     if (!key) throw new AppError({ code: "INTERNAL", message: "RESEND_API_KEY missing." });
     this.client = new Resend(key);
-    this.fromAddress = process.env.RESEND_FROM_ADDRESS ?? "noreply@example.com";
+    this.fromAddress = env.RESEND_FROM_ADDRESS ?? "noreply@example.com";
   }
 
   send(message: NotificationMessage): Effect.Effect<NotificationResult, AppError> {
@@ -107,18 +110,19 @@ export class CompositeNotifier implements Notifier {
 
 ```ts
 import { Module } from "@nestjs/common";
+import { ApiEnvModule } from "../api-env.module.js";
 import { NOTIFIER } from "./notifier.tokens.js";
 import { ResendNotifier } from "./resend-notifier.js";
 
 @Module({
+  imports: [ApiEnvModule],
   providers: [ResendNotifier, { provide: NOTIFIER, useExisting: ResendNotifier }],
   exports: [NOTIFIER],
 })
 export class NotifierModule {}
 ```
 
-You'll also want to add `RESEND_API_KEY` and `RESEND_FROM_ADDRESS` to `packages/env/src/apps/api.ts`
-and the env example files (per [`add-env-key.md`](./add-env-key.md)).
+The provider depends on `ApiEnvModule` because provider secrets stay behind the typed env adapter.
 
 ## Step 4 — Send via the queue (recommended)
 

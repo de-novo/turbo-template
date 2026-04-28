@@ -31,10 +31,12 @@ AWS).
 
 ## Step 2 — Implement `ObjectStorage`
 
-For S3 / R2 (S3-compatible) — `apps/api/src/storage/s3-object-storage.ts`:
+For S3 / R2 (S3-compatible) — first add `S3_BUCKET`, `S3_REGION`, and optional `S3_ENDPOINT` to
+`packages/env/src/apps/api.ts` and the env example files (per [`add-env-key.md`](./add-env-key.md)),
+then create `apps/api/src/storage/s3-object-storage.ts`:
 
 ```ts
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -53,20 +55,21 @@ import type {
 } from "@repo/infrastructure";
 import { AppError } from "@repo/platform";
 import { Effect } from "effect";
+import { API_ENV, type ApiEnv } from "../api-env.module.js";
 
 @Injectable()
 export class S3ObjectStorage implements ObjectStorage {
   private readonly client: S3Client;
   private readonly bucket: string;
 
-  constructor() {
-    this.bucket = process.env.S3_BUCKET ?? "";
+  constructor(@Inject(API_ENV) env: ApiEnv) {
+    this.bucket = env.S3_BUCKET ?? "";
     if (!this.bucket) {
       throw new AppError({ code: "INTERNAL", message: "S3_BUCKET missing." });
     }
     this.client = new S3Client({
-      region: process.env.S3_REGION ?? "us-east-1",
-      ...(process.env.S3_ENDPOINT ? { endpoint: process.env.S3_ENDPOINT } : {}),
+      region: env.S3_REGION ?? "us-east-1",
+      ...(env.S3_ENDPOINT ? { endpoint: env.S3_ENDPOINT } : {}),
     });
   }
 
@@ -173,19 +176,20 @@ For GCS / Azure Blob, swap the SDK and adjust the metadata mapping — the contr
 
 ```ts
 import { Module } from "@nestjs/common";
+import { ApiEnvModule } from "../api-env.module.js";
 import { OBJECT_STORAGE } from "./storage.tokens.js";
 import { S3ObjectStorage } from "./s3-object-storage.js";
 
 @Module({
+  imports: [ApiEnvModule],
   providers: [S3ObjectStorage, { provide: OBJECT_STORAGE, useExisting: S3ObjectStorage }],
   exports: [OBJECT_STORAGE],
 })
 export class StorageModule {}
 ```
 
-Add `S3_BUCKET`, `S3_REGION`, optional `S3_ENDPOINT` (for R2 / MinIO), and AWS credentials (via the
-SDK's default credential chain — env vars / IAM role / SSO) per
-[`add-env-key.md`](./add-env-key.md).
+The SDK credential chain can still use platform-provided credentials (IAM role / SSO / CI secret
+mounts), but application-owned storage settings should enter through `@repo/env`.
 
 ## Step 4 — Use from handlers
 

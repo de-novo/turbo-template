@@ -37,19 +37,25 @@ Redis.
 For pg-boss (Postgres-backed) — `apps/api/src/queue/pg-boss-queue.ts`:
 
 ```ts
-import { Inject, Injectable, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
+import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import type { JobDescriptor, JobRecord } from "@repo/contracts";
 import type { JobQueue } from "@repo/infrastructure";
 import { AppError } from "@repo/platform";
 import PgBoss from "pg-boss";
 import { Effect } from "effect";
+import { API_ENV, type ApiEnv } from "../api-env.module.js";
+
+type PgBossHandler<TPayload extends object> = (job: PgBoss.Job<TPayload>) => Promise<void>;
 
 @Injectable()
 export class PgBossQueue implements JobQueue, OnModuleInit, OnModuleDestroy {
   private boss: PgBoss;
 
-  constructor() {
-    this.boss = new PgBoss(process.env.DATABASE_URL!);
+  constructor(@Inject(API_ENV) env: ApiEnv) {
+    if (!env.DATABASE_URL) {
+      throw new AppError({ code: "INTERNAL", message: "DATABASE_URL is required for pg-boss." });
+    }
+    this.boss = new PgBoss(env.DATABASE_URL);
   }
 
   async onModuleInit() {
@@ -81,14 +87,18 @@ export class PgBossQueue implements JobQueue, OnModuleInit, OnModuleDestroy {
     });
   }
 
-  // claimNext / ack / nack / sizeByStatus: pg-boss uses subscribe-based
-  // workers (boss.work(name, handler)) rather than poll-and-ack. The
-  // recipe section below shows how to wire workers — these methods on
-  // the JobQueue port are useful for mock/in-process workers but
-  // pg-boss handlers run inside boss.work().
-  claimNext = () => Effect.succeed(null);
-  ack = () => Effect.void;
-  nack = () => Effect.void;
+  async registerHandler<TPayload extends object>(name: string, handler: PgBossHandler<TPayload>) {
+    await this.boss.work<TPayload>(name, handler);
+  }
+
+  // pg-boss is handler-driven (`boss.work`) rather than poll-and-ack.
+  // Fail fast instead of silently pretending the polling side is active.
+  claimNext = () =>
+    Effect.fail(new AppError({ code: "UNAVAILABLE", message: "Use registerHandler for pg-boss." }));
+  ack = () =>
+    Effect.fail(new AppError({ code: "UNAVAILABLE", message: "pg-boss acks inside handlers." }));
+  nack = () =>
+    Effect.fail(new AppError({ code: "UNAVAILABLE", message: "pg-boss retries thrown handlers." }));
   sizeByStatus = () => Effect.succeed({ pending: 0, running: 0, succeeded: 0, failed: 0 });
 }
 ```
@@ -100,10 +110,12 @@ For BullMQ — same shape, swap pg-boss for `Queue`/`Worker` from `bullmq` and u
 
 ```ts
 import { Module } from "@nestjs/common";
+import { ApiEnvModule } from "../api-env.module.js";
 import { JOB_QUEUE } from "./queue.tokens.js";
 import { PgBossQueue } from "./pg-boss-queue.js";
 
 @Module({
+  imports: [ApiEnvModule],
   providers: [PgBossQueue, { provide: JOB_QUEUE, useExisting: PgBossQueue }],
   exports: [JOB_QUEUE],
 })
@@ -125,7 +137,7 @@ export class WelcomeEmailHandler implements OnApplicationBootstrap {
   constructor(@Inject(PgBossQueue) private readonly queue: PgBossQueue) {}
 
   async onApplicationBootstrap() {
-    await this.queue.boss.work(
+    await this.queue.registerHandler(
       "user.welcome.email",
       async (job: PgBoss.Job<{ userId: string }>) => {
         // Call your notifier here (per docs/recipes/enable-notifier.md).
