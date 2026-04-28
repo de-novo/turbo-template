@@ -51,3 +51,5 @@ Skip an ADR for:
 - [0004 — Multi-tenancy contract, resolution deferred](./0004-multi-tenancy-contract.md) · Accepted
 - [0005 — Outbox contract, relay deferred](./0005-outbox-contract.md) · Accepted
 - [0006 — Policy port, engine deferred](./0006-policy-port.md) · Accepted
+- [0007 — Job queue contract, backend deferred](./0007-job-queue-contract.md) · Accepted
+- [0008 — Notifier contract, provider deferred](./0008-notifier-contract.md) · Accepted
