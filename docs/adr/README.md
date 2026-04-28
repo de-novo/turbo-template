@@ -46,3 +46,8 @@ Skip an ADR for:
 
 - [0001 — Avoid day-one overreach](./0001-avoid-day-one-overreach.md) · Accepted
 - [0002 — Per-app env loaders with foreign-key guards](./0002-per-app-env-loaders.md) · Accepted
+- [0003 — OpenAPI from Zod contracts via z.toJSONSchema](./0003-openapi-from-zod-contracts.md) ·
+  Accepted
+- [0004 — Multi-tenancy contract, resolution deferred](./0004-multi-tenancy-contract.md) · Accepted
+- [0005 — Outbox contract, relay deferred](./0005-outbox-contract.md) · Accepted
+- [0006 — Policy port, engine deferred](./0006-policy-port.md) · Accepted

@@ -15,6 +15,13 @@
       "when": 1777267723260,
       "tag": "0001_add_auth_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777343393548,
+      "tag": "0002_quiet_dark_beast",
+      "breakpoints": true
     }
   ]
 }

@@ -3,4 +3,7 @@ export * from "./errors.js";
 export * from "./events.js";
 export * from "./ids.js";
 export * from "./notes.js";
+export * from "./outbox.js";
 export * from "./pagination.js";
+export * from "./policy.js";
+export * from "./tenant.js";

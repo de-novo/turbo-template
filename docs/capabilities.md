@@ -1,6 +1,6 @@
 # What this template enables
 
-Last checked: 2026-04-27
+Last checked: 2026-04-28
 
 Single map of every surface, package, and operational lane the template ships. Detailed docs are
 linked at the bottom of each section.
@@ -26,20 +26,20 @@ are. See [docs/deployment.md](./deployment.md).
 All `@repo/*` packages are `private: true`. Import direction is documented in
 [docs/technical-stack.md](./technical-stack.md) and enforced by example in each package's source.
 
-| Package                | Purpose                                                                                                               |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `@repo/auth`           | Session, identity, permission, role Zod contracts (no runtime).                                                       |
-| `@repo/clients`        | `createFetchClient` reference plus contract-driven decoding.                                                          |
-| `@repo/config`         | `projectConfig` from JSON; future home for shared tsconfig presets.                                                   |
-| `@repo/contracts`      | API envelope, error schema, ids, pagination, domain event shape, reference `notes` Zod schemas.                       |
-| `@repo/db`             | Drizzle schema (system events) + client factory; DB-aware health helper.                                              |
-| `@repo/design-system`  | `AppShell`, `EmptyState`, `StatusBadge`, `designTokens`.                                                              |
-| `@repo/env`            | Per-app env loaders with foreign-key + secret guards.                                                                 |
-| `@repo/infrastructure` | Effect-backed cache / events / health adapters (in-memory + noop) + OTel init.                                        |
-| `@repo/mfe`            | Manifest schema + lifecycle event helpers for the MFE lane.                                                           |
-| `@repo/platform`       | `AppError` taxonomy, pino `Logger` factory, `LoggerContext` ALS, result helpers, feature-flag registry, time helpers. |
-| `@repo/testing`        | Shared Vitest node/jsdom configs (`@repo/testing/vitest/{node,jsdom}`).                                               |
-| `@repo/ui-primitives`  | shadcn-style primitives + `cn()` (tailwind-merge).                                                                    |
+| Package                | Purpose                                                                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `@repo/auth`           | Session, identity, permission, role Zod contracts (no runtime).                                                                           |
+| `@repo/clients`        | `createFetchClient` reference plus contract-driven decoding.                                                                              |
+| `@repo/config`         | `projectConfig` from JSON; future home for shared tsconfig presets.                                                                       |
+| `@repo/contracts`      | API envelope, error schema, ids, pagination, domain event shape, tenant context, outbox row, policy query, reference `notes` Zod schemas. |
+| `@repo/db`             | Drizzle schema (auth, system events, outbox) + client factory; DB-aware health helper.                                                    |
+| `@repo/design-system`  | `AppShell`, `EmptyState`, `StatusBadge`, `designTokens`.                                                                                  |
+| `@repo/env`            | Per-app env loaders with foreign-key + secret guards.                                                                                     |
+| `@repo/infrastructure` | Effect-backed cache / events / health / tenant-resolver / outbox-relay / policy-evaluator adapters (in-memory + noop) + OTel init.        |
+| `@repo/mfe`            | Manifest schema + lifecycle event helpers for the MFE lane.                                                                               |
+| `@repo/platform`       | `AppError` taxonomy, pino `Logger` factory, `LoggerContext` + `TenantContext` ALS, result helpers, feature-flag registry, time helpers.   |
+| `@repo/testing`        | Shared Vitest node/jsdom configs (`@repo/testing/vitest/{node,jsdom}`).                                                                   |
+| `@repo/ui-primitives`  | shadcn-style primitives + `cn()` (tailwind-merge).                                                                                        |
 
 ## Authentication
 
@@ -100,6 +100,21 @@ rationale.
   [0003 — OpenAPI from Zod contracts](./adr/0003-openapi-from-zod-contracts.md)).
 - **next-intl / i18n routing.** Single-locale by default; the `[locale]/` segment restructure is a
   deliberate fork choice.
+- **Real tenant resolution strategy.** `@repo/contracts/tenant`, `@repo/platform/tenant-context`,
+  and `@repo/infrastructure`'s `noopTenantResolver` ship the multi-tenancy contract — picking how a
+  tenant is resolved (subdomain, `x-tenant-id` header, JWT claim, membership lookup) and mounting
+  middleware to seed `withTenantContext` is a deliberate fork choice. See ADR
+  [0004 — Multi-tenancy contract](./adr/0004-multi-tenancy-contract.md).
+- **Real outbox relay.** `packages/db/src/schema/outbox.ts` (Drizzle table),
+  `@repo/contracts/outbox` (Zod row), and `@repo/infrastructure`'s `noopOutboxRelay` +
+  `createMemoryOutboxRelay` ship the transactional-outbox contract. Picking the relay implementation
+  (Postgres `LISTEN/NOTIFY` worker, polling worker, Debezium CDC, BullMQ / Inngest adapter) is a
+  deliberate fork choice. See ADR [0005 — Outbox contract](./adr/0005-outbox-contract.md).
+- **Real policy engine.** `@repo/contracts/policy` and `@repo/infrastructure`'s
+  `allowAllPolicyEvaluator` / `denyAllPolicyEvaluator` / `createMemoryPolicyEvaluator` ship the
+  authorization contract and a rule-list reference adapter. Plugging in a real engine (CASL, AWS
+  Cedar, OPA, custom service) is a deliberate fork choice. See ADR
+  [0006 — Policy port](./adr/0006-policy-port.md).
 - **Theme provider (`next-themes`) and form convention (`react-hook-form`).** The first product UI
   decides those.
 - **Changesets / Husky / lint-staged / commitlint.** This repo uses a structured commit body
