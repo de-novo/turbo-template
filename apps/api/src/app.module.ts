@@ -12,7 +12,11 @@ import { jobsModule } from "./jobs/jobs.module.js";
 import { MeModule } from "./me/me.module.js";
 import { MetricsModule } from "./metrics/metrics.module.js";
 import { NotesModule } from "./notes/notes.module.js";
+import { NotifierModule } from "./notifier/notifier.module.js";
+import { OutboxModule } from "./outbox/outbox.module.js";
 import { PolicyModule } from "./policy/policy.module.js";
+import { QueueModule } from "./queue/queue.module.js";
+import { StorageModule } from "./storage/storage.module.js";
 import { TenantModule } from "./tenant/tenant.module.js";
 
 const env = loadApiEnv();
@@ -32,6 +36,10 @@ const env = loadApiEnv();
     TenantModule,
     PolicyModule,
     AuditModule,
+    OutboxModule,
+    QueueModule,
+    NotifierModule,
+    StorageModule,
     jobsModule(env.JOBS_ENABLED),
   ],
   providers: [

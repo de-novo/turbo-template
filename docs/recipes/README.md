@@ -19,6 +19,10 @@ For the **what ships**, see [docs/capabilities.md](../capabilities.md).
 | [Enable multi-tenancy](./enable-multi-tenancy.md)         | Swap `noopTenantResolver` for a real one. Middleware + ALS already wired (per ADRs 0004 + 0013).                 |
 | [Enable policy authorization](./enable-policy.md)         | Swap `allowAllPolicyEvaluator` for a rule list / CASL / Cedar / OPA adapter, then call `evaluate` from handlers. |
 | [Enable audit recording](./enable-audit.md)               | Swap `noopAuditSink` for a Drizzle / SIEM / outbox-backed sink, then `record(...)` from handlers.                |
+| [Enable outbox relay](./enable-outbox-relay.md)           | Swap `noopOutboxRelay` for a Postgres polling / LISTEN-NOTIFY / Debezium relay; mount a worker.                  |
+| [Enable job queue](./enable-job-queue.md)                 | Swap `noopJobQueue` for BullMQ / pg-boss / Inngest / SQS / Cloud Tasks; start a worker pool.                     |
+| [Enable notifier](./enable-notifier.md)                   | Swap `noopNotifier` for Resend / SES / Postmark / Twilio / FCM. Typically called via the queue.                  |
+| [Enable object storage](./enable-object-storage.md)       | Swap `noopObjectStorage` for S3 / R2 / GCS / Azure Blob / MinIO. Direct upload + presigned URL patterns.         |
 | [Production go-live checklist](./production-checklist.md) | Required env vars, auth posture, observability, CORS, container, smoke checks before traffic lands.              |
 
 If you're touching something not listed here, the most useful next read is usually the closest
