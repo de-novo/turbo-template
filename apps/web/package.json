@@ -42,5 +42,9 @@
     "jsdom": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "portless": {
+    "name": "web.fullstack-typescript-template",
+    "script": "dev:app"
   }
 }

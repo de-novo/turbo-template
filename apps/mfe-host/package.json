@@ -33,5 +33,9 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
+  },
+  "portless": {
+    "name": "mfe.fullstack-typescript-template",
+    "script": "dev:app"
   }
 }

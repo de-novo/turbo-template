@@ -40,5 +40,9 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
+  },
+  "portless": {
+    "name": "desktop.fullstack-typescript-template",
+    "script": "dev:app"
   }
 }

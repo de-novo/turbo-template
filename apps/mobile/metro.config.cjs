@@ -10,5 +10,11 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, "node_modules"),
   path.resolve(workspaceRoot, "node_modules"),
 ];
+config.resolver.blockList = [
+  /\/apps\/web\/\.next\/.*/,
+  /\/apps\/desktop\/dist\/.*/,
+  /\/apps\/mfe-host\/dist\/.*/,
+  /\/apps\/mfe-dashboard\/dist\/.*/,
+];
 
 module.exports = config;
