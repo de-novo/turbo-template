@@ -1,0 +1,12 @@
+{
+  "apps": {
+    "apps/web": { "name": "web.fullstack-typescript-template", "script": "dev:app" },
+    "apps/api": { "name": "api.fullstack-typescript-template", "script": "dev:app" },
+    "apps/desktop": { "name": "desktop.fullstack-typescript-template", "script": "dev:app" },
+    "apps/mfe-host": { "name": "mfe.fullstack-typescript-template", "script": "dev:app" },
+    "apps/mfe-dashboard": {
+      "name": "mfe-dashboard.fullstack-typescript-template",
+      "script": "dev:app"
+    }
+  }
+}

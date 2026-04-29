@@ -63,7 +63,7 @@ adversaries from inflating Prometheus storage by hammering random URLs.
 ## Curl
 
 ```bash
-curl http://localhost:4000/health/live
-curl http://localhost:4000/health/ready
-curl http://localhost:4000/metrics
+curl https://api.fullstack-typescript-template.localhost/health/live
+curl https://api.fullstack-typescript-template.localhost/health/ready
+curl https://api.fullstack-typescript-template.localhost/metrics
 ```

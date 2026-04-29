@@ -22,10 +22,15 @@ const observability = initOpenTelemetry({
 });
 
 // CORS: in production, require an explicit allowlist via CORS_ORIGINS (comma-
-// separated). In local dev, default to the per-surface localhost origins so
-// `pnpm dev` "just works" without env tuning. `cors: true` is intentionally
+// separated). In local dev, default to the per-surface portless origins and
+// legacy localhost fallbacks so `pnpm dev` and `dev:app` both work without env
+// tuning. `cors: true` is intentionally
 // avoided — it reflects every Origin and pairs poorly with `credentials: true`.
 const defaultDevOrigins = [
+  "https://web.fullstack-typescript-template.localhost", // web
+  "https://desktop.fullstack-typescript-template.localhost", // desktop
+  "https://mfe.fullstack-typescript-template.localhost", // mfe-host
+  "https://mfe-dashboard.fullstack-typescript-template.localhost", // mfe-dashboard
   "http://localhost:3000", // web
   "http://localhost:3001", // desktop
   "http://localhost:3100", // mfe-host
@@ -74,7 +79,7 @@ await app.listen(env.PORT);
 
 logger.log({
   level: "info",
-  message: `API listening on http://localhost:${env.PORT}`,
+  message: `API listening on port ${env.PORT}`,
   details: {
     observability: observability ? "enabled" : "disabled",
     database: dbClient ? "connected" : "not-configured",

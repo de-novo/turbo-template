@@ -222,7 +222,7 @@ pnpm --filter @repo/api test
 JOBS_ENABLED=true pnpm dev:api
 
 # Trigger a job:
-curl -X POST http://localhost:4000/auth/signup -d '{"email":"u@example.com"}'
+curl -X POST https://api.fullstack-typescript-template.localhost/auth/signup -d '{"email":"u@example.com"}'
 
 # pg-boss: verify in Postgres
 psql "$DATABASE_URL" -c "select name, state, retry_count from pgboss.job order by created_on desc limit 5;"

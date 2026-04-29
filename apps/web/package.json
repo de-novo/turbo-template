@@ -7,12 +7,13 @@
     "analyze": "ANALYZE=true next build",
     "build": "next build",
     "check": "pnpm lint && pnpm typecheck",
-    "dev": "next dev --port 3000",
+    "dev": "portless",
     "lint": "biome lint .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev:app": "next dev"
   },
   "dependencies": {
     "@repo/auth": "workspace:*",

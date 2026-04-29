@@ -15,7 +15,7 @@ const webEnvKeys = [
 
 export const webEnvSchema = z
   .object({
-    NEXT_PUBLIC_API_URL: z.url().default("http://localhost:4000"),
+    NEXT_PUBLIC_API_URL: z.url().default("https://api.fullstack-typescript-template.localhost"),
     NEXT_PUBLIC_APP_ENV: appEnvironmentSchema.default("local"),
     NEXT_PUBLIC_AUTH_ISSUER_URL: z.url().optional(),
     NEXT_PUBLIC_AUTH_MODE: z
@@ -25,7 +25,7 @@ export const webEnvSchema = z
     NEXT_PUBLIC_AUTH_TOPOLOGY: z
       .enum(["single-app", "modular-monolith", "msa"])
       .default("modular-monolith"),
-    NEXT_PUBLIC_WEB_URL: z.url().default("http://localhost:3000"),
+    NEXT_PUBLIC_WEB_URL: z.url().default("https://web.fullstack-typescript-template.localhost"),
   })
   .superRefine((value, ctx) => {
     requireInProduction(ctx, value.NEXT_PUBLIC_APP_ENV, value, [

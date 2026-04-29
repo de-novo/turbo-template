@@ -14,9 +14,11 @@ export const mfeHostEnvSchema = z
     VITE_MFE_DASHBOARD_MANIFEST_URL: z
       .string()
       .url()
-      .default("http://localhost:3101/mfe-manifest.dev.json"),
+      .default(
+        "https://mfe-dashboard.fullstack-typescript-template.localhost/mfe-manifest.dev.json",
+      ),
     VITE_MFE_HOST_ENV: appEnvironmentSchema.default("local"),
-    VITE_MFE_HOST_URL: z.url().default("http://localhost:3100"),
+    VITE_MFE_HOST_URL: z.url().default("https://mfe.fullstack-typescript-template.localhost"),
   })
   .superRefine((value, ctx) => {
     requireInProduction(ctx, value.VITE_MFE_HOST_ENV, value, [

@@ -159,6 +159,9 @@ catalogs:
     pino-pretty:
       specifier: 13.1.3
       version: 13.1.3
+    portless:
+      specifier: 0.11.1
+      version: 0.11.1
     prettier:
       specifier: 3.8.3
       version: 3.8.3
@@ -237,6 +240,9 @@ importers:
       license-checker-rseidelsohn:
         specifier: 'catalog:'
         version: 4.4.2
+      portless:
+        specifier: 'catalog:'
+        version: 0.11.1
       prettier:
         specifier: 'catalog:'
         version: 3.8.3
@@ -6585,6 +6591,12 @@ packages:
   pngjs@3.4.0:
     resolution: {integrity: sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==}
     engines: {node: '>=4.0.0'}
+
+  portless@0.11.1:
+    resolution: {integrity: sha512-A/U6sBo/aC+MDoLjVTzAUeB18KTzJQs7z+MnuyyCjJTOZoCh9xZzOjSqUPA+aWS0uS3UytWPrNLA5AO96TzuKQ==}
+    engines: {node: '>=20'}
+    os: [darwin, linux, win32]
+    hasBin: true
 
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
@@ -14361,6 +14373,8 @@ snapshots:
       xmlbuilder: 15.1.1
 
   pngjs@3.4.0: {}
+
+  portless@0.11.1: {}
 
   postcss-value-parser@4.2.0: {}
 

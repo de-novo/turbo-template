@@ -158,7 +158,7 @@ There is no automated drift gate; reviewers flag PRs that change the API surface
 pnpm --filter @repo/contracts build      # if other packages import the new types
 pnpm --filter @repo/api typecheck
 pnpm --filter @repo/api test
-pnpm dev:api                              # curl http://localhost:4000/orders
+pnpm dev:api                              # curl https://api.fullstack-typescript-template.localhost/orders
 ```
 
 The new routes should respond as expected; the matching shapes should appear in

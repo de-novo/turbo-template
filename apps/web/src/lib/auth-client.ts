@@ -12,7 +12,10 @@ import { createAuthClient } from "better-auth/react";
  * because the rewrite happens server-side.
  */
 export const authClient = createAuthClient({
-  baseURL: typeof window === "undefined" ? "http://localhost:3000" : window.location.origin,
+  baseURL:
+    typeof window === "undefined"
+      ? "https://web.fullstack-typescript-template.localhost"
+      : window.location.origin,
 });
 
 export const { useSession, signIn, signUp, signOut } = authClient;

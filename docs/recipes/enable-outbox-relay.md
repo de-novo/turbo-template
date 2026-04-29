@@ -265,7 +265,7 @@ pnpm --filter @repo/api test
 JOBS_ENABLED=true pnpm dev:api
 
 # Trigger a domain mutation:
-curl -X POST http://localhost:4000/notes -d '{"title":"hello"}' \
+curl -X POST https://api.fullstack-typescript-template.localhost/notes -d '{"title":"hello"}' \
   -H 'content-type: application/json'
 
 # Verify the outbox row landed and was published:

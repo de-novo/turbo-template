@@ -60,7 +60,8 @@
     "prettier": "catalog:",
     "syncpack": "catalog:",
     "turbo": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "portless": "catalog:"
   },
   "pnpm": {
     "overrides": {

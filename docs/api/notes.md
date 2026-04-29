@@ -48,21 +48,21 @@ intentionally does not require authentication. Real product modules pair with
 
 ```bash
 # List
-curl http://localhost:4000/notes?page=1&pageSize=20
+curl https://api.fullstack-typescript-template.localhost/notes?page=1&pageSize=20
 
 # Create
-curl -X POST http://localhost:4000/notes \
+curl -X POST https://api.fullstack-typescript-template.localhost/notes \
   -H 'content-type: application/json' \
   -d '{"title":"hello","body":"first note"}'
 
 # Fetch by id
-curl http://localhost:4000/notes/<id>
+curl https://api.fullstack-typescript-template.localhost/notes/<id>
 
 # Update
-curl -X PUT http://localhost:4000/notes/<id> \
+curl -X PUT https://api.fullstack-typescript-template.localhost/notes/<id> \
   -H 'content-type: application/json' \
   -d '{"title":"updated"}'
 
 # Delete
-curl -X DELETE -i http://localhost:4000/notes/<id>
+curl -X DELETE -i https://api.fullstack-typescript-template.localhost/notes/<id>
 ```

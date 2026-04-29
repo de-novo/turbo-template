@@ -103,7 +103,7 @@ test("GET /protected with a session cookie returns 200", async () => {
 pnpm --filter @repo/api typecheck
 pnpm --filter @repo/api test
 pnpm dev:api
-# curl -i http://localhost:4000/protected                # → 401
+# curl -i https://api.fullstack-typescript-template.localhost/protected                # → 401
 # Then sign up via /api/auth/sign-up/email and reuse the session cookie.
 ```
 

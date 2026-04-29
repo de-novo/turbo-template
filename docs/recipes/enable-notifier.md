@@ -200,7 +200,7 @@ export RESEND_FROM_ADDRESS=onboarding@your-domain.com
 JOBS_ENABLED=true pnpm dev:api
 
 # Trigger a flow that enqueues a notification:
-curl -X POST http://localhost:4000/auth/signup -d '{"email":"verified@your-domain.com"}'
+curl -X POST https://api.fullstack-typescript-template.localhost/auth/signup -d '{"email":"verified@your-domain.com"}'
 
 # Check the provider's dashboard / inbox for delivery confirmation.
 ```

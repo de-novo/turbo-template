@@ -277,10 +277,10 @@ export AWS_SECRET_ACCESS_KEY=...
 pnpm dev:api
 
 # Direct upload:
-curl -F "file=@/path/to/image.png" http://localhost:4000/avatar
+curl -F "file=@/path/to/image.png" https://api.fullstack-typescript-template.localhost/avatar
 
 # Presigned upload:
-curl -s -X POST http://localhost:4000/uploads/presign \
+curl -s -X POST https://api.fullstack-typescript-template.localhost/uploads/presign \
   -d '{"contentType":"image/png","contentLength":1024}' \
   -H 'content-type: application/json' \
   | jq -r .data.url \

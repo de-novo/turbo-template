@@ -153,10 +153,10 @@ pnpm --filter @repo/api test
 pnpm --filter @repo/api dev
 
 # Send a request without the header — should 4xx (if you chose strict):
-curl -i http://localhost:4000/notes
+curl -i https://api.fullstack-typescript-template.localhost/notes
 
 # Send a request with the header — should 200 and scope to that tenant:
-curl -H 'x-tenant-id: tenant-1' http://localhost:4000/notes
+curl -H 'x-tenant-id: tenant-1' https://api.fullstack-typescript-template.localhost/notes
 ```
 
 Watch the access log line — it should now carry `tenantId` in `details` for any request where the

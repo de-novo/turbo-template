@@ -114,16 +114,16 @@ Template naming policy:
 The shipped root `package.json` is the source of truth for the canonical script list. The most
 load-bearing entries:
 
-| Script                                                         | Purpose                                                                                          |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `pnpm install`                                                 | Install with `pnpm@10.33.2` pinned via `packageManager`.                                         |
-| `pnpm dev` / `dev:*`                                           | Run all surfaces or one (`web`, `api`, `desktop`, `mobile`, `mfe`, `mfe-host`, `mfe-dashboard`). |
-| `pnpm check`                                                   | Lint + tsconfig check + typecheck + format check + env example check + DESIGN lint.              |
-| `pnpm test` / `test:e2e` / `test:coverage`                     | Vitest fanout + Playwright web smoke + informational coverage.                                   |
-| `pnpm build`                                                   | Turbo build pipeline.                                                                            |
-| `pnpm db:generate` / `db:migrate` / `db:studio`                | Drizzle CLI wrappers.                                                                            |
-| `pnpm template:rename` / `template:auth` / `template:surfaces` | Fork-time rename, auth selection, surface pruning.                                               |
-| `pnpm syncpack:check` / `licenses:check`                       | Catalog drift + production license allow-list (CI gates).                                        |
+| Script                                                         | Purpose                                                                                                                                                                                   |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install`                                                 | Install with `pnpm@10.33.2` pinned via `packageManager`.                                                                                                                                  |
+| `pnpm dev` / `dev:*`                                           | Run all surfaces or one (`web`, `api`, `desktop`, `mobile`, `mfe`, `mfe-host`, `mfe-dashboard`). HTTP apps use portless `.localhost` URLs; `dev:app` is the raw fallback inside each app. |
+| `pnpm check`                                                   | Lint + tsconfig check + typecheck + format check + env example check + DESIGN lint.                                                                                                       |
+| `pnpm test` / `test:e2e` / `test:coverage`                     | Vitest fanout + Playwright web smoke + informational coverage.                                                                                                                            |
+| `pnpm build`                                                   | Turbo build pipeline.                                                                                                                                                                     |
+| `pnpm db:generate` / `db:migrate` / `db:studio`                | Drizzle CLI wrappers.                                                                                                                                                                     |
+| `pnpm template:rename` / `template:auth` / `template:surfaces` | Fork-time rename, auth selection, surface pruning.                                                                                                                                        |
+| `pnpm syncpack:check` / `licenses:check`                       | Catalog drift + production license allow-list (CI gates).                                                                                                                                 |
 
 ## Turborepo Standard
 

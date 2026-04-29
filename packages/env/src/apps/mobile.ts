@@ -11,7 +11,7 @@ const mobileEnvKeys = [
 
 export const mobileEnvSchema = z
   .object({
-    EXPO_PUBLIC_API_URL: z.url().default("http://localhost:4000"),
+    EXPO_PUBLIC_API_URL: z.url().default("https://api.fullstack-typescript-template.localhost"),
     EXPO_PUBLIC_APP_ENV: appEnvironmentSchema.default("local"),
     EXPO_PUBLIC_MOBILE_URL: z.url().default("http://localhost:8081"),
   })

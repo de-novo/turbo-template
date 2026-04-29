@@ -189,7 +189,7 @@ pnpm --filter @repo/api dev
 
 # Sign in, then attempt a denied action — should 403:
 curl -X PUT --cookie 'better-auth.session_token=...' \
-  http://localhost:4000/notes/some-id -d '{"title":"x"}'
+  https://api.fullstack-typescript-template.localhost/notes/some-id -d '{"title":"x"}'
 ```
 
 Watch the access log line — it should carry `403 FORBIDDEN` in the status / level fields.

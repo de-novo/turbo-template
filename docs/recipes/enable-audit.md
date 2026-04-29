@@ -244,7 +244,7 @@ pnpm --filter @repo/api dev
 
 # Trigger a recorded action:
 curl -X DELETE --cookie 'better-auth.session_token=...' \
-  http://localhost:4000/notes/some-id
+  https://api.fullstack-typescript-template.localhost/notes/some-id
 
 # Verify the entry landed:
 psql "$DATABASE_URL" -c "select * from audit_events order by occurred_at desc limit 1;"

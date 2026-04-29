@@ -49,7 +49,7 @@ Source: [`apps/api/src/me/me.controller.ts`](../../apps/api/src/me/me.controller
 ```bash
 # After signing in via /api/auth/sign-in/email, the response sets a
 # session cookie. Reuse it in subsequent requests:
-curl --cookie 'better-auth.session_token=...' http://localhost:4000/me
+curl --cookie 'better-auth.session_token=...' https://api.fullstack-typescript-template.localhost/me
 ```
 
 ## Adding a protected route

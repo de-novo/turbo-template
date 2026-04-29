@@ -147,6 +147,11 @@ repo uses a structured `Constraint:` / `Rejected:` / `Confidence:` / `Scope-risk
 
 ### Per-surface dev
 
+Local HTTP surfaces run through [portless](https://github.com/vercel-labs/portless), so the browser
+URLs stay stable even when the underlying framework ports move. On first run, portless may ask to
+trust its local CA and bind the HTTPS proxy. People who cannot run portless can use each package's
+raw `dev:app` script.
+
 ```bash
 pnpm dev:web
 pnpm dev:api
@@ -157,15 +162,15 @@ pnpm dev:mfe-host         # host only
 pnpm dev:mfe-dashboard    # remote only
 ```
 
-Default app ports:
+Default local URLs:
 
 ```text
-web: http://localhost:3000
-desktop: http://localhost:3001
-api: http://localhost:4000
+web: https://web.fullstack-typescript-template.localhost
+desktop: https://desktop.fullstack-typescript-template.localhost
+api: https://api.fullstack-typescript-template.localhost
 mobile metro: http://localhost:8081
-mfe host: http://localhost:3100
-mfe dashboard remote: http://localhost:3101
+mfe host: https://mfe.fullstack-typescript-template.localhost
+mfe dashboard remote: https://mfe-dashboard.fullstack-typescript-template.localhost
 ```
 
 ### Database
@@ -465,7 +470,7 @@ pnpm dev:mfe-dashboard
 Default local contract:
 
 ```text
-VITE_MFE_DASHBOARD_MANIFEST_URL=http://localhost:3101/mfe-manifest.dev.json
+VITE_MFE_DASHBOARD_MANIFEST_URL=https://mfe-dashboard.fullstack-typescript-template.localhost/mfe-manifest.dev.json
 remote custom element: <repo-mfe-dashboard>
 ```
 
