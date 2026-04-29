@@ -191,6 +191,11 @@ pnpm dev:proxy:unprivileged
 pnpm dev:api
 ```
 
+OAuth providers commonly reject `.localhost` subdomains. For local Google / Apple / GitHub OAuth,
+use an owned public DNS wildcard such as `*.local.example.com` or `*.{project}.local.example.com`
+with portless custom TLDs; see
+[Use OAuth locally with portless](./docs/recipes/local-oauth-with-portless.md).
+
 ### Database
 
 ```bash
