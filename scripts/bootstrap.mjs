@@ -106,6 +106,9 @@ for (const r of envResults) {
 step("Suggested next commands", () => {
   const lines = [
     "  pnpm dev                 # turbo run dev across every surface",
+    "  pnpm dev:trust           # one-time portless CA trust",
+    "  pnpm dev:proxy           # optional: HTTPS proxy on 443 (may prompt for sudo)",
+    "  pnpm dev:proxy:unprivileged # optional: HTTPS proxy on :1355, no sudo",
     "  pnpm dev:api             # API only (memory adapter; no DB needed)",
     "  pnpm dev:web             # Web only",
     "",
@@ -116,7 +119,7 @@ step("Suggested next commands", () => {
     "",
     "  pnpm check               # lint + typecheck + format + env + design (CI gate)",
     "",
-    "  open http://localhost:4000/docs   # Scalar UI for the API",
+    "  open https://api.fullstack-typescript-template.localhost/health/live",
   ];
   process.stdout.write(`${lines.join("\n")}\n`);
 });

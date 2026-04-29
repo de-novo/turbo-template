@@ -21,6 +21,8 @@ Use these instead of inventing alternatives:
 
 ```bash
 pnpm install
+pnpm dev:trust            # one-time portless CA trust
+pnpm dev:proxy[:unprivileged|:stop]
 pnpm dev                  # all surfaces (HTTP apps through portless .localhost URLs)
 pnpm dev:web | dev:api | dev:desktop | dev:mobile | dev:mfe | dev:mfe-host | dev:mfe-dashboard
 pnpm check                # biome lint + tsconfig:check + typecheck + format:check + env:check + design:lint

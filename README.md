@@ -153,6 +153,9 @@ trust its local CA and bind the HTTPS proxy. People who cannot run portless can 
 raw `dev:app` script.
 
 ```bash
+pnpm dev:trust            # one-time: trust the local portless CA
+pnpm dev:proxy            # optional: start HTTPS proxy on 443 (may prompt for sudo)
+pnpm dev:proxy:unprivileged  # optional: no sudo; URLs include :1355
 pnpm dev:web
 pnpm dev:api
 pnpm dev:desktop
@@ -171,6 +174,14 @@ api: https://api.fullstack-typescript-template.localhost
 mobile metro: http://localhost:8081
 mfe host: https://mfe.fullstack-typescript-template.localhost
 mfe dashboard remote: https://mfe-dashboard.fullstack-typescript-template.localhost
+```
+
+If `pnpm dev:*` runs from a non-interactive terminal and portless cannot prompt for sudo, start the
+unprivileged proxy first:
+
+```bash
+pnpm dev:proxy:unprivileged
+pnpm dev:api
 ```
 
 ### Database
