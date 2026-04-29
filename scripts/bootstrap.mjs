@@ -10,6 +10,8 @@
 //      mfe-host/.env), but only when the destination doesn't already exist.
 //      Pass `--force` to overwrite.
 //   4. Prints the suggested next commands.
+// Portless global setup is opt-in: global npm installs and CA trust can prompt
+// for system credentials.
 
 import { spawnSync } from "node:child_process";
 import { copyFileSync, existsSync } from "node:fs";
@@ -24,6 +26,9 @@ const args = new Set(process.argv.slice(2));
 const force = args.has("--force") || args.has("-f");
 const skipInstall = args.has("--skip-install");
 const skipPreflight = args.has("--skip-preflight");
+const setupPortless = args.has("--setup-portless");
+const setupPortlessProxy = args.has("--setup-portless-proxy");
+const setupPortlessUnprivileged = args.has("--setup-portless-unprivileged");
 
 const ENV_PAIRS = [
   { example: "env/local/api.env.example", dest: "apps/api/.env" },
@@ -69,6 +74,22 @@ step("Install dependencies", () => {
   run("pnpm install", "pnpm", flags);
 });
 
+step("Portless global setup", () => {
+  if (!setupPortless && !setupPortlessProxy && !setupPortlessUnprivileged) {
+    process.stdout.write("  (skipped; pass --setup-portless to install global portless)\n");
+    return;
+  }
+
+  const portlessArgs = ["scripts/setup-portless.mjs"];
+  if (setupPortlessProxy || setupPortlessUnprivileged) {
+    portlessArgs.push("--start-proxy");
+  }
+  if (setupPortlessUnprivileged) {
+    portlessArgs.push("--unprivileged");
+  }
+  run("portless setup", "node", portlessArgs);
+});
+
 const envResults = step("Provision local env files", () => {
   const results = [];
   for (const { example, dest } of ENV_PAIRS) {
@@ -106,6 +127,8 @@ for (const r of envResults) {
 step("Suggested next commands", () => {
   const lines = [
     "  pnpm dev                 # turbo run dev across every surface",
+    "  pnpm bootstrap --setup-portless # bootstrap + global portless setup",
+    "  pnpm dev:portless:setup  # recommended: global portless install + CA trust",
     "  pnpm dev:trust           # one-time portless CA trust",
     "  pnpm dev:proxy           # optional: HTTPS proxy on 443 (may prompt for sudo)",
     "  pnpm dev:proxy:unprivileged # optional: HTTPS proxy on :1355, no sudo",

@@ -71,6 +71,7 @@ Once you have a copy:
 
 ```bash
 pnpm bootstrap         # preflight + pnpm install + copy env examples to per-app .env files
+pnpm bootstrap --setup-portless  # optional: also install global portless + trust local CA
 pnpm template:rename   # interactive: change the project name, slug, and package scope
 pnpm dev               # turbo run dev across every surface
 ```
@@ -85,7 +86,9 @@ It is idempotent (re-running won't overwrite your edits — pass `--force` if yo
 3. Copies `env/local/*.env.example` to each app's canonical dev location (`apps/api/.env`,
    `apps/web/.env.local`, `apps/desktop/.env`, `apps/mobile/.env.local`, `apps/mfe-host/.env`),
    leaving any file you've already edited untouched.
-4. Prints suggested next commands.
+4. Optionally runs global portless setup when passed `--setup-portless`, `--setup-portless-proxy`,
+   or `--setup-portless-unprivileged`.
+5. Prints suggested next commands, including the recommended global portless setup.
 
 The API + web boot to fully working defaults without a database (Better Auth uses an in-memory
 adapter). For persistent auth and the notes example, add a Postgres step:
@@ -148,12 +151,16 @@ repo uses a structured `Constraint:` / `Rejected:` / `Confidence:` / `Scope-risk
 ### Per-surface dev
 
 Local HTTP surfaces run through [portless](https://github.com/vercel-labs/portless), so the browser
-URLs stay stable even when the underlying framework ports move. On first run, portless may ask to
-trust its local CA and bind the HTTPS proxy. People who cannot run portless can use each package's
-raw `dev:app` script.
+URLs stay stable even when the underlying framework ports move. The template keeps `portless` as a
+repo-local devDependency for reproducible scripts, and also provides a global setup command because
+the upstream project recommends global installation for day-to-day use. People who cannot run
+portless can use each package's raw `dev:app` script.
 
 ```bash
-pnpm dev:trust            # one-time: trust the local portless CA
+pnpm dev:portless:setup   # one-time: npm install -g portless@latest + trust CA
+pnpm dev:portless:setup:proxy  # setup + start HTTPS proxy on 443 (may prompt for sudo)
+pnpm dev:portless:setup:unprivileged  # setup + start HTTPS proxy on :1355, no sudo
+pnpm dev:trust            # one-time CA trust only, using the repo-local CLI
 pnpm dev:proxy            # optional: start HTTPS proxy on 443 (may prompt for sudo)
 pnpm dev:proxy:unprivileged  # optional: no sudo; URLs include :1355
 pnpm dev:web

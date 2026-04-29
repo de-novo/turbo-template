@@ -26,6 +26,10 @@ function makeFixture() {
   mkdirSync(join(dir, "node_modules/.pnpm"), { recursive: true });
 
   copyFileSync(bootstrapScript, join(dir, "scripts/bootstrap.mjs"));
+  writeFileSync(
+    join(dir, "scripts/setup-portless.mjs"),
+    "import { writeFileSync } from 'node:fs'; writeFileSync('portless-args.txt', process.argv.slice(2).join(' '));\n",
+  );
   writeFileSync(join(dir, "env/local/api.env.example"), "API_KEY=local\n");
   writeFileSync(
     join(dir, "env/local/web.env.example"),
@@ -117,6 +121,21 @@ test("bootstrap is idempotent across re-runs", () => {
     assert.match(first.stdout, /copied from example/);
     assert.doesNotMatch(second.stdout, /copied from example/);
     assert.match(second.stdout, /already present/);
+  } finally {
+    cleanup(dir);
+  }
+});
+
+test("bootstrap can opt into global portless setup", () => {
+  const dir = makeFixture();
+  try {
+    const result = runBootstrap(dir, ["--setup-portless-unprivileged"]);
+    assert.equal(result.status, 0, `bootstrap exited non-zero:\n${result.stderr}`);
+    assert.equal(
+      readFileSync(join(dir, "portless-args.txt"), "utf8"),
+      "--start-proxy --unprivileged",
+    );
+    assert.match(result.stdout, /Portless global setup/);
   } finally {
     cleanup(dir);
   }

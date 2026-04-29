@@ -21,6 +21,7 @@ Use these instead of inventing alternatives:
 
 ```bash
 pnpm install
+pnpm dev:portless:setup   # recommended global portless@latest install + CA trust
 pnpm dev:trust            # one-time portless CA trust
 pnpm dev:proxy[:unprivileged|:stop]
 pnpm dev                  # all surfaces (HTTP apps through portless .localhost URLs)
@@ -55,7 +56,9 @@ weekly schedule.
 - **Do not import from `process.env` directly** outside the per-app env adapter
   (`apps/*/src/env.ts`). Use `@repo/env/apps/<name>` loaders.
 - **Keep portless dev wiring aligned.** HTTP app `dev` scripts should call `portless`; the real
-  framework command belongs in `dev:app`, with names centralized in `portless.json`.
+  framework command belongs in `dev:app`, with names centralized in `portless.json`. Keep
+  `pnpm dev:portless:setup` installing `portless@latest` for the global CLI while the repo-local
+  devDependency remains the reproducible fallback.
 - **Activation recipes must be copy-safe and follow the same env contract as source code.** Provider
   examples should inject `API_ENV` / `ApiEnvModule` or use the relevant `@repo/env/apps/<name>`
   loader; do not teach forks to bypass env validation with broad `process.env` reads.
