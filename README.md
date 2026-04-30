@@ -151,10 +151,15 @@ repo uses a structured `Constraint:` / `Rejected:` / `Confidence:` / `Scope-risk
 ### Per-surface dev
 
 Local HTTP surfaces run through [portless](https://github.com/vercel-labs/portless), so the browser
-URLs stay stable even when the underlying framework ports move. The template keeps `portless` as a
-repo-local devDependency for reproducible scripts, and also provides a global setup command because
-the upstream project recommends global installation for day-to-day use. People who cannot run
-portless can use each package's raw `dev:app` script.
+URLs stay stable even when the underlying framework ports move. Portless is domain-first: app URLs
+are managed as names such as `https://web.fullstack-typescript-template.localhost`, not as app ports
+that people have to remember. The framework still listens on an internal port, but the only port you
+normally care about is the shared portless proxy (`443`, or `1355` for the unprivileged fallback).
+Do not use `localhost:{port}` for browser access, docs curl examples, OAuth callbacks, or app API
+base URLs; use the portless domains instead. The template keeps `portless` as a repo-local
+devDependency for reproducible scripts, and also provides a global setup command because the
+upstream project recommends global installation for day-to-day use. People who cannot run portless
+can use each package's raw `dev:app` script.
 
 ```bash
 pnpm dev:portless:setup   # one-time: npm install -g portless@latest + trust CA

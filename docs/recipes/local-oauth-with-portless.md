@@ -9,6 +9,12 @@ For OAuth testing, run portless on a real public suffix and use a DNS name under
 Do not rely on local DNS overrides for this template path; public DNS keeps provider validation and
 team setup predictable.
 
+Portless should still be treated as a domain-based router, not as an app-port registry. The app
+commands may bind internal framework ports such as `3000` or `4000`, but OAuth providers and
+browsers should see stable HTTPS domains. Only the shared portless proxy port is exposed (`443` by
+default, or an unprivileged port such as `1355` when sudo is not available). Do not register or
+document OAuth redirects with `localhost:{port}`.
+
 ## Recommended DNS shape
 
 If you own `example.com`, create a wildcard DNS record at your DNS provider, such as Cloudflare:

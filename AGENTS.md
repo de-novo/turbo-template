@@ -59,6 +59,11 @@ weekly schedule.
   framework command belongs in `dev:app`, with names centralized in `portless.json`. Keep
   `pnpm dev:portless:setup` installing `portless@latest` for the global CLI while the repo-local
   devDependency remains the reproducible fallback.
+- **Do not use `localhost:{port}` for human-facing app access or API calls.** Browser URLs, docs
+  examples, OAuth redirect URIs, and app-to-app env values such as `NEXT_PUBLIC_API_URL`,
+  `BETTER_AUTH_URL`, and `CORS_ORIGINS` must use portless domains. Raw `localhost` ports are only
+  acceptable for internal framework listeners, automated test harnesses, container healthchecks, and
+  non-HTTP dependencies such as Postgres, OTel collectors, or Expo Metro.
 - **Activation recipes must be copy-safe and follow the same env contract as source code.** Provider
   examples should inject `API_ENV` / `ApiEnvModule` or use the relevant `@repo/env/apps/<name>`
   loader; do not teach forks to bypass env validation with broad `process.env` reads.
