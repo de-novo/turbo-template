@@ -15,119 +15,53 @@ Start with [docs/capabilities.md](./docs/capabilities.md) for the surface map,
 [docs/template-strategy.md](./docs/template-strategy.md) for naming/scope decisions, and
 [docs/technical-stack.md](./docs/technical-stack.md) for stack-level rationale.
 
-## Run commands
+## Structured Rule Source
 
-Use these instead of inventing alternatives:
+Canonical detailed agent rules live in `.agents/rules/{NN-category}/{rule-name}.md`, indexed by
+[.agents/manifest.json](./.agents/manifest.json). Read them in manifest priority order.
+Tool-specific files under `.agents/adapters/` are adapters only; they are not the source of truth.
+Use [.agents/skills/rule-management/SKILL.md](./.agents/skills/rule-management/SKILL.md) when
+adding, editing, moving, deleting, or validating rules.
 
-```bash
-pnpm install
-pnpm dev:portless:setup   # recommended global portless@latest install + CA trust
-pnpm dev:trust            # one-time portless CA trust
-pnpm dev:proxy[:unprivileged|:stop]
-pnpm dev                  # all surfaces (HTTP apps through portless .localhost URLs)
-pnpm dev:web | dev:api | dev:desktop | dev:mobile | dev:mfe | dev:mfe-host | dev:mfe-dashboard
-pnpm check                # biome lint + tsconfig:check + typecheck + format:check + env:check + design:lint
-pnpm env:check            # validate env/*/*.env.example
-pnpm test                 # turbo run test (vitest + jest-expo for mobile)
-pnpm test:e2e             # Playwright web smoke (opt-in, not in pnpm test)
-pnpm build                # turbo build
-pnpm db:generate | db:migrate | db:studio
-pnpm template:rename --name "..." --slug "..." [--scope @acme]
-pnpm template:auth        # select AUTH_MODE / AUTH_TOPOLOGY
-pnpm template:surfaces --keep web,api  # prune unused apps from a fork
-pnpm syncpack:check       # workspace catalog drift gate
-pnpm licenses:check       # production license allow-list
-```
+Minimum read order:
 
-CI (`.github/workflows/ci.yml`) runs install → audit (high+) → licenses → syncpack → check → build,
-then a separate `test` job. `.github/workflows/security.yml` runs Trivy + CodeQL on push, PR, and
-weekly schedule.
+1. [.agents/rules/00-core/agent-behavior.md](./.agents/rules/00-core/agent-behavior.md)
+2. [.agents/rules/00-core/run-commands.md](./.agents/rules/00-core/run-commands.md)
+3. [.agents/rules/00-core/contradiction-audit.md](./.agents/rules/00-core/contradiction-audit.md)
+4. [.agents/rules/10-repo-contract/template-scope.md](./.agents/rules/10-repo-contract/template-scope.md)
+5. [.agents/rules/10-repo-contract/package-boundaries.md](./.agents/rules/10-repo-contract/package-boundaries.md)
+6. [.agents/rules/10-repo-contract/repo-map.md](./.agents/rules/10-repo-contract/repo-map.md)
+7. [.agents/rules/20-dev-runtime/portless.md](./.agents/rules/20-dev-runtime/portless.md)
+8. [.agents/rules/30-env-and-secrets/env-adapters.md](./.agents/rules/30-env-and-secrets/env-adapters.md)
+9. [.agents/rules/40-git-and-review/git-workflow.md](./.agents/rules/40-git-and-review/git-workflow.md)
+10. [.agents/rules/50-testing-and-verification/gates.md](./.agents/rules/50-testing-and-verification/gates.md)
+11. [.agents/rules/60-frontend-design/design-contract.md](./.agents/rules/60-frontend-design/design-contract.md)
+12. [.agents/rules/60-frontend-design/nextjs.md](./.agents/rules/60-frontend-design/nextjs.md)
+13. [.agents/rules/60-frontend-design/shadcn-composition.md](./.agents/rules/60-frontend-design/shadcn-composition.md)
 
-## Hard rules
+## Hard Overrides
 
 - **Do not amend or force-push.** Always create a new commit.
-- **Conventional commits are NOT used.** This repo uses a structured commit body: `Constraint: ...`
-  / `Rejected: ... | reason` / `Confidence: high|med|low` / `Scope-risk: narrow|medium|broad` /
-  `Directive: ...` / `Tested: ...` / `Not-tested: ...`. See `git log -1 --format=fuller` for the
-  most recent example.
-- **Tests live alongside source as `*.test.ts` or `*.spec.ts` (also `.tsx`).** Each package's
-  `tsconfig.json` excludes them so `tsc` does not emit test files into `dist/`. Don't add test files
-  anywhere `tsc` would emit them.
-- **Do not import from `process.env` directly** outside the per-app env adapter
-  (`apps/*/src/env.ts`). Use `@repo/env/apps/<name>` loaders.
-- **Keep portless dev wiring aligned.** HTTP app `dev` scripts should call `portless`; the real
-  framework command belongs in `dev:app`, with names centralized in `portless.json`. Keep
-  `pnpm dev:portless:setup` installing `portless@latest` for the global CLI while the repo-local
-  devDependency remains the reproducible fallback.
 - **Do not use `localhost:{port}` for human-facing app access or API calls.** Browser URLs, docs
-  examples, OAuth redirect URIs, and app-to-app env values such as `NEXT_PUBLIC_API_URL`,
-  `BETTER_AUTH_URL`, and `CORS_ORIGINS` must use portless domains. Raw `localhost` ports are only
-  acceptable for internal framework listeners, automated test harnesses, container healthchecks, and
-  non-HTTP dependencies such as Postgres, OTel collectors, or Expo Metro.
-- **Activation recipes must be copy-safe and follow the same env contract as source code.** Provider
-  examples should inject `API_ENV` / `ApiEnvModule` or use the relevant `@repo/env/apps/<name>`
-  loader; do not teach forks to bypass env validation with broad `process.env` reads.
-- **No new `tsconfig.references` arrays.** `pnpm tsconfig:check` will reject them; Turborepo derives
-  the dependency graph from `package.json` `workspace:*`.
-- **Foreign env prefixes are forbidden by the loader.** API rejects `NEXT_PUBLIC_*`, `VITE_*`,
-  `EXPO_PUBLIC_*`. Web rejects `VITE_*` and `EXPO_PUBLIC_*`. Etc.
-- **`@repo/contracts` stays runtime-light.** No NestJS, Next.js, browser-only APIs, or ORM clients
-  in there.
-- **`packages/db/src/env.ts` does not exist.** `DATABASE_URL` is owned by `@repo/env/apps/api` only.
+  examples, OAuth redirect URIs, and app-to-app env values must use portless domains. Raw localhost
+  ports are allowed only for internal framework listeners, automated tests, container healthchecks,
+  and non-HTTP dependencies such as Postgres, OTel collectors, or Expo Metro.
+- **Do not import from `process.env` directly** outside the per-app env adapter boundary. Use
+  `@repo/env/apps/<name>` loaders and API DI (`API_ENV` / `ApiEnvModule`) where applicable.
+- **No new `tsconfig.references` arrays.** Turborepo derives the graph from `package.json`
+  `workspace:*` dependencies.
+- **Keep activation recipes copy-safe.** Provider examples must follow the same env and DI contracts
+  as source code.
+- **Next.js work follows the vendored Vercel Labs skills.** Apply the repo-local
+  `.agents/skills/vercel-react-best-practices`, `.agents/skills/vercel-composition-patterns`, and
+  `.agents/skills/web-design-guidelines` skills when touching React/Next.js code.
+- **Do not customize by editing shadcn directly.** Use shadcn as source/generator input and compose
+  reusable product UI through `packages/design-system` or the relevant shared design-system package.
 
-## Where things live
+## Finish Checklist
 
-API (`apps/api`):
-
-- Request scope (request id, ALS-backed logger context): `apps/api/src/middleware/` and
-  `apps/api/src/logger.ts`.
-- Global error envelope: `apps/api/src/filters/app-error.filter.ts` →
-  `@repo/platform/toPublicError` + `errorCodeToHttpStatus`.
-- Health probes: `apps/api/src/health/health.controller.ts` (`/health/live`, `/health/ready`).
-- Prometheus scrape: `apps/api/src/metrics/metrics.controller.ts` (`/metrics`).
-- Rate limiting: `@nestjs/throttler` registered globally in `apps/api/src/app.module.ts`;
-  `@SkipThrottle()` on probes and metrics.
-- API env DI: `apps/api/src/api-env.module.ts` provides `loadApiEnv()` via `API_ENV` token.
-- Better Auth runtime mount (when `AUTH_MODE=better-auth-embedded`): `apps/api/src/auth/auth.ts`
-  - Express-level mount in `apps/api/src/main.ts`. Drizzle adapter when `DATABASE_URL` is set
-    (production path), in-process memory adapter otherwise (solo / demo).
-- DB client DI: `apps/api/src/db/db.module.ts` provides a `DatabaseClient` (or `null` when
-  `DATABASE_URL` is unset) via the `DATABASE_CLIENT` token.
-- Reference domain module: `apps/api/src/notes/` (controller + service + test) — copy this shape for
-  new domain modules. The contract lives in `@repo/contracts/notes`.
-
-Web (`apps/web`):
-
-- App Router root: `apps/web/src/app/{layout,page,providers}.tsx`.
-- Client-only error boundary: `apps/web/src/components/error-boundary.tsx` (uses duck-typed
-  `AppError` shape because `@repo/platform` cannot be bundled for the client — see commit
-  `33af446`).
-- E2E spec: `apps/web/e2e/`. Playwright config in `apps/web/playwright.config.ts`.
-
-Desktop / Mobile / MFE:
-
-- `apps/desktop/src/main.tsx` (Vite + Tauri shell).
-- `apps/mobile/app/{_layout,index}.tsx` + `apps/mobile/eas.json` (EAS Build profiles).
-- `apps/mfe-host/src/main.tsx` (manifest-driven host) and `apps/mfe-dashboard/src/register.tsx`
-  (custom-element remote).
-
-Cross-cutting (`packages/*`):
-
-- OpenTelemetry: `@repo/infrastructure` `initOpenTelemetry()`; opt-in via
-  `OTEL_EXPORTER_OTLP_ENDPOINT`.
-- Logger + ALS context: `@repo/platform` `createPinoLogger()` + `withLoggerContext()`.
-- Error taxonomy: `@repo/contracts/errorCodeSchema` + `@repo/platform/errorCodeToHttpStatus`.
-- Env contracts: `@repo/env/apps/<name>` per-app loaders. Examples in `env/{local,production}/`.
-- Test harness: `@repo/testing/vitest/{node,jsdom}` shared configs.
-- Runtime activation ports: `@repo/infrastructure` owns ports and noop / memory adapters; `apps/api`
-  wires app-side DI tokens (`POLICY_EVALUATOR`, `AUDIT_SINK`, `JOB_QUEUE`, `NOTIFIER`,
-  `OBJECT_STORAGE`, `OUTBOX_RELAY`). Activation docs in `docs/recipes/enable-*.md` must stay aligned
-  with those ports and fail fast instead of silently no-oping unsupported runtime methods.
-
-## When you finish work
-
-1. Run `pnpm format` then the full gate locally (`pnpm check && pnpm build && pnpm test`).
-2. If you touched `apps/web` or ran `pnpm build`, check `apps/web/next-env.d.ts` was not flipped by
-   Next's generated route import. Restore it to the tracked state before committing.
-3. Write the commit body in the documented style (above). Do not skip `Tested:` / `Not-tested:`
-   lines.
+1. Run the relevant gates from `.agents/rules/50-testing-and-verification/gates.md`.
+2. If you touched `apps/web` or ran `pnpm build`, verify `apps/web/next-env.d.ts` stayed in the
+   tracked state.
+3. Use the structured commit body documented in `.agents/rules/40-git-and-review/git-workflow.md`.
+4. Run `pnpm agents:check` after editing `.agents/**` or `AGENTS.md`.

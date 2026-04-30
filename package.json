@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "check": "pnpm lint && pnpm tsconfig:check && pnpm typecheck && pnpm format:check && pnpm env:check && pnpm design:lint",
+    "check": "pnpm lint && pnpm agents:check && pnpm tsconfig:check && pnpm typecheck && pnpm format:check && pnpm env:check && pnpm design:lint",
     "clean": "node scripts/clean.mjs",
     "dev": "turbo run dev",
     "dev:api": "pnpm --filter @repo/api dev",
@@ -56,7 +56,8 @@
     "test:scripts": "node --test scripts/*.test.mjs",
     "dev:portless:setup": "node scripts/setup-portless.mjs",
     "dev:portless:setup:proxy": "node scripts/setup-portless.mjs --start-proxy",
-    "dev:portless:setup:unprivileged": "node scripts/setup-portless.mjs --start-proxy --unprivileged"
+    "dev:portless:setup:unprivileged": "node scripts/setup-portless.mjs --start-proxy --unprivileged",
+    "agents:check": "node scripts/check-agent-rules.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

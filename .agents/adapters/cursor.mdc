@@ -1,0 +1,7 @@
+---
+description: Cursor adapter for the structured agent rules in this repository.
+alwaysApply: true
+---
+
+Read `AGENTS.md` first. Detailed canonical rules live in `.agents/rules/**` and are indexed by
+`.agents/manifest.json`.

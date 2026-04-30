@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "entrypoint": "AGENTS.md",
+  "rulesRoot": ".agents/rules",
+  "naming": "{NN-category}/{rule-name}.md",
+  "rules": [
+    {
+      "id": "core.agent-behavior",
+      "path": ".agents/rules/00-core/agent-behavior.md",
+      "priority": 0
+    },
+    {
+      "id": "core.run-commands",
+      "path": ".agents/rules/00-core/run-commands.md",
+      "priority": 1
+    },
+    {
+      "id": "core.contradiction-audit",
+      "path": ".agents/rules/00-core/contradiction-audit.md",
+      "priority": 2
+    },
+    {
+      "id": "repo-contract.template-scope",
+      "path": ".agents/rules/10-repo-contract/template-scope.md",
+      "priority": 10
+    },
+    {
+      "id": "repo-contract.package-boundaries",
+      "path": ".agents/rules/10-repo-contract/package-boundaries.md",
+      "priority": 11
+    },
+    {
+      "id": "repo-contract.repo-map",
+      "path": ".agents/rules/10-repo-contract/repo-map.md",
+      "priority": 12
+    },
+    {
+      "id": "dev-runtime.portless",
+      "path": ".agents/rules/20-dev-runtime/portless.md",
+      "priority": 20
+    },
+    {
+      "id": "env-and-secrets.env-adapters",
+      "path": ".agents/rules/30-env-and-secrets/env-adapters.md",
+      "priority": 30
+    },
+    {
+      "id": "git-and-review.git-workflow",
+      "path": ".agents/rules/40-git-and-review/git-workflow.md",
+      "priority": 40
+    },
+    {
+      "id": "testing-and-verification.gates",
+      "path": ".agents/rules/50-testing-and-verification/gates.md",
+      "priority": 50
+    },
+    {
+      "id": "frontend-design.design-contract",
+      "path": ".agents/rules/60-frontend-design/design-contract.md",
+      "priority": 60
+    },
+    {
+      "id": "frontend-design.nextjs",
+      "path": ".agents/rules/60-frontend-design/nextjs.md",
+      "priority": 61
+    },
+    {
+      "id": "frontend-design.shadcn-composition",
+      "path": ".agents/rules/60-frontend-design/shadcn-composition.md",
+      "priority": 62
+    }
+  ],
+  "adapters": {
+    "claude": ".agents/adapters/claude.md",
+    "cursor": ".agents/adapters/cursor.mdc",
+    "copilot": ".agents/adapters/copilot.md"
+  },
+  "skills": {
+    "rule-management": ".agents/skills/rule-management/SKILL.md",
+    "deploy-to-vercel": ".agents/skills/deploy-to-vercel/SKILL.md",
+    "shadcn": ".agents/skills/shadcn/SKILL.md",
+    "vercel-cli-with-tokens": ".agents/skills/vercel-cli-with-tokens/SKILL.md",
+    "vercel-composition-patterns": ".agents/skills/vercel-composition-patterns/SKILL.md",
+    "vercel-react-best-practices": ".agents/skills/vercel-react-best-practices/SKILL.md",
+    "vercel-react-native-skills": ".agents/skills/vercel-react-native-skills/SKILL.md",
+    "vercel-react-view-transitions": ".agents/skills/vercel-react-view-transitions/SKILL.md",
+    "web-design-guidelines": ".agents/skills/web-design-guidelines/SKILL.md"
+  },
+  "ruleSchema": ".agents/skills/rule-management/schema/rule.schema.json"
+}
