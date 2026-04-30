@@ -18,9 +18,16 @@ the structured rule source for humans, agents, and downstream template forks.
     50-testing-and-verification/
     60-frontend-design/
   skills/
+    code-review-excellence/
+    fixing-accessibility/
+    playwright/
     rule-management/
       schema/
         rule.schema.json
+    turborepo-monorepo/
+    typescript-best-practices/
+    vercel-*/
+    shadcn/
   adapters/
 ```
 
@@ -75,6 +82,8 @@ lastReviewed: 2026-04-30
 - Use `.agents/skills/rule-management/SKILL.md` as the reusable process guide for adding, editing,
   moving, or deleting structured rules. The skill is intentionally generic; this repository binds it
   to `.agents/manifest.json`, `AGENTS.md`, and `pnpm agents:check`.
+- Keep vendored skills in `.agents/skills/*` when a rule depends on them, so downstream template
+  users can apply the same guidance immediately after cloning.
 - Keep `AGENTS.md` as the root entrypoint and high-signal index.
 - Keep tool-specific files in `.agents/adapters/*`; do not make `.claude/`, `.cursor/`, or other
   local tool folders the source of truth.

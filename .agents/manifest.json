@@ -35,6 +35,16 @@
       "priority": 12
     },
     {
+      "id": "repo-contract.typescript",
+      "path": ".agents/rules/10-repo-contract/typescript.md",
+      "priority": 13
+    },
+    {
+      "id": "repo-contract.turborepo",
+      "path": ".agents/rules/10-repo-contract/turborepo.md",
+      "priority": 14
+    },
+    {
       "id": "dev-runtime.portless",
       "path": ".agents/rules/20-dev-runtime/portless.md",
       "priority": 20
@@ -50,9 +60,19 @@
       "priority": 40
     },
     {
+      "id": "git-and-review.code-review",
+      "path": ".agents/rules/40-git-and-review/code-review.md",
+      "priority": 41
+    },
+    {
       "id": "testing-and-verification.gates",
       "path": ".agents/rules/50-testing-and-verification/gates.md",
       "priority": 50
+    },
+    {
+      "id": "testing-and-verification.playwright",
+      "path": ".agents/rules/50-testing-and-verification/playwright.md",
+      "priority": 51
     },
     {
       "id": "frontend-design.design-contract",
@@ -68,6 +88,11 @@
       "id": "frontend-design.shadcn-composition",
       "path": ".agents/rules/60-frontend-design/shadcn-composition.md",
       "priority": 62
+    },
+    {
+      "id": "frontend-design.accessibility",
+      "path": ".agents/rules/60-frontend-design/accessibility.md",
+      "priority": 63
     }
   ],
   "adapters": {
@@ -77,8 +102,13 @@
   },
   "skills": {
     "rule-management": ".agents/skills/rule-management/SKILL.md",
+    "code-review-excellence": ".agents/skills/code-review-excellence/SKILL.md",
     "deploy-to-vercel": ".agents/skills/deploy-to-vercel/SKILL.md",
+    "fixing-accessibility": ".agents/skills/fixing-accessibility/SKILL.md",
+    "playwright": ".agents/skills/playwright/SKILL.md",
     "shadcn": ".agents/skills/shadcn/SKILL.md",
+    "turborepo-monorepo": ".agents/skills/turborepo-monorepo/SKILL.md",
+    "typescript-best-practices": ".agents/skills/typescript-best-practices/SKILL.md",
     "vercel-cli-with-tokens": ".agents/skills/vercel-cli-with-tokens/SKILL.md",
     "vercel-composition-patterns": ".agents/skills/vercel-composition-patterns/SKILL.md",
     "vercel-react-best-practices": ".agents/skills/vercel-react-best-practices/SKILL.md",

@@ -31,13 +31,18 @@ Minimum read order:
 4. [.agents/rules/10-repo-contract/template-scope.md](./.agents/rules/10-repo-contract/template-scope.md)
 5. [.agents/rules/10-repo-contract/package-boundaries.md](./.agents/rules/10-repo-contract/package-boundaries.md)
 6. [.agents/rules/10-repo-contract/repo-map.md](./.agents/rules/10-repo-contract/repo-map.md)
-7. [.agents/rules/20-dev-runtime/portless.md](./.agents/rules/20-dev-runtime/portless.md)
-8. [.agents/rules/30-env-and-secrets/env-adapters.md](./.agents/rules/30-env-and-secrets/env-adapters.md)
-9. [.agents/rules/40-git-and-review/git-workflow.md](./.agents/rules/40-git-and-review/git-workflow.md)
-10. [.agents/rules/50-testing-and-verification/gates.md](./.agents/rules/50-testing-and-verification/gates.md)
-11. [.agents/rules/60-frontend-design/design-contract.md](./.agents/rules/60-frontend-design/design-contract.md)
-12. [.agents/rules/60-frontend-design/nextjs.md](./.agents/rules/60-frontend-design/nextjs.md)
-13. [.agents/rules/60-frontend-design/shadcn-composition.md](./.agents/rules/60-frontend-design/shadcn-composition.md)
+7. [.agents/rules/10-repo-contract/typescript.md](./.agents/rules/10-repo-contract/typescript.md)
+8. [.agents/rules/10-repo-contract/turborepo.md](./.agents/rules/10-repo-contract/turborepo.md)
+9. [.agents/rules/20-dev-runtime/portless.md](./.agents/rules/20-dev-runtime/portless.md)
+10. [.agents/rules/30-env-and-secrets/env-adapters.md](./.agents/rules/30-env-and-secrets/env-adapters.md)
+11. [.agents/rules/40-git-and-review/git-workflow.md](./.agents/rules/40-git-and-review/git-workflow.md)
+12. [.agents/rules/40-git-and-review/code-review.md](./.agents/rules/40-git-and-review/code-review.md)
+13. [.agents/rules/50-testing-and-verification/gates.md](./.agents/rules/50-testing-and-verification/gates.md)
+14. [.agents/rules/50-testing-and-verification/playwright.md](./.agents/rules/50-testing-and-verification/playwright.md)
+15. [.agents/rules/60-frontend-design/design-contract.md](./.agents/rules/60-frontend-design/design-contract.md)
+16. [.agents/rules/60-frontend-design/nextjs.md](./.agents/rules/60-frontend-design/nextjs.md)
+17. [.agents/rules/60-frontend-design/shadcn-composition.md](./.agents/rules/60-frontend-design/shadcn-composition.md)
+18. [.agents/rules/60-frontend-design/accessibility.md](./.agents/rules/60-frontend-design/accessibility.md)
 
 ## Hard Overrides
 
@@ -57,6 +62,12 @@ Minimum read order:
   `.agents/skills/web-design-guidelines` skills when touching React/Next.js code.
 - **Do not customize by editing shadcn directly.** Use shadcn as source/generator input and compose
   reusable product UI through `packages/design-system` or the relevant shared design-system package.
+- **TypeScript and Turborepo changes use vendored skills.** Apply repo-local
+  `.agents/skills/typescript-best-practices` for TS/JS work and `.agents/skills/turborepo-monorepo`
+  for workspace, task graph, and package-boundary changes.
+- **Reviews, Playwright, and accessibility have dedicated skills.** Apply repo-local
+  `.agents/skills/code-review-excellence`, `.agents/skills/playwright`, and
+  `.agents/skills/fixing-accessibility` for those lanes.
 
 ## Finish Checklist
 
