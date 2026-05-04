@@ -3,7 +3,7 @@ packages:
   - "packages/*"
 
 catalog:
-  "@biomejs/biome": "2.4.13"
+  "@biomejs/biome": "2.4.14"
   "@effect/platform": "0.96.1"
   "@expo/metro-config": "55.0.17"
   "@expo/metro-runtime": "55.0.10"
